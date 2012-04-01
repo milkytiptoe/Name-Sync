@@ -5,9 +5,9 @@
 // @contributor   my name here
 // @include       http://boards.4chan.org/b/res/*
 // @include       https://boards.4chan.org/b/res/*
-// @updateURL     http://nassign.heliohost.org/beta/NameSync.user.js
+// @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.3
+// @version       2.0.4
 // ==/UserScript==
 
 function addJQuery(a)
@@ -162,16 +162,16 @@ function setUp()
 					if (window.XMLHttpRequest)
 						xmlhttp = new XMLHttpRequest();
 					
-					xmlhttp.open("GET","http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName, true);
-					xmlhttp.send();
+					if (location.protocol == "https:")
+					{
+						xmlhttp.open("GET","http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName+"&t="+t, true);
+					}
+					else
+					{
+						xmlhttp.open("GET","http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName, true);
+					}
 					
-					// xmlhttp.onreadystatechange = function()
-					// {
-						// if (xmlhttp.readyState==4 && xmlhttp.status == 200)
-						// {
-							// alert("Sent");
-						// }
-					// }
+					xmlhttp.send();
 					
 					canPost = false;
 					setTimeout(function() { postSet(); }, 30000);
