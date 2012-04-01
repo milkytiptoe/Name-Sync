@@ -7,7 +7,7 @@
 // @include       https://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.4
+// @version       2.0.5
 // ==/UserScript==
 
 function addJQuery(a)
@@ -424,7 +424,7 @@ function setUp()
 				
 				if (guessed == "")
 				{
-					alert("Could not guess poster");
+					alert("Could not guess the name of this poster");
 				}
 				else
 				{
