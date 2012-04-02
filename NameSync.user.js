@@ -3,11 +3,10 @@
 // @description   Shares your name with other posters on /b/. Also allows you to assign names to Anonymous posters.
 // @author        milky
 // @contributor   my name here
-// @include       http://boards.4chan.org/b/res/*
-// @include       https://boards.4chan.org/b/res/*
+// @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.5
+// @version       2.0.6
 // ==/UserScript==
 
 function addJQuery(a)
@@ -428,7 +427,19 @@ function setUp()
 				}
 				else
 				{
-					if (confirm("This poster is guessed as " + guessed + ", apply name?"))
+					guessed = unescape(guessed);
+					
+					var promptName = guessed.split("#");
+					var promptTripcode = "";
+					
+					if (typeof promptName[1] != "undefined")
+					{
+						promptTripcode = " !" + promptName[1];
+					}
+
+					promptName = promptName[0];
+					
+					if (confirm("This poster is guessed as " + promptName + promptTripcode + ", apply name? Your guess will be marked with a *"))
 					{
 						// Check if the ID already has a name applied
 						var index = ids.indexOf(id);
@@ -441,7 +452,7 @@ function setUp()
 						else
 						{
 							// Otherwise write a new entry
-							names[names.length] = name + "*";
+							names[names.length] = guessed + "*";
 							ids[ids.length] = id;
 						}
 						

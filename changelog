@@ -1,0 +1,10 @@
+2.0.6
+- Improved guess prompt
+- Merged 4chan two @includes
+
+2.0.5
+- Minor failed guess prompt change
+
+2.0.4
+- Fixed https name uploading
+- Changed @updateURL to github 
