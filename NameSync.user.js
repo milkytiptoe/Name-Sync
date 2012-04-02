@@ -245,155 +245,106 @@ function setUp()
 	
 	function updateElements()
 	{
-		// Store all span elements in a variable
-		var spans = document.getElementsByTagName("span");
+		// Process OP
+		var optag = $("form[name='delform'] > .op", document)[0];
+		var id = $(".posteruid", optag)[0].innerHTML;
+		var nametag = $(".postername", optag)[0];
+		var filenamespan = $(".filesize a", optag)[0];
+		var titlespan = $(".filetitle", optag)[0];
+		updatePost(id, nametag, filenamespan, titlespan);
 
-		// Loop to add + button to posts and update names
-		for (var i = 0; i < spans.length; i++)
-		{
-			var gb, as;
-			var filename = "";
+		// Process replies separately because they differ
+		// slightly in a few class names.
+		$("form[name='delform'] > table tr > td[id]", document).each(function() {
+			var id = $(".posteruid", this)[0].innerHTML;
+			var nametag = $(".commentpostername", this)[0];
+			var filenamespan = $(".filesize a", this)[0];
+			var titlespan = $(".replytitle", this)[0];
+			updatePost(id, nametag, filenamespan, titlespan);
+		});
+
+		storeCookie();
+	}
+
+	function updatePost(id, nametag, filenamespan, titlespan) {
+		if(id == "(ID: Heaven)")
+			return;
+
+		var index = ids.indexOf(id);
+		var filename = null;
+		var name = null;
+		var tripcode = null;
+
+		// These may be null if they don't exist yet.
+		var assignbutton = $(".assignbutton", titlespan)[0];
+		var guessbutton = $(".guessbutton", titlespan)[0];
+
+		if(assignbutton == null) {
+			assignbutton = document.createElement('a');
+			assignbutton.href = "#";
+			assignbutton.title = "Assign a name to this poster";
+			assignbutton.setAttribute("class", "assignbutton");
+			assignbutton.textContent = "+";
+			assignbutton.onclick = (function() { var currentId = id; return function() { assignName(currentId); return false; } } )();
+			titlespan.appendChild(assignbutton);
+		}
+		if(guessbutton == null) {	
+			guessbutton = document.createElement('a');
+			guessbutton.href = "#";
+			guessbutton.title = "Guess this poster";
+			guessbutton.setAttribute("class", "guessbutton");
+			guessbutton.textContent = "?";
+			guessbutton.onclick = function () { alert("Guessing requires a filename"); return false; };
+			guessbutton.style.display = "none";
 			
-			// Add button
-			if ((spans[i].className == "replytitle" || spans[i].className == "filetitle") && spans[i+2].innerHTML != "(ID: Heaven)")
-			{
-				var id = spans[i+2].innerHTML;
-				var index = ids.indexOf(id);
-				
-				if (spans[i].innerHTML == "" || onlineNames.indexOf(names[index]) > -1)
-				{
-					if (onlineNames.indexOf(names[index]) > -1)
-					{
-						var cell = spans[i];
+			titlespan.appendChild(guessbutton);
+		}
 
-						if (cell.hasChildNodes())
-						{
-							while (cell.childNodes.length >= 1)
-							{
-								cell.removeChild(cell.firstChild);
-							} 
-						}
-					}
-					else
-					{
-						as = document.createElement('a');
-						as.href = "#";
-						as.title = "Assign a name to this poster";
-						as.textContent = "+";
-						as.onclick = (function() { var currentId = id; return function() { assignName(currentId); return false; } } )();
-						
-						gb = document.createElement('a');
-						gb.href = "#";
-						gb.title = "Guess this poster";
-						gb.textContent = "?";
-						gb.onclick = function () { alert("Guessing requires a filename"); return false; };
-						gb.style.display = "none";
-					
-						spans[i].appendChild(as);
-						spans[i].appendChild(gb);
-					}
-				}
+		if(document.getElementById("onlineEnabled").checked && filenamespan != null) {
+			var fullname = $(".fntrunc", filenamespan)[0];
+			if(fullname != null) {
+				filename = fullname.innerHTML;
+			} else {
+				filename = filenamespan.innerHTML;
 			}
-			
-			if (spans[i].className == "posteruid")
-			{
-				// Step one: Get ID
-				var id = spans[i].innerHTML;
-				var index = ids.indexOf(id);
-				
-				// Step two: Get filename
-				if (document.getElementById("onlineEnabled").checked && id != "(ID: Heaven)")
-				{
-					var filenameSpan;
-					
-					// Find filename span
-					if (spans[i-2].className == "filetitle")
-					{
-						// If OP
-						filenameSpan = spans[i-3];
-					}
-					else
-					{
-						// If reply
-						filenameSpan = spans[i+4];
-					}
-					
-					// Move ahead of one span if X back links are in the way
-					if (typeof filenameSpan !== "undefined" && filenameSpan.className == "filesize")
-					{
-						filenameSpan = spans[i+5];
-					}
-					
-					if (typeof filenameSpan !== "undefined" && filenameSpan.className == "replytitle")
-					{
-						if (spans[i+3].className == "container")
-						{
-							filenameSpan = spans[i+4];
-						}
-						else
-						{
-							filenameSpan = spans[i+3];
-						}
-					}
-					
-					if (typeof filenameSpan !== "undefined")
-					{
-						filename = filenameSpan.innerHTML;
-					}
-					
-					// If filename is valid
-					if (filename != "" && filename.indexOf("google") == -1 && (filename.indexOf(".png") > -1 || filename.indexOf(".gif") > -1 || filename.indexOf(".jpg") > -1))
-					{
-						// Update guess button
-						if (typeof gb != "undefined")
-						{
-							gb.onclick = (function() { var currentId = id; var currentFilename = filename; return function() { guessPoster(currentId, currentFilename); return false; } } )();
-							gb.style.display = "inline";
-						}
-					}
-				}
-				
-				// Step three: Check if this name is new, or needs updating
-				var guess = getOnlineName(filename);
-					
-				if (guess != "")
-				{	
-					if (index > -1)
-					{
-						// If ID exists, update name there
-						names[index] = guess;
-					}
-					else
-					{
-						// Otherwise write new
-						names[names.length] = guess;
-						ids[ids.length] = id;
-						
-						// Update index with our new one
-						index = ids.length;
-					}
-				}
-				
-				// Step four: Update name innerHTML if the ID now exists
-				if (index > -1)
-				{
-					var name = names[index];
-					var tripcode = "";
-					
-					name = name.split("#");
-					if (typeof name[1] != "undefined")
-					{
-						tripcode = "!" + name[1];
-					}
+			var guess = getOnlineName(filename);
+			if(guess != null && guess != "") {
+				if(index > -1) {
+					names[index] = guess;
+				} else {
+					names[names.length] = guess;
+					ids[ids.length] = id;
 
-					name = name[0];
-					
-					spans[i-1].innerHTML = name + " " + "<a style='font-weight: normal !important; color: green !important; text-decoration: none;'>" + tripcode + "</a>";
+					index = ids.length-1;
 				}
 			}
 		}
-		
-		storeCookie();
+		if(index > -1) {
+			name = names[index];
+			tripcode = "";
+			
+			name = name.split("#");
+			if (typeof name[1] != "undefined")
+			{
+				tripcode = "!" + name[1];
+			}
+
+			name = name[0];
+			
+			nametag.innerHTML = name + " " + "<a style='font-weight: normal !important; color: green !important; text-decoration: none;'>" + tripcode + "</a>";
+
+			guessbutton.style.display = "none";
+		} else {
+			if(filename != null) {
+				guessbutton.onclick = (function() {
+					var currentId = id;
+					var currentFilename = filename;
+					return function() {
+						guessPoster(currentId, currentFilename); return false;
+					} } )();
+				guessbutton.style.display = "inline";
+			}
+		}
 	}
 	
 	// Return an online name
