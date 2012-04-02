@@ -331,7 +331,7 @@ function setUp()
 
 			name = name[0];
 			
-			nametag.innerHTML = name + " " + "<a style='font-weight: normal !important; color: green !important; text-decoration: none;'>" + tripcode + "</a>";
+			nametag.innerHTML = EncodeEntities(name) + " <a style='font-weight: normal !important; color: green !important; text-decoration: none;'>" + EncodeEntities(tripcode) + "</a>";
 
 			guessbutton.style.display = "none";
 		} else {
@@ -523,6 +523,13 @@ function setUp()
 		}
 		
 		return null;
+	}
+
+	function EncodeEntities(s){
+		return $("<div/>").text(s).html();
+	}
+	function DencodeEntities(s){
+		return $("<div/>").html(s).text();
 	}
 	
 	// Update elements on load
