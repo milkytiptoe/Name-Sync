@@ -2,11 +2,12 @@
 // @name          /b/ Name Sync
 // @description   Shares your name with other posters on /b/. Also allows you to assign names to Anonymous posters.
 // @author        milky
-// @contributor   my name here
+// @contributor   My Name Here
+// @contributor   Macil
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.6
+// @version       2.0.7
 // ==/UserScript==
 
 function addJQuery(a)
@@ -45,6 +46,7 @@ function setUp()
 	onlineElement.setAttribute("type", "checkbox");
 	onlineElement.checked = true;
 	onlineElement.setAttribute("title", "Share and download names online");
+	onlineElement.onclick = function() { storeCookie(); };
 	var idsElement = document.createElement("input");
 	idsElement.setAttribute("id", "idsEnabled");
 	idsElement.setAttribute("type", "checkbox");

@@ -1,3 +1,6 @@
+2.0.7
+- (Macil) Save cookie as soon as user toggles Enable Sync mode
+
 2.0.6
 - Improved guess prompt
 - Merged 4chan two @includes
