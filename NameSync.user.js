@@ -249,24 +249,24 @@ function setUp()
 		var optag = $("form[name='delform'] > .op", document)[0];
 		var id = $(".posteruid", optag)[0].innerHTML;
 		var nametag = $(".postername", optag)[0];
-		var filenamespan = $(".filesize a", optag)[0];
+		var filesizespan = $(".filesize", optag)[0];
 		var titlespan = $(".filetitle", optag)[0];
-		updatePost(id, nametag, filenamespan, titlespan);
+		updatePost(id, nametag, filesizespan, titlespan);
 
 		// Process replies separately because they differ
 		// slightly in a few class names.
 		$("form[name='delform'] > table tr > td[id]", document).each(function() {
 			var id = $(".posteruid", this)[0].innerHTML;
 			var nametag = $(".commentpostername", this)[0];
-			var filenamespan = $(".filesize a", this)[0];
+			var filesizespan = $(".filesize", this)[0];
 			var titlespan = $(".replytitle", this)[0];
-			updatePost(id, nametag, filenamespan, titlespan);
+			updatePost(id, nametag, filesizespan, titlespan);
 		});
 
 		storeCookie();
 	}
 
-	function updatePost(id, nametag, filenamespan, titlespan) {
+	function updatePost(id, nametag, filesizespan, titlespan) {
 		if(id == "(ID: Heaven)")
 			return;
 
@@ -300,7 +300,11 @@ function setUp()
 			titlespan.appendChild(guessbutton);
 		}
 
-		if(document.getElementById("onlineEnabled").checked && filenamespan != null) {
+		if(document.getElementById("onlineEnabled").checked && filesizespan != null) {
+			var filenamespan = $("span[title]", filesizespan)[0];
+			if(filenamespan == null) {
+				filenamespan = $("a[href]", filesizespan)[0];
+			}
 			var fullname = $(".fntrunc", filenamespan)[0];
 			if(fullname != null) {
 				filename = fullname.innerHTML;
