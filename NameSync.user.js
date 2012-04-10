@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.7
+// @version       2.0.8
 // ==/UserScript==
 
 function addJQuery(a)
@@ -157,25 +157,26 @@ function setUp()
 				cFile = escape(cFile);
 				
 				if (cName != "" && cFile != "" && document.getElementById("onlineEnabled").checked)
-				{
-					var xmlhttp;
-
-					if (window.XMLHttpRequest)
-						xmlhttp = new XMLHttpRequest();
-					
+				{					
 					if (location.protocol == "https:")
 					{
-						xmlhttp.open("GET","http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName+"&t="+t, true);
+						$.ajax({
+							url: "http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName+"&t="+t,
+						})
 					}
 					else
 					{
-						xmlhttp.open("GET","http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName, true);
+						$.ajax({
+							url: "http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName,
+						})
 					}
 					
-					xmlhttp.send();
-					
 					canPost = false;
-					setTimeout(function() { postSet(); }, 30000);
+					
+					if (parseInt(document.getElementById("imagecount").innerHTML) <= 152 && document.getElementById("count").innerHTML != "404")
+					{
+						setTimeout(function() { postSet(); }, 30000);
+					}
 				}
 			}
 			
@@ -192,8 +193,10 @@ function setUp()
 	{
 		if (document.getElementById("onlineEnabled").checked)
 		{	
-			$.getJSON(host+'/get?url=http%3A//nassign.heliohost.org/script/query.php?t='+t+'&callback=?', function(data){
-				var content = data.contents;
+			$.ajax({
+				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
+				}).done(function(data){
+				var content = data;
 				
 				try
 				{
@@ -240,7 +243,10 @@ function setUp()
 			document.getElementById("syncStatus").style.color = "gray";
 		}
 		
-		setTimeout(function() { sync(); }, 30000);
+		if (parseInt(document.getElementById("imagecount").innerHTML) <= 152 && document.getElementById("count").innerHTML != "404")
+		{
+			setTimeout(function() { sync(); }, 30000);
+		}
 	}
 	
 	function updateElements()
@@ -353,24 +359,30 @@ function setUp()
 					}
 				}
 				
-				// Step three: Check if this name is new, or needs updating
-				var guess = getOnlineName(filename);
-					
-				if (guess != "")
-				{	
-					if (index > -1)
-					{
-						// If ID exists, update name there
-						names[index] = guess;
-					}
-					else
-					{
-						// Otherwise write new
-						names[names.length] = guess;
-						ids[ids.length] = id;
+				// If filename is valid
+				if (filename != "" && filename.indexOf("google") == -1 && (filename.indexOf(".png") > -1 || filename.indexOf(".gif") > -1 || filename.indexOf(".jpg") > -1))
+				{
+					// Step three: Check if this name is new, or needs updating
+					var guess = getOnlineName(filename);
 						
-						// Update index with our new one
-						index = ids.length;
+					if (guess != "")
+					{	
+						if (index > -1)
+						{
+							// If ID exists, update name there
+							names[index] = guess;
+						}
+						else
+						{
+							// Otherwise write new
+							names[names.length] = guess;
+							ids[ids.length] = id;
+							
+							// Update index with our new one
+							index = ids.length - 1;
+							
+							updateElements();
+						}
 					}
 				}
 				
@@ -420,8 +432,10 @@ function setUp()
 		}
 		else
 		{
-			$.getJSON(host+'/get?url=http%3A//nassign.heliohost.org/script/guess.php%3Ff%3D'+filename+'&callback=?', function(data){
-				var guessed = data.contents;
+			$.ajax({
+				url: 'http://nassign.heliohost.org/s/g.php?f='+filename,
+				}).done(function(data){
+				var guessed = data;
 				
 				if (guessed == "")
 				{

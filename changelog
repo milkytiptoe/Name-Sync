@@ -1,3 +1,8 @@
+2.0.8
+- Prevent names being assigned incorrectly
+- Changed retrieve method slightly which should result in less sync failures
+- Sync will stop after hitting the image limit or a 404
+
 2.0.7
 - (Macil) Save cookie as soon as user toggles Enable Sync mode
 
