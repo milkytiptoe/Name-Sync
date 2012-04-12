@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.8
+// @version       2.0.9
 // ==/UserScript==
 
 function addJQuery(a)
@@ -35,9 +35,7 @@ function setUp()
 	t = t.substring(0, 9);
 	
 	var lastFile = "";
-	
-	var host = "http://whateverorigin.org";
-	
+		
 	var canPost = true;
 	
 	// Insert options html
@@ -71,7 +69,7 @@ function setUp()
 	document.body.insertBefore(document.createElement("br"), delForm);
 	var syncStatus = document.createElement("span");
 	syncStatus.setAttribute("id", "syncStatus");
-	syncStatus.innerHTML = "Sync: Loading...";
+	syncStatus.innerHTML = "Loading...";
 	document.body.insertBefore(syncStatus, delForm);
 	document.body.insertBefore(document.createElement("br"), delForm);
 	document.body.insertBefore(document.createElement("br"), delForm);
@@ -158,18 +156,24 @@ function setUp()
 				
 				if (cName != "" && cFile != "" && document.getElementById("onlineEnabled").checked)
 				{					
-					if (location.protocol == "https:")
-					{
-						$.ajax({
-							url: "http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName+"&t="+t,
-						})
-					}
-					else
-					{
-						$.ajax({
-							url: "http://nassign.heliohost.org/script/store.php?f="+cFile+"&n="+cName,
-						})
-					}
+					$.ajax({
+						type: "POST",
+						url: "http://nassign.heliohost.org/s/s.php",
+						data: "f="+cFile+"&n="+cName+"&t="+t,
+						statusCode: {
+							404: function() {
+								document.getElementById("syncStatus").innerHTML = "Error sending name (404)";
+								document.getElementById("syncStatus").style.color = "red";
+							},
+							503: function() {
+								document.getElementById("syncStatus").innerHTML = "Error sending name (503)";
+								document.getElementById("syncStatus").style.color = "red";
+							}
+						}
+					}).fail( function() {
+						document.getElementById("syncStatus").innerHTML = "Error sending name";
+						document.getElementById("syncStatus").style.color = "red";
+					});
 					
 					canPost = false;
 					
@@ -195,7 +199,20 @@ function setUp()
 		{	
 			$.ajax({
 				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
-				}).done(function(data){
+				statusCode: {
+					404: function() {
+						document.getElementById("syncStatus").innerHTML = "Error retrieving names (404)";
+						document.getElementById("syncStatus").style.color = "red";
+					},
+					503: function() {
+						document.getElementById("syncStatus").innerHTML = "Error retrieving names (503)";
+						document.getElementById("syncStatus").style.color = "red";
+					}
+				}
+			}).fail( function() {
+				document.getElementById("syncStatus").innerHTML = "Error retrieving names";
+				document.getElementById("syncStatus").style.color = "red";
+			}).done(function(data) {
 				var content = data;
 				
 				try
@@ -225,21 +242,21 @@ function setUp()
 						}
 					}
 					
-					document.getElementById("syncStatus").innerHTML = "Sync: Online";
+					document.getElementById("syncStatus").innerHTML = "Online";
 					document.getElementById("syncStatus").style.color = "green";
 					
 					updateElements();
 				}
 				catch (err)
 				{
-					document.getElementById("syncStatus").innerHTML = "Sync: Error retrieving names, retrying in 30 seconds";
+					document.getElementById("syncStatus").innerHTML = "Error retrieving names (Script Error)";
 					document.getElementById("syncStatus").style.color = "red";
 				}
 			});
 		}
 		else
 		{
-			document.getElementById("syncStatus").innerHTML = "Sync: Disabled";
+			document.getElementById("syncStatus").innerHTML = "Disabled";
 			document.getElementById("syncStatus").style.color = "gray";
 		}
 		
@@ -434,7 +451,20 @@ function setUp()
 		{
 			$.ajax({
 				url: 'http://nassign.heliohost.org/s/g.php?f='+filename,
-				}).done(function(data){
+				statusCode: {
+					404: function() {
+						document.getElementById("syncStatus").innerHTML = "Error guessing name (404)";
+						document.getElementById("syncStatus").style.color = "red";
+					},
+					503: function() {
+						document.getElementById("syncStatus").innerHTML = "Error guessing name (503)";
+						document.getElementById("syncStatus").style.color = "red";
+					}
+				}
+			}).fail( function() {
+				document.getElementById("syncStatus").innerHTML = "Error guessing name";
+				document.getElementById("syncStatus").style.color = "red";
+			}).done(function(data) {
 				var guessed = data;
 				
 				if (guessed == "")

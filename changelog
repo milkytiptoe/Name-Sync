@@ -1,3 +1,7 @@
+2.0.9
+- Sync status will now show errors instead of always Online
+- Changed send method slightly
+
 2.0.8
 - Prevent names being assigned incorrectly
 - Changed retrieve method slightly which should result in less sync failures
