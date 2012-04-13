@@ -1,3 +1,6 @@
+2.0.10
+- X-Requested-With header
+
 2.0.9
 - Sync status will now show errors instead of always Online
 - Changed send method slightly

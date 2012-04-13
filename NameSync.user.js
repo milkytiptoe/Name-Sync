@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.9
+// @version       2.0.10
 // ==/UserScript==
 
 function addJQuery(a)
@@ -157,6 +157,7 @@ function setUp()
 				if (cName != "" && cFile != "" && document.getElementById("onlineEnabled").checked)
 				{					
 					$.ajax({
+						headers: {"X-Requested-With":"Ajax"},
 						type: "POST",
 						url: "http://nassign.heliohost.org/s/s.php",
 						data: "f="+cFile+"&n="+cName+"&t="+t,
@@ -198,6 +199,7 @@ function setUp()
 		if (document.getElementById("onlineEnabled").checked)
 		{	
 			$.ajax({
+				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
 				statusCode: {
 					404: function() {
@@ -450,6 +452,7 @@ function setUp()
 		else
 		{
 			$.ajax({
+				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/g.php?f='+filename,
 				statusCode: {
 					404: function() {
