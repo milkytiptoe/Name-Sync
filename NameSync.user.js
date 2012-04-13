@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.12
+// @version       2.0.13
 // ==/UserScript==
 
 function addJQuery(a)
@@ -348,7 +348,7 @@ function setUp()
 				filename = filenamespan.innerHTML;
 			}
 			var guess = getOnlineName(filename);
-			if(guess != null && guess != "") {
+			if(guess != null && guess != "" && $(filesizespan).parents(".inline").length == 0) {
 				if(index > -1) {
 					names[index] = guess;
 				} else {
