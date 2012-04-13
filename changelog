@@ -1,3 +1,7 @@
+2.0.12
+- Fixed guess button not hiding on unguessable posts
+- Failed guesses now show a prompt
+
 2.0.11
 - (Macil) Fixed file info formatting
 

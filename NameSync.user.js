@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.11
+// @version       2.0.12
 // ==/UserScript==
 
 function addJQuery(a)
@@ -383,11 +383,12 @@ function setUp()
 						guessPoster(currentId, currentFilename); return false;
 					} } )();
 			}
-			else
-			{
-				guessbutton.style.display = "none";
-			}
 		}
+		if (filename == null)
+		{
+			guessbutton.style.display = "none";
+		}
+
 	}
 	
 	// Return an online name
@@ -419,15 +420,18 @@ function setUp()
 				url: 'http://nassign.heliohost.org/s/g.php?f='+filename,
 				statusCode: {
 					404: function() {
+						alert("Error guessing name (404)");
 						document.getElementById("syncStatus").innerHTML = "Error guessing name (404)";
 						document.getElementById("syncStatus").style.color = "red";
 					},
 					503: function() {
+						alert("Error guessing name (503)");
 						document.getElementById("syncStatus").innerHTML = "Error guessing name (503)";
 						document.getElementById("syncStatus").style.color = "red";
 					}
 				}
 			}).fail( function() {
+				alert("Error guessing name");
 				document.getElementById("syncStatus").innerHTML = "Error guessing name";
 				document.getElementById("syncStatus").style.color = "red";
 			}).done(function(data) {
