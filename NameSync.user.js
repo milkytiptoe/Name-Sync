@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.13
+// @version       2.0.14
 // ==/UserScript==
 
 function addJQuery(a)
@@ -24,6 +24,9 @@ function addJQuery(a)
 
 function setUp()
 {
+	var ver = "2.0.14";
+	var options;
+	
 	var names = new Array();
 	var ids = new Array();
 
@@ -39,38 +42,19 @@ function setUp()
 	var canPost = true;
 	
 	// Insert options html
-	var onlineElement = document.createElement("input");
-	onlineElement.setAttribute("id", "onlineEnabled");
-	onlineElement.setAttribute("type", "checkbox");
-	onlineElement.checked = true;
-	onlineElement.setAttribute("title", "Share and download names online");
-	onlineElement.onclick = function() { storeCookie(); };
-	var idsElement = document.createElement("input");
-	idsElement.setAttribute("id", "idsEnabled");
-	idsElement.setAttribute("type", "checkbox");
-	idsElement.checked = true;
-	idsElement.setAttribute("title", "Show ID's next to poster names");
-	idsElement.onclick = function() { hideIds(); };
-	var optElement = document.createElement("input");
-	optElement.setAttribute("id", "optEnabled");
-	optElement.setAttribute("type", "checkbox");
-	optElement.checked = true;
-	optElement.setAttribute("title", "Show options next to poster names");
-	optElement.onclick = function() { hideOptions(); };
 	var delForm = document.getElementsByName("delform")[0];
-	document.body.insertBefore(onlineElement, delForm);
-	document.body.insertBefore(document.createTextNode("Enable sync"), delForm);
-	document.body.insertBefore(document.createElement("br"), delForm);
-	document.body.insertBefore(idsElement, delForm);
-	document.body.insertBefore(document.createTextNode("Show ID's"), delForm);
-	document.body.insertBefore(document.createElement("br"), delForm);
-	document.body.insertBefore(optElement, delForm);
-	document.body.insertBefore(document.createTextNode("Show poster options"), delForm);
-	document.body.insertBefore(document.createElement("br"), delForm);
 	var syncStatus = document.createElement("span");
 	syncStatus.setAttribute("id", "syncStatus");
 	syncStatus.innerHTML = "Loading...";
 	document.body.insertBefore(syncStatus, delForm);
+	document.body.insertBefore(document.createElement("br"), delForm);
+	var optionsElement = document.createElement("a");
+	optionsElement.textContent = "Options";
+	optionsElement.href = "#";
+	optionsElement.setAttribute("title", "View options");
+	optionsElement.style.textDecoration = "none";
+	optionsElement.onclick = function () { showOptionsScreen(); };
+	document.body.insertBefore(optionsElement, delForm);
 	document.body.insertBefore(document.createElement("br"), delForm);
 	document.body.insertBefore(document.createElement("br"), delForm);
 	var asheet = document.createElement('style');
@@ -78,8 +62,56 @@ function setUp()
 	var bsheet = document.createElement('style');
 	document.body.appendChild(bsheet);
 	var csheet = document.createElement('style');
-	csheet.innerHTML = ".filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
+	csheet.innerHTML = "#optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.jpg) no-repeat white; background-position: bottom right; padding: 12px; border: 1px solid black; position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; border-radius: 5px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
 	document.body.appendChild(csheet);
+	
+	function showOptionsScreen()
+	{
+		$("body").css("overflow", "hidden");
+		var overlayDiv = document.createElement("div");
+		overlayDiv.setAttribute("id", "optionsOverlay");
+		document.body.appendChild(overlayDiv);
+
+		var optionsDiv = document.createElement("div");
+		optionsDiv.setAttribute("id", "optionsScreen");
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync</h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li></ul><br />";
+		var okayElement = document.createElement("a");
+		okayElement.textContent = "Close";
+		okayElement.href = "#";
+		okayElement.setAttribute("title", "Close options");
+		okayElement.onclick = function () { hideOptionsScreen(); return false; };
+		overlayDiv.onclick = function () { hideOptionsScreen(); return false; };
+		optionsDiv.appendChild(okayElement);
+		document.body.appendChild(optionsDiv);
+		
+		$("#posterOption").click(function() { hideOptions(); });
+		$("#syncOption").click(function() { options[0] = String($("#syncOption").is(":checked")); storeCookie(); });
+		$("#IDOption").click(function() { hideIds(); });
+		
+		if (options[0] == "false")
+		{
+			$("#syncOption").attr("checked", false);
+		}
+		
+		if (options[1] == false)
+		{
+			$("#IDOption").attr("checked", false);
+		}
+		
+		if (options[2] == false)
+		{
+			$("#posterOption").attr("checked", false);
+		}
+		
+		$("#optionsScreen").fadeIn("fast");
+	}
+	
+	function hideOptionsScreen()
+	{
+		$("#optionsScreen").remove();
+		$("#optionsOverlay").remove();
+		$("body").css("overflow", "visible");
+	}
 	
 	function hideIds()
 	{
@@ -90,7 +122,8 @@ function setUp()
 			asheet.innerHTML = off;
 		else
 			asheet.innerHTML = on;
-			
+		
+		options[1] = $("#IDOption").is(":checked");
 		storeCookie();
 	}
 
@@ -104,6 +137,7 @@ function setUp()
 		else
 			bsheet.innerHTML = on;
 			
+		options[2] = $("#posterOption").is(":checked");
 		storeCookie();
 	}
 	
@@ -154,7 +188,7 @@ function setUp()
 				
 				cFile = escape(cFile);
 				
-				if (cName != "" && cFile != "" && document.getElementById("onlineEnabled").checked)
+				if (cName != "" && cFile != "" && options[0] == "true")
 				{					
 					$.ajax({
 						headers: {"X-Requested-With":"Ajax"},
@@ -196,7 +230,7 @@ function setUp()
 	
 	function sync()
 	{
-		if (document.getElementById("onlineEnabled").checked)
+		if (options[0] == "true")
 		{	
 			$.ajax({
 				headers: {"X-Requested-With":"Ajax"},
@@ -336,7 +370,7 @@ function setUp()
 			}
 		}
 
-		if(document.getElementById("onlineEnabled").checked && filesizespan != null) {
+		if(options[0] == "true" && filesizespan != null) {
 			var filenamespan = $("span[title]", filesizespan)[0];
 			if(filenamespan == null) {
 				filenamespan = $("a[href]", filesizespan)[0];
@@ -526,7 +560,7 @@ function setUp()
 		document.cookie = "names" + "=" + escape(namesJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 		document.cookie = "ids" + "=" + escape(idsJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 
-		document.cookie = "options" + "=" + escape(document.getElementById("onlineEnabled").checked) + "|" + escape(document.getElementById("idsEnabled").checked) + "|" + escape(document.getElementById("optEnabled").checked) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
+		document.cookie = "options" + "=" + escape(options[0]) + "|" + escape(options[1]) + "|" + escape(options[2]) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 	}
 
 	function loadCookie()
@@ -544,22 +578,20 @@ function setUp()
 		
 		if (guessing != null)
 		{
-			var options = guessing.split("|");
+			options = guessing.split("|");
 			
-			if (options[0] == "false")
-			{
-				document.getElementById("onlineEnabled").checked = false;
-			}
 			if (options[1] == "false")
 			{
-				document.getElementById("idsEnabled").checked = false;
 				hideIds();
 			}
 			if (options[2] == "false")
 			{
-				document.getElementById("optEnabled").checked = false;
 				hideOptions();
 			}
+		}
+		else
+		{
+			options = ["true", "true", "true"];
 		}
 	}
 
