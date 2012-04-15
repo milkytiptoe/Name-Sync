@@ -4,10 +4,10 @@
 // @author        milky
 // @contributor   My Name Here
 // @contributor   Macil
-// @include       http*://boards.4chan.org/b/res/*
+// @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.14
+// @version       2.0.15
 // ==/UserScript==
 
 function addJQuery(a)
@@ -24,7 +24,7 @@ function addJQuery(a)
 
 function setUp()
 {
-	var ver = "2.0.14";
+	var ver = "2.0.15";
 	var options;
 	
 	var names = new Array();
@@ -36,7 +36,9 @@ function setUp()
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
 	t = t.substring(0, 9);
-	
+	if (t == "")
+		t = "b";
+		
 	var lastFile = "";
 		
 	var canPost = true;
@@ -230,6 +232,13 @@ function setUp()
 	
 	function sync()
 	{
+		if (t == "b")
+		{
+			document.getElementById("syncStatus").innerHTML = "Not available on board index";
+			document.getElementById("syncStatus").style.color = "gray";
+			return;
+		}
+			
 		if (options[0] == "true")
 		{	
 			$.ajax({
@@ -304,6 +313,9 @@ function setUp()
 	
 	function updateElements()
 	{
+		if (t == "b")
+			return;
+			
 		// Process OP
 		var optag = $("form[name='delform'] > .op", document)[0];
 		var id = $(".posteruid", optag)[0].innerHTML;
