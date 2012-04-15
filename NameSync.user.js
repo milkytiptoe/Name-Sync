@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.15
+// @version       2.0.16
 // ==/UserScript==
 
 function addJQuery(a)
@@ -24,7 +24,7 @@ function addJQuery(a)
 
 function setUp()
 {
-	var ver = "2.0.15";
+	var ver = "2.0.16";
 	var options;
 	
 	var names = new Array();
@@ -76,7 +76,7 @@ function setUp()
 
 		var optionsDiv = document.createElement("div");
 		optionsDiv.setAttribute("id", "optionsScreen");
-		optionsDiv.innerHTML = "<h1>/b/ Name Sync</h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li></ul><br />";
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync</h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='http://nassign.heliohost.org/beta/' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		var okayElement = document.createElement("a");
 		okayElement.textContent = "Close";
 		okayElement.href = "#";
@@ -89,6 +89,27 @@ function setUp()
 		$("#posterOption").click(function() { hideOptions(); });
 		$("#syncOption").click(function() { options[0] = String($("#syncOption").is(":checked")); storeCookie(); });
 		$("#IDOption").click(function() { hideIds(); });
+		$("#updateLink").click(function() { 
+			document.getElementById("updateLink").innerHTML = "Checking...";
+			$.ajax({
+				headers: {"X-Requested-With":"Ajax"},
+				url: 'http://nassign.heliohost.org/s/u.php?v='+ver,
+				statusCode: {
+					404: function() {
+						document.getElementById("updateLink").innerHTML = "Error checking for update (404)";
+					},
+					503: function() {
+						document.getElementById("updateLink").innerHTML = "Error checking for update (503)";
+					}
+				}
+			}).fail( function() {
+				document.getElementById("updateLink").innerHTML = "Error checking for update";
+			}).done(function(data) {
+				document.getElementById("updateLink").innerHTML = data;
+			});
+			
+			$("#updateLink").attr('onclick','').unbind('click');
+		});
 		
 		if (options[0] == "false")
 		{
@@ -104,6 +125,8 @@ function setUp()
 		{
 			$("#posterOption").attr("checked", false);
 		}
+		
+
 		
 		$("#optionsScreen").fadeIn("fast");
 	}
