@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.17
+// @version       2.0.18
 // ==/UserScript==
 
 function addJQuery(a)
@@ -24,7 +24,7 @@ function addJQuery(a)
 
 function setUp()
 {
-	var ver = "2.0.17";
+	var ver = "2.0.18";
 	var options;
 	var bName = "";
 	
@@ -65,7 +65,7 @@ function setUp()
 	var bsheet = document.createElement('style');
 	document.body.appendChild(bsheet);
 	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.jpg) no-repeat white; background-position: bottom right; padding: 12px; border: 1px solid black; position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; border-radius: 5px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
+	csheet.innerHTML = "#optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.jpg?i="+new Date().getTime()+") no-repeat white; background-position: bottom right; padding: 12px; border: 1px solid black; position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; border-radius: 5px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
 	document.body.appendChild(csheet);
 	
 	function showOptionsScreen()
@@ -95,19 +95,11 @@ function setUp()
 			$(this).html("Checking...");
 			$.ajax({
 				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/u.php?v='+ver,
-				statusCode: {
-					404: function() {
-						document.getElementById("updateLink").innerHTML = "Error checking for update (404)";
-					},
-					503: function() {
-						document.getElementById("updateLink").innerHTML = "Error checking for update (503)";
-					}
-				}
-			}).fail( function() {
-				document.getElementById("updateLink").innerHTML = "Error checking for update";
+				url: 'http://nassign.heliohost.org/s/u.php?v='+ver
+			}).error(function() {
+				$("#updateLink").html("Error checking for update");
 			}).done(function(data) {
-				document.getElementById("updateLink").innerHTML = data;
+				$("#updateLink").html(data);
 			});
 			
 			$(this).attr('onclick','').unbind('click');
@@ -227,19 +219,9 @@ function setUp()
 						headers: {"X-Requested-With":"Ajax"},
 						type: "POST",
 						url: "http://nassign.heliohost.org/s/s.php",
-						data: "f="+cFile+"&n="+cName+"&t="+t,
-						statusCode: {
-							404: function() {
-								document.getElementById("syncStatus").innerHTML = "Error sending name (404)";
-								document.getElementById("syncStatus").style.color = "red";
-							},
-							503: function() {
-								document.getElementById("syncStatus").innerHTML = "Error sending name (503)";
-								document.getElementById("syncStatus").style.color = "red";
-							}
-						}
-					}).fail( function() {
-						document.getElementById("syncStatus").innerHTML = "Error sending name";
+						data: "f="+cFile+"&n="+cName+"&t="+t
+					}).error(function() {
+						$("#syncStatus").html("Error sending name");
 						document.getElementById("syncStatus").style.color = "red";
 					});
 					
@@ -271,22 +253,12 @@ function setUp()
 		}
 			
 		if (options[0] == "true")
-		{	
+		{			
 			$.ajax({
 				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
-				statusCode: {
-					404: function() {
-						document.getElementById("syncStatus").innerHTML = "Error retrieving names (404)";
-						document.getElementById("syncStatus").style.color = "red";
-					},
-					503: function() {
-						document.getElementById("syncStatus").innerHTML = "Error retrieving names (503)";
-						document.getElementById("syncStatus").style.color = "red";
-					}
-				}
-			}).fail( function() {
-				document.getElementById("syncStatus").innerHTML = "Error retrieving names";
+				url: 'http://nassign.heliohost.org/s/q.php?t='+t
+			}).error(function() {
+				$("#syncStatus").html("Error retrieving names");
 				document.getElementById("syncStatus").style.color = "red";
 			}).done(function(data) {
 				var content = data;
@@ -318,21 +290,21 @@ function setUp()
 						}
 					}
 					
-					document.getElementById("syncStatus").innerHTML = "Online";
+					$("#syncStatus").html("Online");
 					document.getElementById("syncStatus").style.color = "green";
 					
 					updateElements();
 				}
 				catch (err)
 				{
-					document.getElementById("syncStatus").innerHTML = "Error retrieving names (Script Error)";
+					$("#syncStatus").html("Error retrieving names (Script Error)");
 					document.getElementById("syncStatus").style.color = "red";
 				}
 			});
 		}
 		else
 		{
-			document.getElementById("syncStatus").innerHTML = "Disabled";
+			$("#syncStatus").html("Disabled");
 			document.getElementById("syncStatus").style.color = "gray";
 		}
 		
@@ -494,23 +466,9 @@ function setUp()
 		{
 			$.ajax({
 				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/g.php?f='+filename,
-				statusCode: {
-					404: function() {
-						alert("Error guessing name (404)");
-						document.getElementById("syncStatus").innerHTML = "Error guessing name (404)";
-						document.getElementById("syncStatus").style.color = "red";
-					},
-					503: function() {
-						alert("Error guessing name (503)");
-						document.getElementById("syncStatus").innerHTML = "Error guessing name (503)";
-						document.getElementById("syncStatus").style.color = "red";
-					}
-				}
-			}).fail( function() {
+				url: 'http://nassign.heliohost.org/s/g.php?f='+filename
+			}).error( function() {
 				alert("Error guessing name");
-				document.getElementById("syncStatus").innerHTML = "Error guessing name";
-				document.getElementById("syncStatus").style.color = "red";
 			}).done(function(data) {
 				var guessed = data;
 				
