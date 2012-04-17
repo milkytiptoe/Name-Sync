@@ -1,3 +1,9 @@
+2.0.19
+- Updated jquery version
+
+2.0.18
+- Fixed sync stuck on Loading in Firefox
+
 2.0.17
 - Added name to options
 

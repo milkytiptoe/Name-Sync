@@ -7,13 +7,13 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.18
+// @version       2.0.19
 // ==/UserScript==
 
 function addJQuery(a)
 {
 	var script = document.createElement("script");
-	script.setAttribute("src", "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js");
+	script.setAttribute("src", "http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 	script.addEventListener('load', function() {
 	var script = document.createElement("script");
 	script.textContent = "(" + a.toString() + ")();";
@@ -24,7 +24,7 @@ function addJQuery(a)
 
 function setUp()
 {
-	var ver = "2.0.18";
+	var ver = "2.0.19";
 	var options;
 	var bName = "";
 	
@@ -96,7 +96,7 @@ function setUp()
 			$.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/u.php?v='+ver
-			}).error(function() {
+			}).fail(function() {
 				$("#updateLink").html("Error checking for update");
 			}).done(function(data) {
 				$("#updateLink").html(data);
@@ -220,7 +220,7 @@ function setUp()
 						type: "POST",
 						url: "http://nassign.heliohost.org/s/s.php",
 						data: "f="+cFile+"&n="+cName+"&t="+t
-					}).error(function() {
+					}).fail(function() {
 						$("#syncStatus").html("Error sending name");
 						document.getElementById("syncStatus").style.color = "red";
 					});
@@ -257,7 +257,7 @@ function setUp()
 			$.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/q.php?t='+t
-			}).error(function() {
+			}).fail(function() {
 				$("#syncStatus").html("Error retrieving names");
 				document.getElementById("syncStatus").style.color = "red";
 			}).done(function(data) {
@@ -467,7 +467,7 @@ function setUp()
 			$.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/g.php?f='+filename
-			}).error( function() {
+			}).fail(function() {
 				alert("Error guessing name");
 			}).done(function(data) {
 				var guessed = data;
