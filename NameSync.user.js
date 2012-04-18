@@ -7,7 +7,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.19
+// @version       2.0.20
 // ==/UserScript==
 
 function addJQuery(a)
@@ -24,7 +24,9 @@ function addJQuery(a)
 
 function setUp()
 {
-	var ver = "2.0.19";
+	var $Jq = jQuery.noConflict();
+
+	var ver = "2.0.20";
 	var options;
 	var bName = "";
 	
@@ -70,7 +72,7 @@ function setUp()
 	
 	function showOptionsScreen()
 	{
-		$("body").css("overflow", "hidden");
+		$Jq("body").css("overflow", "hidden");
 		var overlayDiv = document.createElement("div");
 		overlayDiv.setAttribute("id", "optionsOverlay");
 		document.body.appendChild(overlayDiv);
@@ -87,47 +89,47 @@ function setUp()
 		optionsDiv.appendChild(okayElement);
 		document.body.appendChild(optionsDiv);
 		
-		$("#bName").keyup(function() { bName = $(this).val(); storeCookie(); });
-		$("#posterOption").click(function() { hideOptions(); });
-		$("#syncOption").click(function() { options[0] = String($("#syncOption").is(":checked")); storeCookie(); });
-		$("#IDOption").click(function() { hideIds(); });
-		$("#updateLink").click(function() { 
-			$(this).html("Checking...");
-			$.ajax({
+		$Jq("#bName").keyup(function() { bName = $Jq(this).val(); storeCookie(); });
+		$Jq("#posterOption").click(function() { hideOptions(); });
+		$Jq("#syncOption").click(function() { options[0] = String($Jq("#syncOption").is(":checked")); storeCookie(); });
+		$Jq("#IDOption").click(function() { hideIds(); });
+		$Jq("#updateLink").click(function() { 
+			$Jq(this).html("Checking...");
+			$Jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/u.php?v='+ver
 			}).fail(function() {
-				$("#updateLink").html("Error checking for update");
+				$Jq("#updateLink").html("Error checking for update");
 			}).done(function(data) {
-				$("#updateLink").html(data);
+				$Jq("#updateLink").html(data);
 			});
 			
-			$(this).attr('onclick','').unbind('click');
+			$Jq(this).attr('onclick','').unbind('click');
 		});
 		
 		if (options[0] == "false")
 		{
-			$("#syncOption").attr("checked", false);
+			$Jq("#syncOption").attr("checked", false);
 		}
 		
 		if (options[1] == false)
 		{
-			$("#IDOption").attr("checked", false);
+			$Jq("#IDOption").attr("checked", false);
 		}
 		
 		if (options[2] == false)
 		{
-			$("#posterOption").attr("checked", false);
+			$Jq("#posterOption").attr("checked", false);
 		}
 		
-		$("#optionsScreen").fadeIn("fast");
+		$Jq("#optionsScreen").fadeIn("fast");
 	}
 	
 	function hideOptionsScreen()
 	{
-		$("#optionsScreen").remove();
-		$("#optionsOverlay").remove();
-		$("body").css("overflow", "visible");
+		$Jq("#optionsScreen").remove();
+		$Jq("#optionsOverlay").remove();
+		$Jq("body").css("overflow", "visible");
 	}
 	
 	function hideIds()
@@ -140,7 +142,7 @@ function setUp()
 		else
 			asheet.innerHTML = on;
 		
-		options[1] = $("#IDOption").is(":checked");
+		options[1] = $Jq("#IDOption").is(":checked");
 		storeCookie();
 	}
 
@@ -154,13 +156,13 @@ function setUp()
 		else
 			bsheet.innerHTML = on;
 			
-		options[2] = $("#posterOption").is(":checked");
+		options[2] = $Jq("#posterOption").is(":checked");
 		storeCookie();
 	}
 	
 	// When document is fully loaded
-	$(document).ready(function() {
-		if ($("#qr").length)
+	$Jq(document).ready(function() {
+		if ($Jq("#qr").length)
 		{
 			addListenQR();
 		}
@@ -182,7 +184,7 @@ function setUp()
 	function addListenQR()
 	{
 		// Add submit listen to QR box
-		var $currentIFrame = $('#qr'); 
+		var $currentIFrame = $Jq('#qr'); 
 		$currentIFrame.contents().find(":submit").click(function()
 		{
 			var cName;
@@ -215,13 +217,13 @@ function setUp()
 								
 				if (cName != "" && cFile != "" && options[0] == "true")
 				{					
-					$.ajax({
+					$Jq.ajax({
 						headers: {"X-Requested-With":"Ajax"},
 						type: "POST",
 						url: "http://nassign.heliohost.org/s/s.php",
 						data: "f="+cFile+"&n="+cName+"&t="+t
 					}).fail(function() {
-						$("#syncStatus").html("Error sending name");
+						$Jq("#syncStatus").html("Error sending name");
 						document.getElementById("syncStatus").style.color = "red";
 					});
 					
@@ -253,27 +255,27 @@ function setUp()
 		}
 			
 		if (options[0] == "true")
-		{			
-			$.ajax({
+		{		
+			$Jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/q.php?t='+t
+				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
 			}).fail(function() {
-				$("#syncStatus").html("Error retrieving names");
+				$Jq("#syncStatus").html("Error retrieving names");
 				document.getElementById("syncStatus").style.color = "red";
 			}).done(function(data) {
 				var content = data;
-				
+
 				try
 				{
 					var jsonBlocks = content.split("|");
-					
+
 					onlineNames = [];
 					onlineFiles = [];
-					
+
 					for (var i = 0; i < jsonBlocks.length -1; i++)
 					{
 						var p = jQuery.parseJSON(jsonBlocks[i]);
-					
+
 						for (var key in p)
 						{
 						  if (p.hasOwnProperty(key))
@@ -289,22 +291,22 @@ function setUp()
 						  }
 						}
 					}
-					
-					$("#syncStatus").html("Online");
+
+					$Jq("#syncStatus").html("Online");
 					document.getElementById("syncStatus").style.color = "green";
-					
+
 					updateElements();
 				}
 				catch (err)
 				{
-					$("#syncStatus").html("Error retrieving names (Script Error)");
+					$Jq("#syncStatus").html("Error retrieving names (Script Error)");
 					document.getElementById("syncStatus").style.color = "red";
 				}
 			});
 		}
 		else
 		{
-			$("#syncStatus").html("Disabled");
+			$Jq("#syncStatus").html("Disabled");
 			document.getElementById("syncStatus").style.color = "gray";
 		}
 		
@@ -320,20 +322,20 @@ function setUp()
 			return;
 			
 		// Process OP
-		var optag = $("form[name='delform'] > .op", document)[0];
-		var id = $(".posteruid", optag)[0].innerHTML;
-		var nametag = $(".postername", optag)[0];
-		var filesizespan = $(".filesize", optag)[0];
-		var titlespan = $(".filetitle", optag)[0];
+		var optag = $Jq("form[name='delform'] > .op", document)[0];
+		var id = $Jq(".posteruid", optag)[0].innerHTML;
+		var nametag = $Jq(".postername", optag)[0];
+		var filesizespan = $Jq(".filesize", optag)[0];
+		var titlespan = $Jq(".filetitle", optag)[0];
 		updatePost(id, nametag, filesizespan, titlespan);
 
 		// Process replies separately because they differ
 		// slightly in a few class names.
-		$("form[name='delform'] > table tr > td[id]", document).each(function() {
-			var id = $(".posteruid", this)[0].innerHTML;
-			var nametag = $(".commentpostername", this)[0];
-			var filesizespan = $(".filesize", this)[0];
-			var titlespan = $(".replytitle", this)[0];
+		$Jq("form[name='delform'] > table tr > td[id]", document).each(function() {
+			var id = $Jq(".posteruid", this)[0].innerHTML;
+			var nametag = $Jq(".commentpostername", this)[0];
+			var filesizespan = $Jq(".filesize", this)[0];
+			var titlespan = $Jq(".replytitle", this)[0];
 			updatePost(id, nametag, filesizespan, titlespan);
 		});
 
@@ -350,8 +352,8 @@ function setUp()
 		var tripcode = null;
 
 		// These may be null if they don't exist yet.
-		var assignbutton = $(".assignbutton", titlespan)[0];
-		var guessbutton = $(".guessbutton", titlespan)[0];
+		var assignbutton = $Jq(".assignbutton", titlespan)[0];
+		var guessbutton = $Jq(".guessbutton", titlespan)[0];
 
 		if(assignbutton == null) {
 			assignbutton = document.createElement('a');
@@ -386,18 +388,18 @@ function setUp()
 		}
 
 		if(options[0] == "true" && filesizespan != null) {
-			var filenamespan = $("span[title]", filesizespan)[0];
+			var filenamespan = $Jq("span[title]", filesizespan)[0];
 			if(filenamespan == null) {
-				filenamespan = $("a[href]", filesizespan)[0];
+				filenamespan = $Jq("a[href]", filesizespan)[0];
 			}
-			var fullname = $(".fntrunc", filenamespan)[0];
+			var fullname = $Jq(".fntrunc", filenamespan)[0];
 			if(fullname != null) {
 				filename = fullname.innerHTML;
 			} else {
 				filename = filenamespan.innerHTML;
 			}
 			var guess = getOnlineName(filename);
-			if(guess != null && guess != "" && $(filesizespan).parents(".inline").length == 0) {
+			if(guess != null && guess != "" && $Jq(filesizespan).parents(".inline").length == 0) {
 				if(index > -1) {
 					names[index] = guess;
 				} else {
@@ -464,7 +466,7 @@ function setUp()
 		}
 		else
 		{
-			$.ajax({
+			$Jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/g.php?f='+filename
 			}).fail(function() {
@@ -629,10 +631,10 @@ function setUp()
 	}
 	
 	function EncodeEntities(s){
-		return $("<div/>").text(s).html();
+		return $Jq("<div/>").text(s).html();
 	}
 	function DencodeEntities(s){
-		return $("<div/>").html(s).text();
+		return $Jq("<div/>").html(s).text();
 	}
 	
 	// Update elements on load

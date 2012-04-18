@@ -1,3 +1,6 @@
+2.0.20
+- Prevent conflict with other jquery scripts
+
 2.0.19
 - Updated jquery version
 
