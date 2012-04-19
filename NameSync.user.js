@@ -1,14 +1,16 @@
 // ==UserScript==
+// @namespace     milky
 // @name          /b/ Name Sync
 // @description   Shares your name with other posters on /b/. Also allows you to assign names to Anonymous posters.
 // @author        milky
 // @contributor   My Name Here
 // @contributor   Macil
 // @contributor   ihavenoface
+// @contributor   Finer
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.22
+// @version       2.0.23
 // ==/UserScript==
 
 function addJQuery(a)
@@ -27,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.22";
+	var ver = "2.0.23";
 	var options;
 	var bName = "";
 	
@@ -442,7 +444,12 @@ function setUp()
 			
 			if (email != null && email != "")
 			{
-				nametag.innerHTML = "<a href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "<a href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
+				nametag.innerHTML = "<a href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "</a>";
+				
+				if (tripcode != "")
+				{
+					nametag.innerHTML += "<a href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
+				}
 			}
 			else
 			{

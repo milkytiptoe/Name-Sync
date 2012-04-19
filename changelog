@@ -1,3 +1,7 @@
+2.0.23
+- Removed tripcode from email link if no tripcode
+- (Finer) Added @namespace to prevent duplicate script installs
+
 2.0.22
 - Fixed sync being enabled on /b/ pages other than 0
 - Added subject and email support
