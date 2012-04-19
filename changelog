@@ -1,5 +1,9 @@
+2.0.25
+- Added email and subject to options
+- Fixed options not saving changes for override fields
+
 2.0.24
-- Class on email links
+- Added class to email links
 
 2.0.23
 - Removed tripcode from email link if no tripcode

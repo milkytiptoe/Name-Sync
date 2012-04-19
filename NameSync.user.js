@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.24
+// @version       2.0.25
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,9 +29,11 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.24";
+	var ver = "2.0.25";
 	var options;
 	var bName = "";
+	var bEmail = "";
+	var bSubject = "";
 	
 	var names = new Array();
 	var ids = new Array();
@@ -72,7 +74,7 @@ function setUp()
 	var bsheet = document.createElement('style');
 	document.body.appendChild(bsheet);
 	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; border-radius: 0px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
+	csheet.innerHTML = "#optionsScreen input[type='text'] { padding: 2px; width: 32%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
 	document.body.appendChild(csheet);
 	
 	function showOptionsScreen()
@@ -84,7 +86,7 @@ function setUp()
 
 		var optionsDiv = document.createElement("div");
 		optionsDiv.setAttribute("id", "optionsScreen");
-		optionsDiv.innerHTML = "<h1>/b/ Name Sync</h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li></ul><h2>Settings</h2><strong>Name</strong> Share this instead of your QR name<br /><input type='text' name='bName' id='bName' value='"+bName+"' /><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='http://nassign.heliohost.org/beta/' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync</h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li></ul><h2>Settings</h2><strong>Override Fields</strong> Share these instead of your quick reply fields<br /><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='http://nassign.heliohost.org/beta/' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		var okayElement = document.createElement("a");
 		okayElement.textContent = "Close";
 		okayElement.href = "#";
@@ -94,7 +96,9 @@ function setUp()
 		optionsDiv.appendChild(okayElement);
 		document.body.appendChild(optionsDiv);
 		
-		$Jq("#bName").keyup(function() { bName = $Jq(this).val(); storeCookie(); });
+		$Jq("#bName").change(function() { bName = $Jq(this).val(); storeCookie(); });
+		$Jq("#bEmail").change(function() { bEmail = $Jq(this).val(); storeCookie(); });
+		$Jq("#bSubject").change(function() { bSubject = $Jq(this).val(); storeCookie(); });
 		$Jq("#posterOption").click(function() { hideOptions(); });
 		$Jq("#syncOption").click(function() { options[0] = String($Jq("#syncOption").is(":checked")); storeCookie(); });
 		$Jq("#IDOption").click(function() { hideIds(); });
@@ -193,6 +197,10 @@ function setUp()
 		$currentIFrame.contents().find(":submit").click(function()
 		{
 			var cName;
+			var cEmail;
+			var cSubject;
+			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
+			
 			if (bName == "")
 			{
 				cName = $currentIFrame.contents().find('input[name="name"]').val();
@@ -201,9 +209,24 @@ function setUp()
 			{
 				cName = bName;
 			}
-			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
-			var cSubject = $currentIFrame.contents().find('input[name="sub"]').val();
-			var cEmail = $currentIFrame.contents().find('input[name="email"]').val();
+			
+			if (bEmail == "")
+			{
+				cEmail = $currentIFrame.contents().find('input[name="email"]').val();
+			}
+			else
+			{
+				cEmail = bEmail;
+			}
+
+			if (bSubject == "")
+			{
+				cSubject = $currentIFrame.contents().find('input[name="sub"]').val();
+			}
+			else
+			{
+				cSubject = bSubject;
+			}
 			
 			if (cFile.indexOf("C:\\fakepath\\") > -1)
 					cFile = cFile.split("C:\\fakepath\\")[1];
@@ -581,7 +604,7 @@ function setUp()
 		var exp = new Date();
 		exp.setTime(exp.getTime() + (1000 * 60 * 60 * 24));
 
-		//If stored names and ids are getting too long
+		// If stored names and ids are getting too long
 		if (names.length > 40 && ids.length > 40)
 		{
 			names.splice(0, 1);
@@ -592,19 +615,35 @@ function setUp()
 		var idsJoin = ids.join("|");
 		
 		document.cookie = "bName" + "=" + escape(bName) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
+		document.cookie = "bEmail" + "=" + escape(bEmail) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
+		document.cookie = "bSubject" + "=" + escape(bSubject) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 		document.cookie = "names" + "=" + escape(namesJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 		document.cookie = "ids" + "=" + escape(idsJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-
 		document.cookie = "options" + "=" + escape(options[0]) + "|" + escape(options[1]) + "|" + escape(options[2]) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 	}
 
 	function loadCookie()
 	{
 		var nameC = readCookie("bName");
+		
 		if (nameC != null)
 		{
 			bName = nameC;
 		}
+		
+		nameC = readCookie("bEmail");
+		
+		if (nameC != null)
+		{
+			bEmail = nameC;
+		}
+		
+		nameC = readCookie("bSubject");
+		
+		if (nameC != null)
+		{
+			bSubject = nameC;
+		}		
 		
 		var namesSplit = readCookie("names");
 		var idsSplit = readCookie("ids");
