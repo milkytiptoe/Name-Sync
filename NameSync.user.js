@@ -8,7 +8,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.21
+// @version       2.0.22
 // ==/UserScript==
 
 function addJQuery(a)
@@ -27,7 +27,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.21";
+	var ver = "2.0.22";
 	var options;
 	var bName = "";
 	
@@ -36,11 +36,13 @@ function setUp()
 
 	var onlineNames = new Array();
 	var onlineFiles = new Array();
-
+	var onlineEmails = new Array();
+	var onlineSubjects = new Array();
+	
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
 	t = t.substring(0, 9);
-	if (t == "" || t == "#")
+	if (t.length < 9)
 		t = "b";
 		
 	var lastFile = "";
@@ -178,7 +180,7 @@ function setUp()
 			}, true);
 		}
 
-		// Download names and filenames from server
+		// Download info from server
 		setTimeout(function() { sync(); }, 1000);
 	});
 	
@@ -198,6 +200,8 @@ function setUp()
 				cName = bName;
 			}
 			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
+			var cSubject = $currentIFrame.contents().find('input[name="sub"]').val();
+			var cEmail = $currentIFrame.contents().find('input[name="email"]').val();
 			
 			if (cFile.indexOf("C:\\fakepath\\") > -1)
 					cFile = cFile.split("C:\\fakepath\\")[1];
@@ -222,7 +226,7 @@ function setUp()
 						headers: {"X-Requested-With":"Ajax"},
 						type: "POST",
 						url: "http://nassign.heliohost.org/s/s.php",
-						data: "f="+cFile+"&n="+cName+"&t="+t
+						data: "f="+cFile+"&n="+cName+"&t="+t+"&s="+cSubject+"&e="+cEmail
 					}).fail(function() {
 						$Jq("#syncStatus").html("Error sending name");
 						document.getElementById("syncStatus").style.color = "red";
@@ -269,27 +273,28 @@ function setUp()
 				try
 				{
 					var jsonBlocks = content.split("|");
-
+					
 					onlineNames = [];
 					onlineFiles = [];
-
+					onlineSubjects = [];
+					onlineEmails = [];
+					
 					for (var i = 0; i < jsonBlocks.length -1; i++)
 					{
 						var p = jQuery.parseJSON(jsonBlocks[i]);
 
 						for (var key in p)
 						{
-						  if (p.hasOwnProperty(key))
-						  {
-							if (key == "n")
+							if (p.hasOwnProperty(key))
 							{
-								onlineNames.push(unescape(p[key]));
+								switch (key)
+								{
+									case "n": onlineNames.push(unescape(p[key])); break;
+									case "f": onlineFiles.push(unescape(p[key])); break;
+									case "e": onlineEmails.push(unescape(p[key])); break;
+									case "s": onlineSubjects.push(unescape(p[key])); break;
+								}
 							}
-							if (key == "f")
-							{
-								onlineFiles.push(unescape(p[key]));
-							}
-						  }
 						}
 					}
 
@@ -351,7 +356,10 @@ function setUp()
 		var filename = null;
 		var name = null;
 		var tripcode = null;
-
+		var email = null;
+		var subject = null;	
+		var info = null;
+		
 		// These may be null if they don't exist yet.
 		var assignbutton = $Jq(".assignbutton", titlespan)[0];
 		var guessbutton = $Jq(".guessbutton", titlespan)[0];
@@ -374,6 +382,33 @@ function setUp()
 			guessbutton.onclick = function () { alert("Guessing requires a filename"); return false; };
 			titlespan.appendChild(guessbutton);
 		}
+
+		if(options[0] == "true" && filesizespan != null) {
+			var filenamespan = $Jq("span[title]", filesizespan)[0];
+			if(filenamespan == null) {
+				filenamespan = $Jq("a[href]", filesizespan)[0];
+			}
+			var fullname = $Jq(".fntrunc", filenamespan)[0];
+			if(fullname != null) {
+				filename = fullname.innerHTML;
+			} else {
+				filename = filenamespan.innerHTML;
+			}
+			info = getOnlineInfo(filename);
+			if(info[0] != null && info[0] != "" && $Jq(filesizespan).parents(".inline").length == 0) {
+				if(index > -1) {
+					names[index] = info[0];
+				} else {
+					names[names.length] = info[0];
+					ids[ids.length] = id;
+
+					index = ids.length-1;
+				}
+				
+				email = info[1];
+				subject = info[2];
+			}
+		}
 		
 		if (onlineNames.indexOf(names[index]) > -1)
 		{
@@ -387,32 +422,7 @@ function setUp()
 				} 
 			}
 		}
-
-		if(options[0] == "true" && filesizespan != null) {
-			var filenamespan = $Jq("span[title]", filesizespan)[0];
-			if(filenamespan == null) {
-				filenamespan = $Jq("a[href]", filesizespan)[0];
-			}
-			var fullname = $Jq(".fntrunc", filenamespan)[0];
-			if(fullname != null) {
-				filename = fullname.innerHTML;
-			} else {
-				filename = filenamespan.innerHTML;
-			}
-			var guess = getOnlineName(filename);
-			if(guess != null && guess != "" && $Jq(filesizespan).parents(".inline").length == 0) {
-				if(index > -1) {
-					names[index] = guess;
-				} else {
-					names[names.length] = guess;
-					ids[ids.length] = id;
-
-					index = ids.length-1;
-					
-					updateElements();
-				}
-			}
-		}
+		
 		if(index > -1) {
 			name = names[index];
 			tripcode = "";
@@ -425,7 +435,20 @@ function setUp()
 
 			name = name[0];
 			
-			nametag.innerHTML = EncodeEntities(name) + " <a style='font-weight: normal !important; color: green !important; text-decoration: none;'>" + EncodeEntities(tripcode) + "</a>";
+			if (subject != null && subject != "")
+			{
+				titlespan.innerHTML = EncodeEntities(subject);
+			}
+			
+			if (email != null && email != "")
+			{
+				nametag.innerHTML = "<a href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "<a href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
+			}
+			else
+			{
+				nametag.innerHTML = EncodeEntities(name) + "<a style='font-weight: normal !important; color: green !important; text-decoration: none;'> " + EncodeEntities(tripcode) + "</a>";
+			}
+			
 		} else {
 			if(filename != null) {
 				guessbutton.onclick = (function() {
@@ -443,14 +466,14 @@ function setUp()
 
 	}
 	
-	// Return an online name
-	function getOnlineName(filename)
+	// Return online info
+	function getOnlineInfo(filename)
 	{
 		var index = onlineFiles.indexOf(filename);
 		
 		if (index > -1)
 		{
-			return onlineNames[index];
+			return [onlineNames[index], onlineEmails[index], onlineSubjects[index]];
 		}
 		else
 		{
