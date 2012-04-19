@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.23
+// @version       2.0.24
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.23";
+	var ver = "2.0.24";
 	var options;
 	var bName = "";
 	
@@ -444,11 +444,11 @@ function setUp()
 			
 			if (email != null && email != "")
 			{
-				nametag.innerHTML = "<a href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "</a>";
+				nametag.innerHTML = "<a class='linkmail' href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "</a>";
 				
 				if (tripcode != "")
 				{
-					nametag.innerHTML += "<a href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
+					nametag.innerHTML += "<a class='linkmail' href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
 				}
 			}
 			else
