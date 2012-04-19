@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.25
+// @version       2.0.26
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.25";
+	var ver = "2.0.26";
 	var options;
 	var bName = "";
 	var bEmail = "";
@@ -228,12 +228,14 @@ function setUp()
 				cSubject = bSubject;
 			}
 			
-			if (cFile.indexOf("C:\\fakepath\\") > -1)
-					cFile = cFile.split("C:\\fakepath\\")[1];
-			
 			if (cFile != lastFile && canPost == true)
 			{	
+				canPost = false;
+				lastFile = cFile;
 				cName = escape(cName);
+				
+				if (cFile.indexOf("C:\\fakepath\\") > -1)
+					cFile = cFile.split("C:\\fakepath\\")[1];
 				
 				// Filename length fix
 				if (cFile.length-4 > 30)
@@ -257,16 +259,12 @@ function setUp()
 						document.getElementById("syncStatus").style.color = "red";
 					});
 					
-					canPost = false;
-					
 					if (parseInt(document.getElementById("imagecount").innerHTML) <= 152 && document.getElementById("count").innerHTML != "404")
 					{
 						setTimeout(function() { postSet(); }, 30000);
 					}
 				}
 			}
-			
-			lastFile = cFile;
 		});
 	}
 	
@@ -420,7 +418,7 @@ function setUp()
 				filename = filenamespan.innerHTML;
 			}
 			info = getOnlineInfo(filename);
-			if(info[0] != null && info[0] != "" && $Jq(filesizespan).parents(".inline").length == 0) {
+			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("table").attr("class") != "inline") {
 				if(index > -1) {
 					names[index] = info[0];
 				} else {
@@ -489,6 +487,7 @@ function setUp()
 					} } )();
 			}
 		}
+		
 		if (filename == null)
 		{
 			guessbutton.style.display = "none";

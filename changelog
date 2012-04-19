@@ -1,3 +1,7 @@
+2.0.26
+- Fixed submitting same image twice
+- Changed duplicate name bug check
+
 2.0.25
 - Added email and subject to options
 - Fixed options not saving changes for override fields
