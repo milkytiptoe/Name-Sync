@@ -1,3 +1,6 @@
+2.0.27
+- Added append errors option (show sync errors inside the quick reply box)
+
 2.0.26
 - Fixed submitting same image twice
 - Changed duplicate name bug check
