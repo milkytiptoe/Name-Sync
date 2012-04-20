@@ -9,8 +9,8 @@
 // @contributor   Finer
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
-// @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.29
+// @homepage      http://milkytiptoe.github.com/Name-Sync/
+// @version       2.0.30
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,8 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.29";
+	var ver = "2.0.30";
+	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	var options = ["true", "true", "true", "false", "false"];
 	var bName = "";
 	var bEmail = "";
@@ -50,7 +51,6 @@ function setUp()
 		t = "b";
 		
 	var lastFile = "";
-		
 	var canPost = true;
 	
 	// Insert options html
@@ -87,7 +87,7 @@ function setUp()
 
 		var optionsDiv = document.createElement("div");
 		optionsDiv.setAttribute("id", "optionsScreen");
-		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li><li><input type='checkbox' id='appendOption' checked='true' /> <strong>Append Errors</strong> Show sync errors inside the quick reply box</li><li><input type='checkbox' id='overrideOption' checked='true' /> <strong>Override Fields</strong> Share these instead of your quick reply fields</li><li><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /></li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='http://nassign.heliohost.org' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li><li><input type='checkbox' id='appendOption' checked='true' /> <strong>Append Errors</strong> Show sync errors inside the quick reply box</li><li><input type='checkbox' id='overrideOption' checked='true' /> <strong>Override Fields</strong> Share these instead of the quick reply fields</li><li><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /></li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='"+website+"' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		$Jq("#closeBtn").live("click", function () { hideOptionsScreen(); });
 		overlayDiv.onclick = function () { hideOptionsScreen(); };
 		document.body.appendChild(optionsDiv);
