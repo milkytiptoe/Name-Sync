@@ -1,3 +1,6 @@
+2.0.29
+- Fixed old option cookie values affecting new options
+
 2.0.28
 - Made override fields option linked to a checkbox
 

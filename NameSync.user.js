@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.28
+// @version       2.0.29
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.28";
+	var ver = "2.0.29";
 	var options = ["true", "true", "true", "false", "false"];
 	var bName = "";
 	var bEmail = "";
@@ -660,8 +660,13 @@ function setUp()
 		
 		if (guessing != null)
 		{
-			options = [];
-			options = guessing.split("|");
+			var cOptions = guessing.split("|");
+			
+			if (cOptions.length == options.length)
+			{
+				options = [];
+				options = cOptions;
+			}
 			
 			if (options[1] == "false")
 			{
