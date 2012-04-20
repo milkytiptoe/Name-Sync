@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://nassign.heliohost.org/beta/
-// @version       2.0.27
+// @version       2.0.28
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,8 +29,8 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.27";
-	var options;
+	var ver = "2.0.28";
+	var options = ["true", "true", "true", "false", "false"];
 	var bName = "";
 	var bEmail = "";
 	var bSubject = "";
@@ -75,7 +75,7 @@ function setUp()
 	var bsheet = document.createElement('style');
 	document.body.appendChild(bsheet);
 	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 32%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
+	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 32%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
 	document.body.appendChild(csheet);
 	
 	function showOptionsScreen()
@@ -87,7 +87,7 @@ function setUp()
 
 		var optionsDiv = document.createElement("div");
 		optionsDiv.setAttribute("id", "optionsScreen");
-		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li><li><input type='checkbox' id='appendOption' checked='true' /> <strong>Append Errors</strong> Show sync errors inside the quick reply box</li></ul><h2>Settings</h2><strong>Override Fields</strong> Share these instead of your quick reply fields<br /><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='http://nassign.heliohost.org' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li><li><input type='checkbox' id='appendOption' checked='true' /> <strong>Append Errors</strong> Show sync errors inside the quick reply box</li><li><input type='checkbox' id='overrideOption' checked='true' /> <strong>Override Fields</strong> Share these instead of your quick reply fields</li><li><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /></li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='http://nassign.heliohost.org' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		$Jq("#closeBtn").live("click", function () { hideOptionsScreen(); });
 		overlayDiv.onclick = function () { hideOptionsScreen(); };
 		document.body.appendChild(optionsDiv);
@@ -97,6 +97,7 @@ function setUp()
 		$Jq("#bSubject").change(function() { bSubject = $Jq(this).val(); storeCookie(); });
 		$Jq("#posterOption").click(function() { hideOptions(); });
 		$Jq("#appendOption").click(function() { options[3] = String($Jq("#appendOption").is(":checked")); storeCookie(); });
+		$Jq("#overrideOption").click(function() { options[4] = String($Jq("#overrideOption").is(":checked")); storeCookie(); });
 		$Jq("#syncOption").click(function() { options[0] = String($Jq("#syncOption").is(":checked")); storeCookie(); });
 		$Jq("#IDOption").click(function() { hideIds(); });
 		$Jq("#updateLink").click(function() { 
@@ -131,6 +132,11 @@ function setUp()
 		if (options[3] == "false")
 		{
 			$Jq("#appendOption").attr("checked", false);
+		}
+		
+		if (options[4] == "false")
+		{
+			$Jq("#overrideOption").attr("checked", false);
 		}
 		
 		$Jq("#optionsScreen").fadeIn("fast");
@@ -203,34 +209,20 @@ function setUp()
 			var cSubject;
 			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
 			
-			if (bName == "")
-			{
-				cName = $currentIFrame.contents().find('input[name="name"]').val();
-			}
-			else
+			if (options[4] == "true")
 			{
 				cName = bName;
-			}
-			
-			if (bEmail == "")
-			{
-				cEmail = $currentIFrame.contents().find('input[name="email"]').val();
-			}
-			else
-			{
 				cEmail = bEmail;
-			}
-
-			if (bSubject == "")
-			{
-				cSubject = $currentIFrame.contents().find('input[name="sub"]').val();
-			}
-			else
-			{
 				cSubject = bSubject;
 			}
+			else
+			{
+				cName = $currentIFrame.contents().find('input[name="name"]').val();
+				cEmail = $currentIFrame.contents().find('input[name="email"]').val();
+				cSubject = $currentIFrame.contents().find('input[name="sub"]').val();
+			}
 			
-			if (cFile != lastFile && canPost == true)
+			if (cFile != lastFile && canPost == true && cName != "" && cFile != "" && options[0] == "true")
 			{	
 				canPost = false;
 				lastFile = cFile;
@@ -249,21 +241,18 @@ function setUp()
 				
 				cFile = escape(cFile);
 								
-				if (cName != "" && cFile != "" && options[0] == "true")
-				{					
-					$Jq.ajax({
-						headers: {"X-Requested-With":"Ajax"},
-						type: "POST",
-						url: "http://nassign.heliohost.org/s/s.php",
-						data: "f="+cFile+"&n="+cName+"&t="+t+"&s="+cSubject+"&e="+cEmail
-					}).fail(function() {
-						setSyncStatus(1, "Error sending name");
-					});
-					
-					if (parseInt(document.getElementById("imagecount").innerHTML) <= 152 && document.getElementById("count").innerHTML != "404")
-					{
-						setTimeout(function() { postSet(); }, 30000);
-					}
+				$Jq.ajax({
+					headers: {"X-Requested-With":"Ajax"},
+					type: "POST",
+					url: "http://nassign.heliohost.org/s/s.php",
+					data: "f="+cFile+"&n="+cName+"&t="+t+"&s="+cSubject+"&e="+cEmail
+				}).fail(function() {
+					setSyncStatus(1, "Error sending name");
+				});
+				
+				if (parseInt(document.getElementById("imagecount").innerHTML) <= 152 && document.getElementById("count").innerHTML != "404")
+				{
+					setTimeout(function() { postSet(); }, 30000);
 				}
 			}
 		});
@@ -632,7 +621,7 @@ function setUp()
 		document.cookie = "bSubject" + "=" + escape(bSubject) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 		document.cookie = "names" + "=" + escape(namesJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 		document.cookie = "ids" + "=" + escape(idsJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-		document.cookie = "options" + "=" + escape(options[0]) + "|" + escape(options[1]) + "|" + escape(options[2]) + "|" + escape(options[3]) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
+		document.cookie = "options" + "=" + escape(options[0]) + "|" + escape(options[1]) + "|" + escape(options[2]) + "|" + escape(options[3]) + "|" + escape(options[4]) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 	}
 
 	function loadCookie()
@@ -671,7 +660,7 @@ function setUp()
 		
 		if (guessing != null)
 		{
-			
+			options = [];
 			options = guessing.split("|");
 			
 			if (options[1] == "false")
@@ -682,10 +671,6 @@ function setUp()
 			{
 				hideOptions();
 			}
-		}
-		else
-		{
-			options = ["true", "true", "true", "false"];
 		}
 	}
 
