@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.30
+// @version       2.0.31
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.30";
+	var ver = "2.0.31";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	var options = ["true", "true", "true", "false", "false"];
 	var bName = "";
@@ -53,23 +53,11 @@ function setUp()
 	var lastFile = "";
 	var canPost = true;
 	
-	// Insert options html
-	var delForm = document.getElementsByName("delform")[0];
-	var syncStatus = document.createElement("span");
-	syncStatus.setAttribute("id", "syncStatus");
-	syncStatus.innerHTML = "Loading...";
-	syncStatus.style.color = "gray";
-	document.body.insertBefore(syncStatus, delForm);
-	document.body.insertBefore(document.createElement("br"), delForm);
-	var optionsElement = document.createElement("a");
-	optionsElement.textContent = "Options";
-	optionsElement.href = "#";
-	optionsElement.setAttribute("title", "Open options");
-	optionsElement.style.textDecoration = "none";
-	optionsElement.onclick = function () { showOptionsScreen(); };
-	document.body.insertBefore(optionsElement, delForm);
-	document.body.insertBefore(document.createElement("br"), delForm);
-	document.body.insertBefore(document.createElement("br"), delForm);
+	// Options link and status html
+	$Jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='#' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
+	$Jq("#optionsPopUp").click(function () { showOptionsScreen(); });
+	
+	// Styles
 	var asheet = document.createElement('style');
 	document.body.appendChild(asheet);
 	var bsheet = document.createElement('style');
