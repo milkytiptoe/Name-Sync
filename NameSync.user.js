@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.31
+// @version       2.0.32
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,9 +29,9 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.31";
+	var ver = "2.0.32";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
-	var options = ["true", "true", "true", "false", "false"];
+	var options = ["true", "true", "true", "false", "false", "false"];
 	var bName = "";
 	var bEmail = "";
 	var bSubject = "";
@@ -75,7 +75,7 @@ function setUp()
 
 		var optionsDiv = document.createElement("div");
 		optionsDiv.setAttribute("id", "optionsScreen");
-		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li><li><input type='checkbox' id='appendOption' checked='true' /> <strong>Append Errors</strong> Show sync errors inside the quick reply box</li><li><input type='checkbox' id='overrideOption' checked='true' /> <strong>Override Fields</strong> Share these instead of the quick reply fields</li><li><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /></li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='"+website+"' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li><li><input type='checkbox' id='prependOption' checked='true' /> <strong>Cross Thread Links</strong> Prepend >>>/b/ to all reply links</li><li><input type='checkbox' id='overrideOption' checked='true' /> <strong>Append Errors</strong> Show sync errors inside the quick reply box</li><li><input type='checkbox' id='overrideOption' checked='true' /> <strong>Override Fields</strong> Share these instead of the quick reply fields</li><li><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /></li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='"+website+"' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		$Jq("#closeBtn").live("click", function () { hideOptionsScreen(); });
 		overlayDiv.onclick = function () { hideOptionsScreen(); };
 		document.body.appendChild(optionsDiv);
@@ -85,6 +85,7 @@ function setUp()
 		$Jq("#bSubject").change(function() { bSubject = $Jq(this).val(); storeCookie(); });
 		$Jq("#posterOption").click(function() { hideOptions(); });
 		$Jq("#appendOption").click(function() { options[3] = String($Jq("#appendOption").is(":checked")); storeCookie(); });
+		$Jq("#prependOption").click(function() { options[5] = String($Jq("#prependOption").is(":checked")); storeCookie(); });
 		$Jq("#overrideOption").click(function() { options[4] = String($Jq("#overrideOption").is(":checked")); storeCookie(); });
 		$Jq("#syncOption").click(function() { options[0] = String($Jq("#syncOption").is(":checked")); storeCookie(); });
 		$Jq("#IDOption").click(function() { hideIds(); });
@@ -125,6 +126,11 @@ function setUp()
 		if (options[4] == "false")
 		{
 			$Jq("#overrideOption").attr("checked", false);
+		}
+
+		if (options[5] == "false")
+		{
+			$Jq("#prependOption").attr("checked", false);
 		}
 		
 		$Jq("#optionsScreen").fadeIn("fast");
@@ -184,6 +190,15 @@ function setUp()
 
 		// Download info from server
 		setTimeout(function() { sync(); }, 1000);
+	});
+	
+	$Jq(document).click(function() {
+		// To do: Only if not in current thread
+		if (options[5] == "true")
+		{
+			var commentBox = $Jq('#qr').contents().find('textarea[name="com"]');
+			commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
+		}
 	});
 	
 	function addListenQR()
@@ -609,7 +624,7 @@ function setUp()
 		document.cookie = "bSubject" + "=" + escape(bSubject) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 		document.cookie = "names" + "=" + escape(namesJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 		document.cookie = "ids" + "=" + escape(idsJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-		document.cookie = "options" + "=" + escape(options[0]) + "|" + escape(options[1]) + "|" + escape(options[2]) + "|" + escape(options[3]) + "|" + escape(options[4]) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
+		document.cookie = "options" + "=" + escape(options[0]) + "|" + escape(options[1]) + "|" + escape(options[2]) + "|" + escape(options[3]) + "|" + escape(options[4]) + "|" + escape(options[5]) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
 	}
 
 	function loadCookie()
