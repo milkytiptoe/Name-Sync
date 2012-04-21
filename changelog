@@ -1,5 +1,8 @@
+2.0.33
+- Cross-thread Links option only applies to cross-thread links and on Ctrl+V
+
 2.0.32
--  Added Cross Thread Links option
+-  Added Cross-thread Links option
 
 2.0.31
 - Fixed sync status and options link being hidden on some OneeChan styles
