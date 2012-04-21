@@ -1,3 +1,6 @@
+2.0.34
+- Fixed override fields checkbox option not saving
+
 2.0.33
 - Cross-thread Links option only applies to cross-thread links and on Ctrl+V
 
