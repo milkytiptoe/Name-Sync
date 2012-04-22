@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.34
+// @version       2.0.35
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.34";
+	var ver = "2.0.35";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	var options = ["true", "true", "true", "false", "false", "false"];
 	var bName = "";
@@ -43,6 +43,9 @@ function setUp()
 	var onlineFiles = new Array();
 	var onlineEmails = new Array();
 	var onlineSubjects = new Array();
+	
+	// Prevent assigning from duplicate filenames
+	var usedFilenames = [];
 	
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
@@ -367,7 +370,10 @@ function setUp()
 	{
 		if (t == "b")
 			return;
-			
+		
+		// Refresh for new cycle
+		usedFilenames = [];
+		
 		// Process OP
 		var optag = $Jq("form[name='delform'] > .op", document)[0];
 		var id = $Jq(".posteruid", optag)[0].innerHTML;
@@ -436,7 +442,7 @@ function setUp()
 				filename = filenamespan.innerHTML;
 			}
 			info = getOnlineInfo(filename);
-			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("table").attr("class") != "inline") {
+			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("table").attr("class") != "inline" && usedFilenames.indexOf(filename) == -1) {
 				if(index > -1) {
 					names[index] = info[0];
 				} else {
@@ -448,6 +454,7 @@ function setUp()
 				
 				email = info[1];
 				subject = info[2];
+				usedFilenames[usedFilenames.length] = filename;
 			}
 		}
 		
