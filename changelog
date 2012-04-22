@@ -1,5 +1,5 @@
 2.0.35
-- Prevent incorrect name assign on duplicate filename
+- Fixed incorrect name assign on duplicate filename
 
 2.0.34
 - Fixed override fields checkbox option not saving
@@ -48,7 +48,7 @@
 - (ihavenoface) Options screen CSS changes
 
 2.0.20
-- Prevent conflict with other jquery scripts
+- Fixed conflict with other jquery scripts
 
 2.0.19
 - Updated jquery version
@@ -87,7 +87,7 @@
 - Changed send method slightly
 
 2.0.8
-- Prevent names being assigned incorrectly
+- Fixed names being assigned incorrectly
 - Changed retrieve method slightly which should result in less sync failures
 - Sync will stop after hitting the image limit or a 404
 
@@ -99,7 +99,7 @@
 - Merged 4chan two @includes
 
 2.0.5
-- Minor failed guess prompt change
+- Changed failed guess prompt
 
 2.0.4
 - Fixed https name uploading
