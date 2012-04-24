@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.35
+// @version       2.0.36
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.35";
+	var ver = "2.0.36";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	var options = ["true", "true", "true", "false", "false", "false"];
 	var bName = "";
@@ -244,7 +244,6 @@ function setUp()
 			{	
 				canPost = false;
 				lastFile = cFile;
-				cName = escape(cName);
 				
 				if (cFile.indexOf("C:\\fakepath\\") > -1)
 					cFile = cFile.split("C:\\fakepath\\")[1];
