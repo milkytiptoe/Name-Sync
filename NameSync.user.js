@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.36
+// @version       2.0.37
 // ==/UserScript==
 
 function addJQuery(a)
@@ -29,7 +29,7 @@ function setUp()
 {
 	var $Jq = jQuery.noConflict();
 
-	var ver = "2.0.36";
+	var ver = "2.0.37";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	var options = ["true", "true", "true", "false", "false", "false"];
 	var bName = "";
@@ -267,7 +267,7 @@ function setUp()
 					setSyncStatus(1, "Error sending name");
 				});
 				
-				if (parseInt(document.getElementById("imagecount").innerHTML) <= 152 && document.getElementById("count").innerHTML != "404")
+				if ($Jq("#imagecount").hasClass("warning") == false && $Jq("#count").html() != "404")
 				{
 					setTimeout(function() { postSet(); }, 30000);
 				}
@@ -294,8 +294,8 @@ function setUp()
 		
 		if (type == 1 && options[3] == "true")
 		{
-			$Jq(".warning").html("(Sync) "+msg);
-			setTimeout(function() { $Jq(".warning").html(""); }, 5000);
+			$Jq("div.warning").html("(Sync) "+msg);
+			setTimeout(function() { $Jq("div.warning").html(""); }, 5000);
 		}
 	}
 	
@@ -359,7 +359,7 @@ function setUp()
 			setSyncStatus(2, "Disabled");
 		}
 		
-		if (parseInt(document.getElementById("imagecount").innerHTML) <= 152 && document.getElementById("count").innerHTML != "404")
+		if ($Jq("#imagecount").hasClass("warning") == false && $Jq("#count").html() != "404")
 		{
 			setTimeout(function() { sync(); }, 30000);
 		}
