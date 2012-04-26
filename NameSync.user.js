@@ -236,7 +236,7 @@ function setUp()
 					setSyncStatus(1, "Error sending name");
 				});
 				
-				if (parseInt($Jq("#imagecount").html()) <= 250 && $Jq("#count").html() != "404")
+				if (parseInt(document.getElementById("imagecount").innerHTML) <= 250 && $Jq("#count").html() != "404")
 				{
 					setTimeout(function() { postSet(); }, 30000);
 				}
@@ -328,7 +328,7 @@ function setUp()
 			setSyncStatus(2, "Disabled");
 		}
 		
-		if (parseInt($Jq("#imagecount").html()) <= 250 && $Jq("#count").html() != "404")
+		if (parseInt(document.getElementById("imagecount").innerHTML) <= 250 && $Jq("#count").html() != "404")
 		{
 			setTimeout(function() { sync(); }, 30000);
 		}
