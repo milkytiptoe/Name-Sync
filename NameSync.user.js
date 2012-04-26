@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.37
+// @version       2.0.38
 // ==/UserScript==
 
 function addJQuery(a)
@@ -27,14 +27,13 @@ function addJQuery(a)
 
 function setUp()
 {
-	var $Jq = jQuery.noConflict();
+	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Cross-thread Links", "Append Errors", "Override Fields"];
+	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Add >>>/b/ to cross-thread links on Ctrl+V", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
+	var optionsDefaults = ["true", "false", "true", "true", "false", "false"];
 
-	var ver = "2.0.37";
+	var $Jq = jQuery.noConflict();
+	var ver = "2.0.38";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
-	var options = ["true", "true", "true", "false", "false", "false"];
-	var bName = "";
-	var bEmail = "";
-	var bSubject = "";
 	
 	var names = new Array();
 	var ids = new Array();
@@ -44,7 +43,6 @@ function setUp()
 	var onlineEmails = new Array();
 	var onlineSubjects = new Array();
 	
-	// Prevent assigning from duplicate filenames
 	var usedFilenames = [];
 	
 	var t = document.URL;
@@ -78,20 +76,30 @@ function setUp()
 
 		var optionsDiv = document.createElement("div");
 		optionsDiv.setAttribute("id", "optionsScreen");
-		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2><ul><li><input type='checkbox' id='syncOption' checked='true' /> <strong>Enable Sync</strong> Share and download names online</li><li><input type='checkbox' id='IDOption' checked='true' /> <strong>Show ID's</strong> Show ID's next to poster names</li><li><input type='checkbox' id='posterOption' checked='true' /> <strong>Show Poster Options</strong> Show options next to poster names</li><li><input type='checkbox' id='prependOption' checked='true' /> <strong>Cross-thread Links</strong> Add >>>/b/ to cross-thread links on Ctrl+V</li><li><input type='checkbox' id='appendOption' checked='true' /> <strong>Append Errors</strong> Show sync errors inside the quick reply box</li><li><input type='checkbox' id='overrideOption' checked='true' /> <strong>Override Fields</strong> Share these instead of the quick reply fields</li><li><input type='text' name='bName' id='bName' placeholder='Name' value='"+bName+"' /> <input type='text' name='bEmail' id='bEmail' placeholder='Email' value='"+bEmail+"' /> <input type='text' name='bSubject' id='bSubject' placeholder='Subject' value='"+bSubject+"' /></li></ul><h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='"+website+"' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
-		$Jq("#closeBtn").live("click", function () { hideOptionsScreen(); });
-		overlayDiv.onclick = function () { hideOptionsScreen(); };
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2>";
+		
+		var optionsList = document.createElement("ul");
+		
+		// Load options 
+		for (var i = 0; i < optionsNames.length; i++)
+		{
+			var checked = getOption(optionsNames[i]) == "true" ? 'checked' : '';
+			optionsList.innerHTML += "<li><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</li>";
+		}
+		
+		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+getOption("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+getOption("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+getOption("Subject")+"' />";
+		optionsDiv.appendChild(optionsList);		
+		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='"+website+"' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		
+		$Jq('input[type="checkbox"]').live("click", function() { setOption($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
+		
+		$Jq("#closeBtn").live("click", function() { hideOptionsScreen(); });
+		overlayDiv.onclick = function() { hideOptionsScreen(); };
 		document.body.appendChild(optionsDiv);
 		
-		$Jq("#bName").change(function() { bName = $Jq(this).val(); storeCookie(); });
-		$Jq("#bEmail").change(function() { bEmail = $Jq(this).val(); storeCookie(); });
-		$Jq("#bSubject").change(function() { bSubject = $Jq(this).val(); storeCookie(); });
-		$Jq("#posterOption").click(function() { hideOptions(); });
-		$Jq("#appendOption").click(function() { options[3] = String($Jq("#appendOption").is(":checked")); storeCookie(); });
-		$Jq("#prependOption").click(function() { options[5] = String($Jq("#prependOption").is(":checked")); storeCookie(); });
-		$Jq("#overrideOption").click(function() { options[4] = String($Jq("#overrideOption").is(":checked")); storeCookie(); });
-		$Jq("#syncOption").click(function() { options[0] = String($Jq("#syncOption").is(":checked")); storeCookie(); });
-		$Jq("#IDOption").click(function() { hideIds(); });
+		$Jq("#bName").change(function() { setOption("Name", $Jq(this).val()); });
+		$Jq("#bEmail").change(function() { setOption("Email", $Jq(this).val()); });
+		$Jq("#bSubject").change(function() { setOption("Subject", $Jq(this).val()); });
 		$Jq("#updateLink").click(function() { 
 			$Jq(this).html("Checking...");
 			$Jq.ajax({
@@ -106,36 +114,6 @@ function setUp()
 			$Jq(this).attr('onclick','').unbind('click');
 		});
 		
-		if (options[0] == "false")
-		{
-			$Jq("#syncOption").attr("checked", false);
-		}
-		
-		if (options[1] == false)
-		{
-			$Jq("#IDOption").attr("checked", false);
-		}
-		
-		if (options[2] == false)
-		{
-			$Jq("#posterOption").attr("checked", false);
-		}
-		
-		if (options[3] == "false")
-		{
-			$Jq("#appendOption").attr("checked", false);
-		}
-		
-		if (options[4] == "false")
-		{
-			$Jq("#overrideOption").attr("checked", false);
-		}
-
-		if (options[5] == "false")
-		{
-			$Jq("#prependOption").attr("checked", false);
-		}
-		
 		$Jq("#optionsScreen").fadeIn("fast");
 	}
 	
@@ -148,30 +126,26 @@ function setUp()
 	
 	function hideIds()
 	{
-		var off = ".posteruid { display: none; }";
-		var on = ".posteruid { display: inline; }";
-		
-		if (asheet.innerHTML == on || asheet.innerHTML == "")
-			asheet.innerHTML = off;
+		if (getOption("Hide IDs") == "true")
+		{
+			asheet.innerHTML = ".posteruid { display: none; }";
+		}
 		else
-			asheet.innerHTML = on;
-		
-		options[1] = $Jq("#IDOption").is(":checked");
-		storeCookie();
+		{
+			asheet.innerHTML = ".posteruid { display: inline; }";
+		}
 	}
 
 	function hideOptions()
 	{
-		var off = ".filetitle, .replytitle { display: none; }";
-		var on = ".filetitle, .replytitle { display: inline; }";
-		
-		if (bsheet.innerHTML == on || bsheet.innerHTML == "")
-			bsheet.innerHTML = off;
+		if (getOption("Show Poster Options") == "true")
+		{
+			bsheet.innerHTML = ".filetitle, .replytitle { display: inline; }";
+		}
 		else
-			bsheet.innerHTML = on;
-			
-		options[2] = $Jq("#posterOption").is(":checked");
-		storeCookie();
+		{
+			bsheet.innerHTML = ".filetitle, .replytitle { display: none; }";
+		}
 	}
 	
 	// When document is fully loaded
@@ -196,13 +170,8 @@ function setUp()
 	});
 	
 	$Jq(document).keyup(function(e) {
-		// This could probably be done without looping every td 
-		// and instead looping regex match results and checking if td link id exists
-		// and if so, replace that link id. But it should only really be used once
-		// by a user jumping threads in most cases so it doesn't matter
-		
 		// On ctrl+v paste
-		if (t != "b" && e.ctrlKey && e.which != 65 && (e.which == 86 || e.which==118) && options[5] == "true")
+		if (t != "b" && e.ctrlKey && e.which != 65 && (e.which == 86 || e.which==118) && getOption("Cross-thread Links") == "true")
 		{
 			// Append >>>/b/ to all
 			var commentBox = $Jq('#qr').contents().find('textarea[name="com"]');
@@ -227,11 +196,11 @@ function setUp()
 			var cSubject;
 			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
 			
-			if (options[4] == "true")
+			if (getOption("Override Fields") == "true")
 			{
-				cName = bName;
-				cEmail = bEmail;
-				cSubject = bSubject;
+				cName = getOption("Name");
+				cEmail = getOption("Email");
+				cSubject = getOption("Subject");
 			}
 			else
 			{
@@ -240,7 +209,7 @@ function setUp()
 				cSubject = $currentIFrame.contents().find('input[name="sub"]').val();
 			}
 			
-			if (cFile != lastFile && canPost == true && cName != "" && cFile != "" && options[0] == "true")
+			if (cFile != lastFile && canPost == true && cName != "" && cFile != "" && getOption("Enable Sync") == "true")
 			{	
 				canPost = false;
 				lastFile = cFile;
@@ -267,7 +236,7 @@ function setUp()
 					setSyncStatus(1, "Error sending name");
 				});
 				
-				if ($Jq("#imagecount").hasClass("warning") == false && $Jq("#count").html() != "404")
+				if (parseInt($Jq("#imagecount").html()) <= 250 && $Jq("#count").html() != "404")
 				{
 					setTimeout(function() { postSet(); }, 30000);
 				}
@@ -292,7 +261,7 @@ function setUp()
 		
 		$Jq("#syncStatus").html(msg).css("color", colour);
 		
-		if (type == 1 && options[3] == "true")
+		if (type == 1 && getOption("Append Errors") == "true")
 		{
 			$Jq("div.warning").html("(Sync) "+msg);
 			setTimeout(function() { $Jq("div.warning").html(""); }, 5000);
@@ -307,7 +276,7 @@ function setUp()
 			return;
 		}
 			
-		if (options[0] == "true")
+		if (getOption("Enable Sync") == "true")
 		{		
 			$Jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
@@ -359,7 +328,7 @@ function setUp()
 			setSyncStatus(2, "Disabled");
 		}
 		
-		if ($Jq("#imagecount").hasClass("warning") == false && $Jq("#count").html() != "404")
+		if (parseInt($Jq("#imagecount").html()) <= 250 && $Jq("#count").html() != "404")
 		{
 			setTimeout(function() { sync(); }, 30000);
 		}
@@ -391,7 +360,7 @@ function setUp()
 			updatePost(id, nametag, filesizespan, titlespan);
 		});
 
-		storeCookie();
+		storeNames();
 	}
 
 	function updatePost(id, nametag, filesizespan, titlespan) {
@@ -429,7 +398,7 @@ function setUp()
 			titlespan.appendChild(guessbutton);
 		}
 
-		if(options[0] == "true" && filesizespan != null) {
+		if(getOption("Enable Sync") == "true" && filesizespan != null) {
 			var filenamespan = $Jq("span[title]", filesizespan)[0];
 			if(filenamespan == null) {
 				filenamespan = $Jq("a[href]", filesizespan)[0];
@@ -621,13 +590,39 @@ function setUp()
 		}
 	}
 	
-	function storeCookie()
+	function setOption(name, value)
 	{
-		// Expires after one day
-		var exp = new Date();
-		exp.setTime(exp.getTime() + (1000 * 60 * 60 * 24));
-
-		// If stored names and ids are getting too long
+		localStorage.setItem(name, value);
+		
+		if (name == "Hide IDs")
+			hideIds();
+		if (name == "Show Poster Options")
+			hideOptions();
+	}
+	
+	function getOption(name)
+	{
+		var value = localStorage.getItem(name);
+		
+		if (value == null)
+		{
+			if (optionsDefaults[optionsNames.indexOf(name)] != undefined)
+			{
+				return optionsDefaults[optionsNames.indexOf(name)];
+			}
+			else
+			{
+				return "";
+			}
+		}
+		else
+		{
+			return value;
+		}
+	}
+	
+	function storeNames()
+	{
 		if (names.length > 40 && ids.length > 40)
 		{
 			names.splice(0, 1);
@@ -637,92 +632,20 @@ function setUp()
 		var namesJoin = names.join("|");
 		var idsJoin = ids.join("|");
 		
-		document.cookie = "bName" + "=" + escape(bName) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-		document.cookie = "bEmail" + "=" + escape(bEmail) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-		document.cookie = "bSubject" + "=" + escape(bSubject) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-		document.cookie = "names" + "=" + escape(namesJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-		document.cookie = "ids" + "=" + escape(idsJoin) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
-		document.cookie = "options" + "=" + escape(options[0]) + "|" + escape(options[1]) + "|" + escape(options[2]) + "|" + escape(options[3]) + "|" + escape(options[4]) + "|" + escape(options[5]) + "; path=/" + ((exp == null) ? "" : "; expires=" + exp.toGMTString()); 
+		setOption("names", namesJoin);
+		setOption("ids", idsJoin);
 	}
 
-	function loadCookie()
-	{
-		var nameC = readCookie("bName");
+	function loadNames()
+	{	
+		var namesSplit = getOption("names");
+		var idsSplit = getOption("ids");
 		
-		if (nameC != null)
-		{
-			bName = nameC;
-		}
-		
-		nameC = readCookie("bEmail");
-		
-		if (nameC != null)
-		{
-			bEmail = nameC;
-		}
-		
-		nameC = readCookie("bSubject");
-		
-		if (nameC != null)
-		{
-			bSubject = nameC;
-		}		
-		
-		var namesSplit = readCookie("names");
-		var idsSplit = readCookie("ids");
-		
-		if (namesSplit != null && idsSplit != null)
+		if (namesSplit != "" && idsSplit != "")
 		{
 			names = namesSplit.split("|");
 			ids = idsSplit.split("|");
 		}
-		
-		var guessing = readCookie("options");
-		
-		if (guessing != null)
-		{
-			var cOptions = guessing.split("|");
-			
-			if (cOptions.length == options.length)
-			{
-				options = [];
-				options = cOptions;
-			}
-			
-			if (options[1] == "false")
-			{
-				hideIds();
-			}
-			if (options[2] == "false")
-			{
-				hideOptions();
-			}
-		}
-	}
-
-	function readCookie(name)
-	{
-		var dc = document.cookie;	
-		var cname = name + "=";
-		
-		if (dc.length > 0)
-		{
-			var begin = dc.indexOf(cname); 
-			var end;
-			
-			if (begin != -1)
-			{
-				begin += cname.length;
-				end = dc.indexOf(";", begin);
-				
-				if (end == -1)
-					end = dc.length;
-				
-				return unescape(dc.substring(begin, end));
-			}
-		}
-		
-		return null;
 	}
 	
 	function EncodeEntities(s){
@@ -732,8 +655,10 @@ function setUp()
 		return $Jq("<div/>").html(s).text();
 	}
 	
-	// Update elements on load
-	loadCookie();
+	// Set things up
+	loadNames();
+	hideIds();
+	hideOptions();
 	updateElements();
 
 	// Add new reply listen
