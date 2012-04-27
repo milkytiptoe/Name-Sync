@@ -471,7 +471,7 @@ function setUp()
 			}
 			
 		} else {
-			if(filename != null) {
+			if(filename != null && guessbutton != null) {
 				guessbutton.onclick = (function() {
 					var currentId = id;
 					var currentFilename = filename;
@@ -481,7 +481,7 @@ function setUp()
 			}
 		}
 		
-		if (filename == null)
+		if (filename == null && guessbutton != null)
 		{
 			guessbutton.style.display = "none";
 		}
