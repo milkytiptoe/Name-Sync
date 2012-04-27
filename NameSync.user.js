@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.38
+// @version       2.0.39
 // ==/UserScript==
 
 function addJQuery(a)
@@ -32,7 +32,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false", "false"];
 
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.38";
+	var ver = "2.0.39";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = new Array();
@@ -359,7 +359,7 @@ function setUp()
 			var titlespan = $Jq(".replytitle", this)[0];
 			updatePost(id, nametag, filesizespan, titlespan);
 		});
-
+		
 		storeNames();
 	}
 
@@ -375,28 +375,8 @@ function setUp()
 		var subject = null;	
 		var info = null;
 		
-		// These may be null if they don't exist yet.
 		var assignbutton = $Jq(".assignbutton", titlespan)[0];
 		var guessbutton = $Jq(".guessbutton", titlespan)[0];
-
-		if(assignbutton == null) {
-			assignbutton = document.createElement('a');
-			assignbutton.href = "#";
-			assignbutton.title = "Assign a name to this poster";
-			assignbutton.setAttribute("class", "assignbutton");
-			assignbutton.textContent = "+";
-			assignbutton.onclick = (function() { var currentId = id; return function() { assignName(currentId); return false; } } )();
-			titlespan.appendChild(assignbutton);
-		}
-		if(guessbutton == null) {	
-			guessbutton = document.createElement('a');
-			guessbutton.href = "#";
-			guessbutton.title = "Guess this poster";
-			guessbutton.setAttribute("class", "guessbutton");
-			guessbutton.textContent = "?";
-			guessbutton.onclick = function () { alert("Guessing requires a filename"); return false; };
-			titlespan.appendChild(guessbutton);
-		}
 
 		if(getOption("Enable Sync") == "true" && filesizespan != null) {
 			var filenamespan = $Jq("span[title]", filesizespan)[0];
@@ -416,7 +396,7 @@ function setUp()
 				} else {
 					names[names.length] = info[0];
 					ids[ids.length] = id;
-
+					
 					index = ids.length-1;
 				}
 				
@@ -426,17 +406,37 @@ function setUp()
 			}
 		}
 		
-		if (onlineNames.indexOf(names[index]) > -1)
+		if (onlineNames.indexOf(names[index]) == -1)
 		{
-			var cell = titlespan;
-
-			if (cell.hasChildNodes())
-			{
-				while (cell.childNodes.length >= 1)
-				{
-					cell.removeChild(cell.firstChild);
-				} 
+			var domShell = document.createDocumentFragment();
+			
+			if(assignbutton == null) {
+				assignbutton = document.createElement('a');
+				assignbutton.href = "#";
+				assignbutton.title = "Assign a name to this poster";
+				assignbutton.setAttribute("class", "assignbutton");
+				assignbutton.textContent = "+";
+				assignbutton.onclick = (function() { var currentId = id; return function() { assignName(currentId); return false; } } )();
+				domShell.appendChild(assignbutton);
 			}
+			if(guessbutton == null) {	
+				guessbutton = document.createElement('a');
+				guessbutton.href = "#";
+				guessbutton.title = "Guess this poster";
+				guessbutton.setAttribute("class", "guessbutton");
+				guessbutton.textContent = "?";
+				guessbutton.onclick = function () { alert("Guessing requires a filename"); return false; };
+				domShell.appendChild(guessbutton);
+			}
+			
+			titlespan.appendChild(domShell);
+		}
+		else
+		{
+			if(assignbutton != null)
+				assignbutton.style.display = "none";
+			if(guessbutton != null)
+				guessbutton.style.display = "none";
 		}
 		
 		if(index > -1) {
@@ -485,7 +485,6 @@ function setUp()
 		{
 			guessbutton.style.display = "none";
 		}
-
 	}
 	
 	// Return online info
@@ -662,10 +661,8 @@ function setUp()
 	updateElements();
 
 	// Add new reply listen
-	document.body.addEventListener('DOMNodeInserted', function(e)
-	{
-		if(e.target.nodeName=='TABLE')
-		{
+	document.body.addEventListener('DOMNodeInserted', function(e) {
+		if(e.target.nodeName=='TABLE' && e.target.className != "inline") {
 			updateElements();
 		}
 	}, true);
