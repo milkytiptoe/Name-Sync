@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.40
+// @version       2.0.41
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -28,12 +28,12 @@ function addJQuery(a)
 
 function setUp()
 {
-	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Cross-thread Links", "Append Errors", "Override Fields"];
-	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Add >>>/b/ to cross-thread links on Ctrl+V", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
-	var optionsDefaults = ["true", "false", "true", "true", "false", "false"];
+	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Append Errors", "Override Fields"];
+	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
+	var optionsDefaults = ["true", "false", "true", "true", "false"];
 
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.40";
+	var ver = "2.0.41";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = new Array();
@@ -57,7 +57,7 @@ function setUp()
 	
 	// Options link and status html
 	$Jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='#' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
-	$Jq("#optionsPopUp").click(function () { showOptionsScreen(); });
+	$Jq("#optionsPopUp").click(function() { showOptionsScreen(); });
 	
 	// Styles
 	var asheet = document.createElement('style');
@@ -90,7 +90,7 @@ function setUp()
 		
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+getOption("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+getOption("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+getOption("Subject")+"' />";
 		optionsDiv.appendChild(optionsList);		
-		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></li><li><a href='"+website+"' target='_blank'>View website</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='"+website+"' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		
 		$Jq('input[type="checkbox"]').live("click", function() { setOption($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
 		
@@ -168,22 +168,6 @@ function setUp()
 
 		// Download info from server
 		setTimeout(function() { sync(); }, 1000);
-	});
-	
-	$Jq(document).keyup(function(e) {
-		// On ctrl+v paste
-		if (t != "b" && e.ctrlKey && e.which != 65 && (e.which == 86 || e.which==118) && getOption("Cross-thread Links") == "true")
-		{
-			// Append >>>/b/ to all
-			var commentBox = $Jq('#qr').contents().find('textarea[name="com"]');
-			commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
-			
-			// Remove >>>/b/ if in thread
-			$Jq("form[name='delform'] > table tr > td[id]", document).each(function() {
-				var id = $Jq(this).attr("id");
-				commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
-			});
-		}
 	});
 	
 	function addListenQR()
