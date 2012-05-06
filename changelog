@@ -1,3 +1,9 @@
+2.0.42
+- Added Sync Using option (only 4chan X available)
+- Fixed sync requests stacking
+- Added retries count to sync errors
+- Options screen will now pop up automatically on first run
+
 2.0.41
 - Removed Cross-thread Links option
 - Added Test tripcode link in options

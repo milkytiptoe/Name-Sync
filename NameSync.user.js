@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.41
+// @version       2.0.42
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -28,21 +28,27 @@ function addJQuery(a)
 
 function setUp()
 {
+	var optionPre = "NameSync.";
 	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Append Errors", "Override Fields"];
 	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
-
+	
+	var usingNames = ["4chan X"];
+	var usingSelector = ["#qr"];
+	if (getOption("Share Using") == "")
+		setOption("Share Using", usingNames[0]);
+		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.41";
+	var ver = "2.0.42";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
-	var names = new Array();
-	var ids = new Array();
+	var names = [];
+	var ids = [];
 
-	var onlineNames = new Array();
-	var onlineFiles = new Array();
-	var onlineEmails = new Array();
-	var onlineSubjects = new Array();
+	var onlineNames = [];
+	var onlineFiles = [];
+	var onlineEmails = [];
+	var onlineSubjects = [];
 	
 	var usedFilenames = [];
 	
@@ -54,23 +60,23 @@ function setUp()
 		
 	var lastFile = "";
 	var canPost = true;
+	var syncing = false;
+	var retries = 0;
 	
-	// Options link and status html
 	$Jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='#' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$Jq("#optionsPopUp").click(function() { showOptionsScreen(); });
 	
-	// Styles
 	var asheet = document.createElement('style');
 	document.body.appendChild(asheet);
 	var bsheet = document.createElement('style');
 	document.body.appendChild(bsheet);
 	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 32%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .filetitle a, .replytitle a { text-decoration: none; } .filetitle a:hover, .replytitle a:hover { text-decoration: underline; }";
+	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .filetitle a, .replytitle a { text-decoration: none; }";
 	document.body.appendChild(csheet);
 	
 	function showOptionsScreen()
 	{
-		$Jq("body").css("overflow", "hidden");
+		$Jq("body").scrollTop(0).css("overflow", "hidden");
 		var overlayDiv = document.createElement("div");
 		overlayDiv.setAttribute("id", "optionsOverlay");
 		document.body.appendChild(overlayDiv);
@@ -81,18 +87,28 @@ function setUp()
 		
 		var optionsList = document.createElement("ul");
 		
-		// Load options 
-		for (var i = 0; i < optionsNames.length; i++)
+		for (var i = 0, len = optionsNames.length; i < len; i++)
 		{
 			var checked = getOption(optionsNames[i]) == "true" ? 'checked' : '';
 			optionsList.innerHTML += "<li><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</li>";
 		}
 		
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+getOption("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+getOption("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+getOption("Subject")+"' />";
-		optionsDiv.appendChild(optionsList);		
-		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='"+website+"' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.appendChild(optionsList);	
+		
+		optionsDiv.innerHTML += "<h2>Sync Using</h2>";
+		
+		for (var i = 0, len = usingNames.length; i < len; i++)
+		{
+			var checked = getOption("Share Using") == usingNames[i] ? 'checked' : '';
+			
+			optionsDiv.innerHTML += "<input type='radio' name='Share Using' value='"+usingNames[i]+"' "+checked+" /> "+usingNames[i]+" ";
+		}
+		
+		optionsDiv.innerHTML += "<br /><h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='"+website+"' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		
 		$Jq('input[type="checkbox"]').live("click", function() { setOption($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
+		$Jq('input[type="radio"]').live("click", function() { setOption($Jq(this).attr("name"), String($Jq(this).val())); enableListen(); });
 		
 		$Jq("#closeBtn").live("click", function() { hideOptionsScreen(); });
 		overlayDiv.onclick = function() { hideOptionsScreen(); };
@@ -149,31 +165,42 @@ function setUp()
 		}
 	}
 	
-	// When document is fully loaded
 	$Jq(document).ready(function() {
-		if ($Jq("#qr").length)
+		if (getOption("Has Run") == "")
+		{
+			showOptionsScreen();
+			setOption("Has Run", "true");
+		}
+		
+		enableListen();
+
+		setTimeout(function() { sync(); }, 1000);
+	});
+	
+	function enableListen()
+	{
+		var selector = usingSelector[usingNames.indexOf(getOption("Share Using"))];
+		
+		if ($Jq(selector).length)
 		{
 			addListenQR();
 		}
 		else
 		{
-			document.body.addEventListener('DOMNodeInserted', function(e)
-			{
+			document.body.addEventListener('DOMNodeInserted', function(e) {
 				if(e.target.nodeName=='DIV' && e.target.id == "qr")
 				{
 					addListenQR();
 				}
 			}, true);
 		}
-
-		// Download info from server
-		setTimeout(function() { sync(); }, 1000);
-	});
+	}
 	
 	function addListenQR()
 	{
-		// Add submit listen to QR box
-		var $currentIFrame = $Jq('#qr'); 
+		var selector = usingSelector[usingNames.indexOf(getOption("Share Using"))];
+		var $currentIFrame = $Jq(selector);
+		
 		$currentIFrame.contents().find(":submit").click(function()
 		{
 			var cName;
@@ -181,7 +208,7 @@ function setUp()
 			var cSubject;
 			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
 			
-			if (getOption("Override Fields") == "true")
+			if (getOption("Override Fields") == "true" || getOption("Share Using") != usingNames[0])
 			{
 				cName = getOption("Name");
 				cEmail = getOption("Email");
@@ -202,7 +229,6 @@ function setUp()
 				if (cFile.indexOf("C:\\fakepath\\") > -1)
 					cFile = cFile.split("C:\\fakepath\\")[1];
 				
-				// Filename length fix
 				if (cFile.length-4 > 30)
 				{
 					var start = cFile.substring(0, 30);
@@ -221,7 +247,7 @@ function setUp()
 					setSyncStatus(1, "Error sending name");
 				});
 				
-				if (parseInt(document.getElementById("imagecount").innerHTML) <= 250 && $Jq("#count").html() != "404")
+				if (canSync())
 				{
 					setTimeout(function() { postSet(); }, 30000);
 				}
@@ -234,6 +260,14 @@ function setUp()
 		canPost = true;
 	}
 	
+	function canSync()
+	{
+		if (getOption("Share Using") == usingNames[0] && $Jq("#imagecount").length && $Jq("#count").length)
+			return (parseInt(document.getElementById("imagecount").innerHTML) <= 250 && $Jq("#count").html() != "404");
+		else
+			return false;
+	}
+	
 	var setSyncStatus = function(type, msg)
 	{
 		var colour = "green";
@@ -244,11 +278,14 @@ function setUp()
 			case 2: colour = "gray"; break;
 		}
 		
+		if (retries >= 1)
+			msg += " (retries: "+retries+")";
+		
 		$Jq("#syncStatus").html(msg).css("color", colour);
 		
-		if (type == 1 && getOption("Append Errors") == "true")
+		if (type == 1 && getOption("Append Errors") == "true" && getOption("Share Using") == usingNames[0])
 		{
-			$Jq("div.warning").html("(Sync) "+msg);
+			$Jq("div.warning").html("Sync: "+msg);
 			setTimeout(function() { $Jq("div.warning").html(""); }, 5000);
 		}
 	}
@@ -263,14 +300,30 @@ function setUp()
 			
 		if (getOption("Enable Sync") == "true")
 		{		
+			if (syncing == true)
+				return;
+				
+			syncing = true;
+			
 			$Jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
 			}).fail(function() {
+				syncing = false;
 				setSyncStatus(1, "Error retrieving names");
+				retries++;
 			}).done(function(data) {
+				retries = 0;
+				syncing = false;
+				
+				if (data.length == 0)
+				{
+					setSyncStatus(0, "Online");
+					return;
+				}
+				
 				var content = data;
-
+					
 				try
 				{
 					var jsonBlocks = content.split("|");
@@ -280,7 +333,7 @@ function setUp()
 					onlineSubjects = [];
 					onlineEmails = [];
 					
-					for (var i = 0; i < jsonBlocks.length -1; i++)
+					for (var i = 0, len = jsonBlocks.length -1; i < len; i++)
 					{
 						var p = jQuery.parseJSON(jsonBlocks[i]);
 
@@ -305,15 +358,18 @@ function setUp()
 				catch (err)
 				{
 					setSyncStatus(1, "Error retrieving names (Script error)");
+					retries++;
+					syncing = false;
 				}
 			});
 		}
 		else
 		{
 			setSyncStatus(2, "Disabled");
+			syncing = false;
 		}
 		
-		if (parseInt(document.getElementById("imagecount").innerHTML) <= 250 && $Jq("#count").html() != "404")
+		if (canSync())
 		{
 			setTimeout(function() { sync(); }, 30000);
 		}
@@ -324,19 +380,15 @@ function setUp()
 		if (t == "b")
 			return;
 		
-		// Refresh for new cycle
 		usedFilenames = [];
 		
-		// Process OP
 		var optag = $Jq("form[name='delform'] > .op", document)[0];
 		var id = $Jq(".posteruid", optag)[0].innerHTML;
 		var nametag = $Jq(".postername", optag)[0];
 		var filesizespan = $Jq(".filesize", optag)[0];
 		var titlespan = $Jq(".filetitle", optag)[0];
 		updatePost(id, nametag, filesizespan, titlespan);
-
-		// Process replies separately because they differ
-		// slightly in a few class names.
+		
 		$Jq("form[name='delform'] > table tr > td[id]", document).each(function() {
 			var id = $Jq(".posteruid", this)[0].innerHTML;
 			var nametag = $Jq(".commentpostername", this)[0];
@@ -457,12 +509,7 @@ function setUp()
 			
 		} else {
 			if(filename != null && guessbutton != null) {
-				guessbutton.onclick = (function() {
-					var currentId = id;
-					var currentFilename = filename;
-					return function() {
-						guessPoster(currentId, currentFilename); return false;
-					} } )();
+				guessbutton.onclick = (function() { var currentId = id;	var currentFilename = filename;	return function() {	guessPoster(currentId, currentFilename); return false; } } )();
 			}
 		}
 		
@@ -472,7 +519,6 @@ function setUp()
 		}
 	}
 	
-	// Return online info
 	function getOnlineInfo(filename)
 	{
 		var index = onlineFiles.indexOf(filename);
@@ -487,7 +533,6 @@ function setUp()
 		}
 	}
 	
-	// Guess poster
 	function guessPoster(id, filename)
 	{		
 		if (filename == "")
@@ -524,17 +569,14 @@ function setUp()
 					
 					if (confirm("This poster is guessed as " + promptName + promptTripcode + ", apply name? Your guess will be marked with a *"))
 					{
-						// Check if the ID already has a name applied
 						var index = ids.indexOf(id);
 						
 						if (index > -1)
 						{
-							// If it does, rewrite it
 							names[index] = guessed + "*";
 						}
 						else
 						{
-							// Otherwise write a new entry
 							names[names.length] = guessed + "*";
 							ids[ids.length] = id;
 						}
@@ -546,26 +588,20 @@ function setUp()
 		}
 	}
 	
-	// Assign personal name
 	function assignName(id)
 	{
-		// Ask for name
 		var name = prompt("What would you like this poster to be named?","");
 		
-		// If name is not blank
 		if (name != null && name != "")
 		{
-			// Check if the ID already has a name applied
 			var index = ids.indexOf(id);
 			
 			if (index > -1)
 			{
-				// If it does, rewrite it
 				names[index] = name;
 			}
 			else
 			{
-				// Otherwise write a new entry
 				names[names.length] = name;
 				ids[ids.length] = id;
 			}
@@ -576,7 +612,7 @@ function setUp()
 	
 	function setOption(name, value)
 	{
-		localStorage.setItem(name, value);
+		localStorage.setItem(optionPre + name, value);
 		
 		if (name == "Hide IDs")
 			hideIds();
@@ -586,7 +622,7 @@ function setUp()
 	
 	function getOption(name)
 	{
-		var value = localStorage.getItem(name);
+		var value = localStorage.getItem(optionPre + name);
 		
 		if (value == null)
 		{
@@ -635,17 +671,12 @@ function setUp()
 	function EncodeEntities(s){
 		return $Jq("<div/>").text(s).html();
 	}
-	function DencodeEntities(s){
-		return $Jq("<div/>").html(s).text();
-	}
 	
-	// Set things up
 	loadNames();
 	hideIds();
 	hideOptions();
 	updateElements();
-
-	// Add new reply listen
+	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
 		if(e.target.nodeName=='TABLE' && e.target.className != "inline") {
 			updateElements();
