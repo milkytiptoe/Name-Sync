@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.44
+// @version       2.0.45
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -39,7 +39,7 @@ function setUp()
 		setOption("Share Using", usingNames[0]);
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.44";
+	var ver = "2.0.45";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -545,10 +545,10 @@ function setUp()
 	function getOption(name)
 	{
 		var value = localStorage.getItem(optionPre + name);
-		
-		if (value == null)
+
+		if (value == null || typeof value == "undefined")
 		{
-			if (optionsDefaults[optionsNames.indexOf(name)] != undefined)
+			if (typeof optionsDefaults[optionsNames.indexOf(name)] != "undefined")
 			{
 				return optionsDefaults[optionsNames.indexOf(name)];
 			}

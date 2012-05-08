@@ -1,3 +1,6 @@
+2.0.45
+- Fixed Override Fields undefined error
+
 2.0.44
 - Removed guess button
 
