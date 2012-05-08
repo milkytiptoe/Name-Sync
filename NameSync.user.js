@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.43
+// @version       2.0.44
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -39,7 +39,7 @@ function setUp()
 		setOption("Share Using", usingNames[0]);
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.43";
+	var ver = "2.0.44";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -411,7 +411,6 @@ function setUp()
 		var info = null;
 		
 		var assignbutton = $Jq(".assignbutton", titlespan)[0];
-		var guessbutton = $Jq(".guessbutton", titlespan)[0];
 
 		if(getOption("Enable Sync") == "true" && filesizespan != null) {
 			var filenamespan = $Jq("span[title]", filesizespan)[0];
@@ -454,15 +453,6 @@ function setUp()
 				assignbutton.onclick = (function() { var currentId = id; return function() { assignName(currentId); return false; } } )();
 				domShell.appendChild(assignbutton);
 			}
-			if(guessbutton == null) {	
-				guessbutton = document.createElement('a');
-				guessbutton.href = "#";
-				guessbutton.title = "Guess this poster";
-				guessbutton.setAttribute("class", "guessbutton");
-				guessbutton.textContent = "?";
-				guessbutton.onclick = function () { alert("Guessing requires a filename"); return false; };
-				domShell.appendChild(guessbutton);
-			}
 			
 			titlespan.appendChild(domShell);
 		}
@@ -470,8 +460,6 @@ function setUp()
 		{
 			if(assignbutton != null)
 				assignbutton.style.display = "none";
-			if(guessbutton != null)
-				guessbutton.style.display = "none";
 		}
 		
 		if(index > -1) {
@@ -505,15 +493,6 @@ function setUp()
 				nametag.innerHTML = EncodeEntities(name) + "<a style='font-weight: normal !important; color: green !important; text-decoration: none;'> " + EncodeEntities(tripcode) + "</a>";
 			}
 			
-		} else {
-			if(filename != null && guessbutton != null) {
-				guessbutton.onclick = (function() { var currentId = id;	var currentFilename = filename;	return function() {	guessPoster(currentId, currentFilename); return false; } } )();
-			}
-		}
-		
-		if (filename == null && guessbutton != null)
-		{
-			guessbutton.style.display = "none";
 		}
 	}
 	
@@ -528,61 +507,6 @@ function setUp()
 		else
 		{
 			return "";
-		}
-	}
-	
-	function guessPoster(id, filename)
-	{		
-		if (filename == "")
-		{
-			alert("Can not guess a poster without a filename");
-		}
-		else
-		{
-			$Jq.ajax({
-				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/g.php?f='+filename
-			}).fail(function() {
-				alert("Error guessing name");
-			}).done(function(data) {
-				var guessed = data;
-				
-				if (guessed == "")
-				{
-					alert("Could not guess the name of this poster");
-				}
-				else
-				{
-					guessed = unescape(guessed);
-					
-					var promptName = guessed.split("#");
-					var promptTripcode = "";
-					
-					if (typeof promptName[1] != "undefined")
-					{
-						promptTripcode = " !" + promptName[1];
-					}
-
-					promptName = promptName[0];
-					
-					if (confirm("This poster is guessed as " + promptName + promptTripcode + ", apply name? Your guess will be marked with a *"))
-					{
-						var index = ids.indexOf(id);
-						
-						if (index > -1)
-						{
-							names[index] = guessed + "*";
-						}
-						else
-						{
-							names[names.length] = guessed + "*";
-							ids[ids.length] = id;
-						}
-						
-						updateElements();
-					}
-				}
-			});
 		}
 	}
 	
@@ -666,7 +590,7 @@ function setUp()
 		}
 	}
 	
-	function EncodeEntities(s){
+	function EncodeEntities(s) {
 		return $Jq("<div/>").text(s).html();
 	}
 	
