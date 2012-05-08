@@ -1,3 +1,6 @@
+2.0.43
+- Better retry counter handling
+
 2.0.42
 - Added Sync Using option (only 4chan X available)
 - Fixed sync requests stacking

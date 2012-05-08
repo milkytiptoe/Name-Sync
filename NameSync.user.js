@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.42
+// @version       2.0.43
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -39,7 +39,7 @@ function setUp()
 		setOption("Share Using", usingNames[0]);
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.42";
+	var ver = "2.0.43";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -61,7 +61,7 @@ function setUp()
 	var lastFile = "";
 	var canPost = true;
 	var syncing = false;
-	var retries = 0;
+	var retries = -1;
 	
 	$Jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='#' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$Jq("#optionsPopUp").click(function() { showOptionsScreen(); });
@@ -274,7 +274,8 @@ function setUp()
 		
 		switch (type)
 		{
-			case 1: colour = "red"; break;
+			case 0: retries = -1; break;
+			case 1: colour = "red"; retries++; break;
 			case 2: colour = "gray"; break;
 		}
 		
@@ -311,9 +312,7 @@ function setUp()
 			}).fail(function() {
 				syncing = false;
 				setSyncStatus(1, "Error retrieving names");
-				retries++;
 			}).done(function(data) {
-				retries = 0;
 				syncing = false;
 				
 				if (data.length == 0)
@@ -358,7 +357,6 @@ function setUp()
 				catch (err)
 				{
 					setSyncStatus(1, "Error retrieving names (Script error)");
-					retries++;
 					syncing = false;
 				}
 			});
