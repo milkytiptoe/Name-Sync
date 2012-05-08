@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.45
+// @version       2.0.46
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -39,7 +39,7 @@ function setUp()
 		setOption("Share Using", usingNames[0]);
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.45";
+	var ver = "2.0.46";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -207,6 +207,11 @@ function setUp()
 			var cEmail;
 			var cSubject;
 			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
+			
+			if (cFile == "" && $Jq("#selected[title]").length)
+			{
+				cFile = $Jq("#selected[title]").attr("title");
+			}
 			
 			if (getOption("Override Fields") == "true" || getOption("Share Using") != usingNames[0])
 			{

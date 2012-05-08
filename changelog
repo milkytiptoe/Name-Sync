@@ -1,3 +1,6 @@
+2.0.46
+- Added support for dragged in images
+
 2.0.45
 - Fixed Override Fields undefined error
 
@@ -45,7 +48,7 @@
 - Cross-thread Links option only applies to cross-thread links and on Ctrl+V
 
 2.0.32
--  Added Cross-thread Links option
+- Added Cross-thread Links option
 
 2.0.31
 - Fixed sync status and options link being hidden on some OneeChan styles
