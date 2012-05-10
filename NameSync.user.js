@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.47
+// @version       2.0.48
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.47";
+	var ver = "2.0.48";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -200,7 +200,7 @@ function setUp()
 			}
 			else
 			{
-				cName = qr.contents().find('input[name="name"]').val();
+				cName = encodeURIComponent(qr.contents().find('input[name="name"]').val());
 				cEmail = qr.contents().find('input[name="email"]').val();
 				cSubject = qr.contents().find('input[name="sub"]').val();
 			}

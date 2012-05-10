@@ -1,3 +1,6 @@
+2.0.48
+- Fixed tripcodes with + in password
+
 2.0.47
 - Remove Sync Using option
 - Better QR detection
