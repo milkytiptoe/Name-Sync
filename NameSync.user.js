@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.46
+// @version       2.0.47
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -32,14 +32,9 @@ function setUp()
 	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Append Errors", "Override Fields"];
 	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
-	
-	var usingNames = ["4chan X"];
-	var usingSelector = ["#qr"];
-	if (getOption("Share Using") == "")
-		setOption("Share Using", usingNames[0]);
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.46";
+	var ver = "2.0.47";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -94,21 +89,11 @@ function setUp()
 		}
 		
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+getOption("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+getOption("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+getOption("Subject")+"' />";
-		optionsDiv.appendChild(optionsList);	
+		optionsDiv.appendChild(optionsList);
 		
-		optionsDiv.innerHTML += "<h2>Sync Using</h2>";
-		
-		for (var i = 0, len = usingNames.length; i < len; i++)
-		{
-			var checked = getOption("Share Using") == usingNames[i] ? 'checked' : '';
-			
-			optionsDiv.innerHTML += "<input type='radio' name='Share Using' value='"+usingNames[i]+"' "+checked+" /> "+usingNames[i]+" ";
-		}
-		
-		optionsDiv.innerHTML += "<br /><h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='"+website+"' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='"+website+"' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		
 		$Jq('input[type="checkbox"]').live("click", function() { setOption($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
-		$Jq('input[type="radio"]').live("click", function() { setOption($Jq(this).attr("name"), String($Jq(this).val())); enableListen(); });
 		
 		$Jq("#closeBtn").live("click", function() { hideOptionsScreen(); });
 		overlayDiv.onclick = function() { hideOptionsScreen(); };
@@ -178,42 +163,36 @@ function setUp()
 	});
 	
 	function enableListen()
-	{
-		var selector = usingSelector[usingNames.indexOf(getOption("Share Using"))];
-		
-		if ($Jq(selector).length)
+	{		
+		if ($Jq("#qr").length)
 		{
 			addListenQR();
 		}
 		else
 		{
-			document.body.addEventListener('DOMNodeInserted', function(e) {
-				if(e.target.nodeName=='DIV' && e.target.id == "qr")
-				{
+			document.body.addEventListener('QRDialogCreation', function() {
 					addListenQR();
-				}
 			}, true);
 		}
 	}
 	
 	function addListenQR()
 	{
-		var selector = usingSelector[usingNames.indexOf(getOption("Share Using"))];
-		var $currentIFrame = $Jq(selector);
+		var qr = $Jq("#qr");
 		
-		$currentIFrame.contents().find(":submit").click(function()
+		qr.contents().find(":submit").click(function()
 		{
 			var cName;
 			var cEmail;
 			var cSubject;
-			var cFile = $currentIFrame.contents().find('input[type="file"]').val();
+			var cFile = qr.contents().find('input[type="file"]').val();
 			
 			if (cFile == "" && $Jq("#selected[title]").length)
 			{
 				cFile = $Jq("#selected[title]").attr("title");
 			}
 			
-			if (getOption("Override Fields") == "true" || getOption("Share Using") != usingNames[0])
+			if (getOption("Override Fields") == "true")
 			{
 				cName = getOption("Name");
 				cEmail = getOption("Email");
@@ -221,9 +200,9 @@ function setUp()
 			}
 			else
 			{
-				cName = $currentIFrame.contents().find('input[name="name"]').val();
-				cEmail = $currentIFrame.contents().find('input[name="email"]').val();
-				cSubject = $currentIFrame.contents().find('input[name="sub"]').val();
+				cName = qr.contents().find('input[name="name"]').val();
+				cEmail = qr.contents().find('input[name="email"]').val();
+				cSubject = qr.contents().find('input[name="sub"]').val();
 			}
 			
 			if (cFile != lastFile && canPost == true && cName != "" && cFile != "" && getOption("Enable Sync") == "true")
@@ -267,7 +246,7 @@ function setUp()
 	
 	function canSync()
 	{
-		if (getOption("Share Using") == usingNames[0] && $Jq("#imagecount").length && $Jq("#count").length)
+		if ($Jq("#imagecount").length && $Jq("#count").length)
 			return (parseInt(document.getElementById("imagecount").innerHTML) <= 250 && $Jq("#count").html() != "404");
 		else
 			return false;
@@ -289,7 +268,7 @@ function setUp()
 		
 		$Jq("#syncStatus").html(msg).css("color", colour);
 		
-		if (type == 1 && getOption("Append Errors") == "true" && getOption("Share Using") == usingNames[0])
+		if (type == 1 && getOption("Append Errors") == "true")
 		{
 			$Jq("div.warning").html("Sync: "+msg);
 			setTimeout(function() { $Jq("div.warning").html(""); }, 5000);
