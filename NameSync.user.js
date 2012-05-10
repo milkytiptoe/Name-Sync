@@ -187,11 +187,12 @@ function setUp()
 			var cSubject;
 			var cFile = qr.contents().find('input[type="file"]').val();
 			
-			if (cFile == "" && $Jq("#selected[title]").length)
+			var queuedReplies = $Jq("#replies .preview[title]", qr);
+			if (queuedReplies.length)
 			{
-				cFile = $Jq("#selected[title]").attr("title");
+				cFile = queuedReplies.attr("title");
 			}
-			
+
 			if (getOption("Override Fields") == "true")
 			{
 				cName = getOption("Name");
