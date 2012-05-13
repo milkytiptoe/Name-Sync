@@ -7,10 +7,10 @@
 // @contributor   Macil
 // @contributor   ihavenoface
 // @contributor   Finer
-// @include       http*://boards.4chan.org/b/*
+// @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.48
+// @version       2.0.49
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.48";
+	var ver = "2.0.49";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -66,7 +66,7 @@ function setUp()
 	var bsheet = document.createElement('style');
 	document.body.appendChild(bsheet);
 	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .filetitle a, .replytitle a { text-decoration: none; }";
+	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .subject a { text-decoration: none; }";
 	document.body.appendChild(csheet);
 	
 	function showOptionsScreen()
@@ -142,11 +142,11 @@ function setUp()
 	{
 		if (getOption("Show Poster Options") == "true")
 		{
-			bsheet.innerHTML = ".filetitle, .replytitle { display: inline; }";
+			bsheet.innerHTML = ".subject { display: inline; }";
 		}
 		else
 		{
-			bsheet.innerHTML = ".filetitle, .replytitle { display: none; }";
+			bsheet.innerHTML = ".subject { display: none; }";
 		}
 	}
 	
@@ -365,18 +365,18 @@ function setUp()
 		
 		usedFilenames = [];
 		
-		var optag = $Jq("form[name='delform'] > .op", document)[0];
-		var id = $Jq(".posteruid", optag)[0].innerHTML;
-		var nametag = $Jq(".postername", optag)[0];
-		var filesizespan = $Jq(".filesize", optag)[0];
-		var titlespan = $Jq(".filetitle", optag)[0];
-		updatePost(id, nametag, filesizespan, titlespan);
+		// var optag = $Jq("form[name='delform'] > .op", document)[0];
+		// var id = $Jq(".posteruid", optag)[0].innerHTML;
+		// var nametag = $Jq(".postername", optag)[0];
+		// var filesizespan = $Jq(".filesize", optag)[0];
+		// var titlespan = $Jq(".filetitle", optag)[0];
+		// updatePost(id, nametag, filesizespan, titlespan);
 		
-		$Jq("form[name='delform'] > table tr > td[id]", document).each(function() {
+		$Jq("form[name='delform'] > div[class] > div[id] > .replyContainer > .reply", document).each(function() {
 			var id = $Jq(".posteruid", this)[0].innerHTML;
-			var nametag = $Jq(".commentpostername", this)[0];
-			var filesizespan = $Jq(".filesize", this)[0];
-			var titlespan = $Jq(".replytitle", this)[0];
+			var nametag = $Jq(".name", this)[0];
+			var filesizespan = $Jq(".fileText", this)[0];
+			var titlespan = $Jq(".subject", this)[0];
 			updatePost(id, nametag, filesizespan, titlespan);
 		});
 		
@@ -409,7 +409,7 @@ function setUp()
 				filename = filenamespan.innerHTML;
 			}
 			info = getOnlineInfo(filename);
-			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("table").attr("class") != "inline" && usedFilenames.indexOf(filename) == -1) {
+			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("div.replyContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
 				if(index > -1) {
 					names[index] = info[0];
 				} else {
@@ -466,11 +466,11 @@ function setUp()
 			
 			if (email != null && email != "")
 			{
-				nametag.innerHTML = "<a class='linkmail' href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "</a>";
+				nametag.innerHTML = "<a class='useremail' href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "</a>";
 				
 				if (tripcode != "")
 				{
-					nametag.innerHTML += "<a class='linkmail' href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
+					nametag.innerHTML += "<a class='useremail' href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
 				}
 			}
 			else
@@ -585,7 +585,7 @@ function setUp()
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
-		if(e.target.nodeName=='TABLE' && e.target.className != "inline") {
+		if(e.target.nodeName=='DIV' && $Jq(e.target).hasClass("replyContainer") == true && $Jq(e.target).hasClass("inline") == false) {
 			updateElements();
 		}
 	}, true);
