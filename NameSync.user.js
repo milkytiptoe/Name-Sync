@@ -365,25 +365,21 @@ function setUp()
 		
 		usedFilenames = [];
 		
-		// var optag = $Jq("form[name='delform'] > .op", document)[0];
-		// var id = $Jq(".posteruid", optag)[0].innerHTML;
-		// var nametag = $Jq(".postername", optag)[0];
-		// var filesizespan = $Jq(".filesize", optag)[0];
-		// var titlespan = $Jq(".filetitle", optag)[0];
-		// updatePost(id, nametag, filesizespan, titlespan);
-		
-		$Jq("form[name='delform'] > div[class] > div[id] > .replyContainer > .reply", document).each(function() {
-			var id = $Jq(".posteruid", this)[0].innerHTML;
-			var nametag = $Jq(".name", this)[0];
-			var filesizespan = $Jq(".fileText", this)[0];
-			var titlespan = $Jq(".subject", this)[0];
-			updatePost(id, nametag, filesizespan, titlespan);
+		$Jq(".thread .post", document).each(function() {
+			var idtag = $Jq(".posteruid", this)[0];
+			if(idtag != null) {
+				var id = $Jq(".posteruid", this)[0].innerHTML;
+				var nameblocktag = $Jq(".nameBlock", this)[0];
+				var filetexttag = $Jq(".file .fileInfo .fileText", this)[0];
+				var titletag = $Jq(".subject", this)[0];
+				updatePost(id, nameblocktag, filetexttag, titletag);
+			}
 		});
 		
 		storeNames();
 	}
 
-	function updatePost(id, nametag, filesizespan, titlespan) {
+	function updatePost(id, nameblocktag, filetexttag, titletag) {
 		if(id == "(ID: Heaven)")
 			return;
 
@@ -395,21 +391,20 @@ function setUp()
 		var subject = null;	
 		var info = null;
 		
-		var assignbutton = $Jq(".assignbutton", titlespan)[0];
+		var assignbutton = $Jq(".assignbutton", titletag)[0];
 
-		if(getOption("Enable Sync") == "true" && filesizespan != null) {
-			var filenamespan = $Jq("span[title]", filesizespan)[0];
-			if(filenamespan == null) {
-				filenamespan = $Jq("a[href]", filesizespan)[0];
+		if(getOption("Enable Sync") == "true" && filetexttag != null && $Jq(nameblocktag).closest(".postContainer").hasClass("inline") == false) {
+			var filenametag = $Jq(".fntrunc", filetexttag)[0];
+			if(filenametag == null) {
+				filenametag = $Jq("a[href]", filetexttag)[0];
 			}
-			var fullname = $Jq(".fntrunc", filenamespan)[0];
-			if(fullname != null) {
-				filename = fullname.innerHTML;
-			} else {
-				filename = filenamespan.innerHTML;
+			if(filenametag == null) {
+				filenametag = $Jq("span[title]", filetexttag)[0];
 			}
+			var fullfilename = filenametag.innerHTML;
+
 			info = getOnlineInfo(filename);
-			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("div.postContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
+			if(info[0] != null && info[0] != "" && usedFilenames.indexOf(filename) == -1) {
 				if(index > -1) {
 					names[index] = info[0];
 				} else {
@@ -425,7 +420,7 @@ function setUp()
 			}
 		}
 		
-		if (onlineNames.indexOf(names[index]) == -1)
+		if (index == -1 || onlineNames.indexOf(names[index]) == -1)
 		{
 			var domShell = document.createDocumentFragment();
 			
@@ -439,7 +434,7 @@ function setUp()
 				domShell.appendChild(assignbutton);
 			}
 			
-			titlespan.appendChild(domShell);
+			titletag.appendChild(domShell);
 		}
 		else
 		{
@@ -461,23 +456,27 @@ function setUp()
 			
 			if (subject != null && subject != "")
 			{
-				titlespan.innerHTML = EncodeEntities(subject);
+				titletag.innerHTML = EncodeEntities(subject);
 			}
 			
+			nameblocktag.innerHTML = "";
+
 			if (email != null && email != "")
 			{
-				nametag.innerHTML = "<a class='useremail' href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "</a>";
+				nameblocktag.innerHTML += "<a class='useremail' href='mailto:" + EncodeEntities(email) + "'>";
+			}
+
+			nameblocktag.innerHTML += "<span class='name'>"+ EncodeEntities(name) + "</span>";
 				
-				if (tripcode != "")
-				{
-					nametag.innerHTML += "<a class='useremail' href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
-				}
-			}
-			else
+			if (tripcode != "")
 			{
-				nametag.innerHTML = EncodeEntities(name) + "<a style='font-weight: normal !important; color: green !important; text-decoration: none;'> " + EncodeEntities(tripcode) + "</a>";
+				nameblocktag.innerHTML += " <span class='postertrip'>" + EncodeEntities(tripcode) + "</span>";
 			}
-			
+
+			if (email != null && email != "")
+			{
+				nameblocktag.innerHTML += "</a>";
+			}			
 		}
 	}
 	
