@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.49
+// @version       2.0.50
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.49";
+	var ver = "2.0.50";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -409,7 +409,7 @@ function setUp()
 				filename = filenamespan.innerHTML;
 			}
 			info = getOnlineInfo(filename);
-			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("div.replyContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
+			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("div.postContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
 				if(index > -1) {
 					names[index] = info[0];
 				} else {
