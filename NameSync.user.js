@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.50
+// @version       2.0.51
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.50";
+	var ver = "2.0.51";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -365,28 +365,21 @@ function setUp()
 		
 		usedFilenames = [];
 		
-		// var optag = $Jq("form[name='delform'] > .op", document)[0];
-		// var id = $Jq(".posteruid", optag)[0].innerHTML;
-		// var nametag = $Jq(".postername", optag)[0];
-		// var filesizespan = $Jq(".filesize", optag)[0];
-		// var titlespan = $Jq(".filetitle", optag)[0];
-		// updatePost(id, nametag, filesizespan, titlespan);
-		
 		$Jq("form[name='delform'] > div[class] > div[id] > .replyContainer > .reply", document).each(function() {
 			var id = $Jq(".posteruid", this)[0].innerHTML;
 			var nametag = $Jq(".name", this)[0];
-			var filesizespan = $Jq(".fileText", this)[0];
-			var titlespan = $Jq(".subject", this)[0];
-			updatePost(id, nametag, filesizespan, titlespan);
+			var filetextspan = $Jq(".fileText", this)[0];
+			var subjectspan = $Jq(".subject", this)[0];
+			updatePost(id, nametag, filetextspan, subjectspan);
 		});
 		
 		storeNames();
 	}
 
-	function updatePost(id, nametag, filesizespan, titlespan) {
+	function updatePost(id, nametag, filetextspan, subjectspan) {
 		if(id == "(ID: Heaven)")
 			return;
-
+		
 		var index = ids.indexOf(id);
 		var filename = null;
 		var name = null;
@@ -395,12 +388,12 @@ function setUp()
 		var subject = null;	
 		var info = null;
 		
-		var assignbutton = $Jq(".assignbutton", titlespan)[0];
+		var assignbutton = $Jq(".assignbutton", subjectspan)[0];
 
-		if(getOption("Enable Sync") == "true" && filesizespan != null) {
-			var filenamespan = $Jq("span[title]", filesizespan)[0];
+		if(getOption("Enable Sync") == "true" && filetextspan != null) {
+			var filenamespan = $Jq("span[title]", filetextspan)[0];
 			if(filenamespan == null) {
-				filenamespan = $Jq("a[href]", filesizespan)[0];
+				filenamespan = $Jq("a[href]", filetextspan)[0];
 			}
 			var fullname = $Jq(".fntrunc", filenamespan)[0];
 			if(fullname != null) {
@@ -409,7 +402,7 @@ function setUp()
 				filename = filenamespan.innerHTML;
 			}
 			info = getOnlineInfo(filename);
-			if(info[0] != null && info[0] != "" && $Jq(filesizespan).closest("div.postContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
+			if(info[0] != null && info[0] != "" && $Jq(filetextspan).closest("div.postContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
 				if(index > -1) {
 					names[index] = info[0];
 				} else {
@@ -439,7 +432,7 @@ function setUp()
 				domShell.appendChild(assignbutton);
 			}
 			
-			titlespan.appendChild(domShell);
+			subjectspan.appendChild(domShell);
 		}
 		else
 		{
@@ -461,23 +454,20 @@ function setUp()
 			
 			if (subject != null && subject != "")
 			{
-				titlespan.innerHTML = EncodeEntities(subject);
+				subjectspan.innerHTML = EncodeEntities(subject);
 			}
 			
+			var shell = document.createDocumentFragment();
+			shell.innerHTML = "";
 			if (email != null && email != "")
-			{
-				nametag.innerHTML = "<a class='useremail' href='mailto:" + EncodeEntities(email) + "'>" + EncodeEntities(name) + "</a>";
-				
-				if (tripcode != "")
-				{
-					nametag.innerHTML += "<a class='useremail' href='mailto:" + EncodeEntities(email) + "' style='font-weight: normal !important; color: green !important;'> " + EncodeEntities(tripcode) + "</a>";
-				}
-			}
-			else
-			{
-				nametag.innerHTML = EncodeEntities(name) + "<a style='font-weight: normal !important; color: green !important; text-decoration: none;'> " + EncodeEntities(tripcode) + "</a>";
-			}
-			
+				shell.innerHTML += "<a class='useremail' href='mailto:" + EncodeEntities(email) + "'>";
+			shell.innerHTML += "<span class='name'>" + EncodeEntities(name) + "</span>";
+			if (tripcode != "")
+				shell.innerHTML += " <span class='postertrip'>" + EncodeEntities(tripcode) + "</span>";
+			if (email != null && email != "")
+				shell.innerHTML += "</a>";
+			nametag.innerHTML = shell.innerHTML;
+			shell.innerHTML = "";
 		}
 	}
 	
