@@ -1,3 +1,6 @@
+2.0.52
+- Removed sync request stack check
+
 2.0.51
 - Changed name span html to match 4chan's
 

@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.51
+// @version       2.0.52
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.51";
+	var ver = "2.0.52";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -55,7 +55,6 @@ function setUp()
 		
 	var lastFile = "";
 	var canPost = true;
-	var syncing = false;
 	var retries = -1;
 	
 	$Jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='#' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
@@ -285,71 +284,62 @@ function setUp()
 		}
 			
 		if (getOption("Enable Sync") == "true")
-		{		
-			if (syncing == true)
-				return;
-				
-			syncing = true;
-			
+		{
 			$Jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
 			}).fail(function() {
-				syncing = false;
 				setSyncStatus(1, "Error retrieving names");
 			}).done(function(data) {
-				syncing = false;
-				
 				if (data.length == 0)
 				{
 					setSyncStatus(0, "Online");
-					return;
 				}
-				
-				var content = data;
-					
-				try
+				else
 				{
-					var jsonBlocks = content.split("|");
-					
-					onlineNames = [];
-					onlineFiles = [];
-					onlineSubjects = [];
-					onlineEmails = [];
-					
-					for (var i = 0, len = jsonBlocks.length -1; i < len; i++)
+					var content = data;
+						
+					try
 					{
-						var p = jQuery.parseJSON(jsonBlocks[i]);
-
-						for (var key in p)
+						var jsonBlocks = content.split("|");
+						
+						onlineNames = [];
+						onlineFiles = [];
+						onlineSubjects = [];
+						onlineEmails = [];
+						
+						for (var i = 0, len = jsonBlocks.length -1; i < len; i++)
 						{
-							if (p.hasOwnProperty(key))
+							var p = jQuery.parseJSON(jsonBlocks[i]);
+
+							for (var key in p)
 							{
-								switch (key)
+								if (p.hasOwnProperty(key))
 								{
-									case "n": onlineNames.push(unescape(p[key])); break;
-									case "f": onlineFiles.push(unescape(p[key])); break;
-									case "e": onlineEmails.push(unescape(p[key])); break;
-									case "s": onlineSubjects.push(unescape(p[key])); break;
+									switch (key)
+									{
+										case "n": onlineNames.push(unescape(p[key])); break;
+										case "f": onlineFiles.push(unescape(p[key])); break;
+										case "e": onlineEmails.push(unescape(p[key])); break;
+										case "s": onlineSubjects.push(unescape(p[key])); break;
+									}
 								}
 							}
 						}
-					}
 
-					setSyncStatus(0, "Online");
-					updateElements();
-				}
-				catch (err)
-				{
-					setSyncStatus(1, "Error retrieving names (Script error)");
-					syncing = false;
+						setSyncStatus(0, "Online");
+						updateElements();
+					}
+					catch (err)
+					{
+						setSyncStatus(1, "Error retrieving names (Script error)");
+					}
 				}
 			});
 		}
 		else
 		{
 			setSyncStatus(2, "Disabled");
-			syncing = false;
 		}
 		
 		if (canSync())
