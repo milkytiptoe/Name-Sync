@@ -357,9 +357,9 @@ function setUp()
 		
 		$Jq("form[name='delform'] > div[class] > div[id] > .replyContainer > .reply", document).each(function() {
 			var id = $Jq(".posteruid", this)[0].innerHTML;
-			var nametag = $Jq(".name", this)[0];
-			var filetextspan = $Jq(".fileText", this)[0];
-			var subjectspan = $Jq(".subject", this)[0];
+			var nametag = $Jq(".desktop .name", this)[0];
+			var filetextspan = $Jq(".desktop .fileText", this)[0];
+			var subjectspan = $Jq(".desktop .subject", this)[0];
 			updatePost(id, nametag, filetextspan, subjectspan);
 		});
 		
