@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.52
+// @version       2.0.53
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.52";
+	var ver = "2.0.53";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	var names = [];
@@ -58,7 +58,7 @@ function setUp()
 	var retries = -1;
 	
 	$Jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='#' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
-	$Jq("#optionsPopUp").click(function() { showOptionsScreen(); });
+	$Jq("#optionsPopUp").click(function() { optionsShow(); });
 	
 	var asheet = document.createElement('style');
 	document.body.appendChild(asheet);
@@ -68,7 +68,7 @@ function setUp()
 	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .subject a { text-decoration: none; }";
 	document.body.appendChild(csheet);
 	
-	function showOptionsScreen()
+	function optionsShow()
 	{
 		$Jq("body").scrollTop(0).css("overflow", "hidden");
 		var overlayDiv = document.createElement("div");
@@ -83,24 +83,24 @@ function setUp()
 		
 		for (var i = 0, len = optionsNames.length; i < len; i++)
 		{
-			var checked = getOption(optionsNames[i]) == "true" ? 'checked' : '';
+			var checked = optionsGet(optionsNames[i]) == "true" ? 'checked' : '';
 			optionsList.innerHTML += "<li><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</li>";
 		}
 		
-		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+getOption("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+getOption("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+getOption("Subject")+"' />";
+		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+optionsGet("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+optionsGet("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+optionsGet("Subject")+"' />";
 		optionsDiv.appendChild(optionsList);
 		
 		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='"+website+"' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		
-		$Jq('input[type="checkbox"]').live("click", function() { setOption($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
+		$Jq('input[type="checkbox"]').live("click", function() { optionsSet($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
 		
-		$Jq("#closeBtn").live("click", function() { hideOptionsScreen(); });
-		overlayDiv.onclick = function() { hideOptionsScreen(); };
+		$Jq("#closeBtn").live("click", function() { optionsHide(); });
+		overlayDiv.onclick = function() { optionsHide(); };
 		document.body.appendChild(optionsDiv);
 		
-		$Jq("#bName").change(function() { setOption("Name", $Jq(this).val()); });
-		$Jq("#bEmail").change(function() { setOption("Email", $Jq(this).val()); });
-		$Jq("#bSubject").change(function() { setOption("Subject", $Jq(this).val()); });
+		$Jq("#bName").change(function() { optionsSet("Name", $Jq(this).val()); });
+		$Jq("#bEmail").change(function() { optionsSet("Email", $Jq(this).val()); });
+		$Jq("#bSubject").change(function() { optionsSet("Subject", $Jq(this).val()); });
 		$Jq("#updateLink").click(function() { 
 			$Jq(this).html("Checking...");
 			$Jq.ajax({
@@ -118,7 +118,7 @@ function setUp()
 		$Jq("#optionsScreen").fadeIn("fast");
 	}
 	
-	function hideOptionsScreen()
+	function optionsHide()
 	{
 		$Jq("#optionsScreen").remove();
 		$Jq("#optionsOverlay").remove();
@@ -127,33 +127,19 @@ function setUp()
 	
 	function hideIds()
 	{
-		if (getOption("Hide IDs") == "true")
-		{
-			asheet.innerHTML = ".posteruid { display: none; }";
-		}
-		else
-		{
-			asheet.innerHTML = ".posteruid { display: inline; }";
-		}
+		optionsGet("Hide IDs") == "true" ? asheet.innerHTML = ".posteruid { display: none; }" : asheet.innerHTML = ".posteruid { display: inline; }";
 	}
 
-	function hideOptions()
+	function hidePstrOpts()
 	{
-		if (getOption("Show Poster Options") == "true")
-		{
-			bsheet.innerHTML = ".subject { display: inline; }";
-		}
-		else
-		{
-			bsheet.innerHTML = ".subject { display: none; }";
-		}
+		optionsGet("Show Poster Options") == "true" ? bsheet.innerHTML = ".subject { display: inline; }" : bsheet.innerHTML = ".subject { display: none; }";
 	}
 	
 	$Jq(document).ready(function() {
-		if (getOption("Has Run") == "")
+		if (optionsGet("Has Run") == "")
 		{
-			showOptionsScreen();
-			setOption("Has Run", "true");
+			optionsShow();
+			optionsSet("Has Run", "true");
 		}
 		
 		enableListen();
@@ -192,11 +178,11 @@ function setUp()
 				cFile = queuedReplies.attr("title");
 			}
 
-			if (getOption("Override Fields") == "true")
+			if (optionsGet("Override Fields") == "true")
 			{
-				cName = getOption("Name");
-				cEmail = getOption("Email");
-				cSubject = getOption("Subject");
+				cName = optionsGet("Name");
+				cEmail = optionsGet("Email");
+				cSubject = optionsGet("Subject");
 			}
 			else
 			{
@@ -205,7 +191,7 @@ function setUp()
 				cSubject = qr.contents().find('input[name="sub"]').val();
 			}
 			
-			if (cFile != lastFile && canPost == true && cName != "" && cFile != "" && getOption("Enable Sync") == "true")
+			if (cFile != lastFile && canPost == true && cName != "" && cFile != "" && optionsGet("Enable Sync") == "true")
 			{	
 				canPost = false;
 				lastFile = cFile;
@@ -268,7 +254,7 @@ function setUp()
 		
 		$Jq("#syncStatus").html(msg).css("color", colour);
 		
-		if (type == 1 && getOption("Append Errors") == "true")
+		if (type == 1 && optionsGet("Append Errors") == "true")
 		{
 			$Jq("div.warning").html("Sync: "+msg);
 			setTimeout(function() { $Jq("div.warning").html(""); }, 5000);
@@ -283,7 +269,7 @@ function setUp()
 			return;
 		}
 			
-		if (getOption("Enable Sync") == "true")
+		if (optionsGet("Enable Sync") == "true")
 		{
 			$Jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
@@ -356,10 +342,10 @@ function setUp()
 		usedFilenames = [];
 		
 		$Jq("form[name='delform'] > div[class] > div[id] > .replyContainer > .reply", document).each(function() {
-			var id = $Jq(".posteruid", this)[0].innerHTML;
-			var nametag = $Jq(".name", this)[0];
+			var id = $Jq(".desktop .posteruid", this)[0].innerHTML;
+			var nametag = $Jq(".desktop .name", this)[0];
 			var filetextspan = $Jq(".fileText", this)[0];
-			var subjectspan = $Jq(".subject", this)[0];
+			var subjectspan = $Jq(".desktop .subject", this)[0];
 			updatePost(id, nametag, filetextspan, subjectspan);
 		});
 		
@@ -380,7 +366,7 @@ function setUp()
 		
 		var assignbutton = $Jq(".assignbutton", subjectspan)[0];
 
-		if(getOption("Enable Sync") == "true" && filetextspan != null) {
+		if(optionsGet("Enable Sync") == "true" && filetextspan != null) {
 			var filenamespan = $Jq("span[title]", filetextspan)[0];
 			if(filenamespan == null) {
 				filenamespan = $Jq("a[href]", filetextspan)[0];
@@ -497,17 +483,17 @@ function setUp()
 		}
 	}
 	
-	function setOption(name, value)
+	function optionsSet(name, value)
 	{
 		localStorage.setItem(optionPre + name, value);
 		
 		if (name == "Hide IDs")
 			hideIds();
 		if (name == "Show Poster Options")
-			hideOptions();
+			hidePstrOpts();
 	}
 	
-	function getOption(name)
+	function optionsGet(name)
 	{
 		var value = localStorage.getItem(optionPre + name);
 
@@ -539,14 +525,14 @@ function setUp()
 		var namesJoin = names.join("|");
 		var idsJoin = ids.join("|");
 		
-		setOption("names", namesJoin);
-		setOption("ids", idsJoin);
+		optionsSet("names", namesJoin);
+		optionsSet("ids", idsJoin);
 	}
 
 	function loadNames()
 	{	
-		var namesSplit = getOption("names");
-		var idsSplit = getOption("ids");
+		var namesSplit = optionsGet("names");
+		var idsSplit = optionsGet("ids");
 		
 		if (namesSplit != "" && idsSplit != "")
 		{
@@ -561,7 +547,7 @@ function setUp()
 	
 	loadNames();
 	hideIds();
-	hideOptions();
+	hidePstrOpts();
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
