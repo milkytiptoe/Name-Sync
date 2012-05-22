@@ -518,20 +518,14 @@ function setUp()
 	
 	function storeNames()
 	{
-		if (names.length > 40 && ids.length > 40)
-		{
-			names.splice(names.length-40, names.length);
-			ids.splice(ids.length-40, ids.length);
-		}
-		
-		optionsSet("names-list", JSON.stringify(names));
-		optionsSet("ids-list", JSON.stringify(ids));
+		sessionStorage["names-list"] = JSON.stringify(names);
+		sessionStorage["ids-list"] = JSON.stringify(ids);
 	}
 
 	function loadNames()
 	{
-		names = JSON.parse(optionsGet("names-list"));
-		ids = JSON.parse(optionsGet("ids-list"));
+		names = JSON.parse(sessionStorage["names-list"]);
+		ids = JSON.parse(sessionStorage["ids-list"]);
 
 		if(names == null || ids == null) {
 			names = [];
