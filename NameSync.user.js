@@ -341,21 +341,23 @@ function setUp()
 		
 		usedFilenames = [];
 		
-		$Jq("form[name='delform'] > div[class] > div[id] > .replyContainer > .reply", document).each(function() {
-			var id = $Jq(".desktop .posteruid", this)[0].innerHTML;
-			var nametag = $Jq(".desktop .name", this)[0];
-			var filetextspan = $Jq(".fileText", this)[0];
-			var subjectspan = $Jq(".desktop .subject", this)[0];
-			updatePost(id, nametag, filetextspan, subjectspan);
+		$Jq(".thread .reply", document).each(function() {
+			updatePost(this);
 		});
 		
 		storeNames();
 	}
 
-	function updatePost(id, nametag, filetextspan, subjectspan) {
+	function updatePost(posttag) {
+		var id = $Jq(".desktop .posteruid", posttag)[0].innerHTML;
+
 		if(id == "(ID: Heaven)")
 			return;
 		
+		var nametag = $Jq(".desktop .name", posttag)[0];
+		var filetextspan = $Jq(".fileText", posttag)[0];
+		var subjectspan = $Jq(".desktop .subject", posttag)[0];
+
 		var index = ids.indexOf(id);
 		var filename = null;
 		var name = null;
@@ -551,8 +553,8 @@ function setUp()
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
-		if(e.target.nodeName=='DIV' && $Jq(e.target).hasClass("replyContainer") == true && $Jq(e.target).hasClass("inline") == false) {
-			updateElements();
+		if(e.target.nodeName=='DIV' && $Jq(e.target).hasClass("replyContainer") && !$Jq(e.target).hasClass("inline")) {
+			updatePost($Jq(".reply", e.target));
 		}
 	}, true);
 }
