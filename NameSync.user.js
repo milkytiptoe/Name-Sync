@@ -37,8 +37,8 @@ function setUp()
 	var ver = "2.0.53";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
-	var names = [];
-	var ids = [];
+	// Initialized by loadNames()
+	var names;
 
 	var onlineNames = [];
 	var onlineFiles = [];
@@ -358,7 +358,6 @@ function setUp()
 		var filetextspan = $Jq(".fileText", posttag)[0];
 		var subjectspan = $Jq(".desktop .subject", posttag)[0];
 
-		var index = ids.indexOf(id);
 		var filename = null;
 		var name = null;
 		var tripcode = null;
@@ -380,15 +379,8 @@ function setUp()
 				filename = filenamespan.innerHTML;
 			}
 			info = getOnlineInfo(filename);
-			if(info[0] != null && info[0] != "" && $Jq(filetextspan).closest("div.postContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
-				if(index > -1) {
-					names[index] = info[0];
-				} else {
-					names[names.length] = info[0];
-					ids[ids.length] = id;
-					
-					index = ids.length-1;
-				}
+			if(info != null && info[0] != null && info[0] != "" && $Jq(filetextspan).closest("div.postContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
+				names[id] = info[0];
 				
 				email = info[1];
 				subject = info[2];
@@ -396,7 +388,7 @@ function setUp()
 			}
 		}
 		
-		if (onlineNames.indexOf(names[index]) == -1)
+		if (names[id] == null || onlineNames.indexOf(names[id]) == -1)
 		{
 			var domShell = document.createDocumentFragment();
 			
@@ -418,8 +410,8 @@ function setUp()
 				assignbutton.style.display = "none";
 		}
 		
-		if(index > -1) {
-			name = names[index];
+		if(names[id] != null) {
+			name = names[id];
 			tripcode = "";
 			
 			name = name.split("#");
@@ -459,7 +451,7 @@ function setUp()
 		}
 		else
 		{
-			return "";
+			return null;
 		}
 	}
 	
@@ -469,18 +461,7 @@ function setUp()
 		
 		if (name != null && name != "")
 		{
-			var index = ids.indexOf(id);
-			
-			if (index > -1)
-			{
-				names[index] = name;
-			}
-			else
-			{
-				names[names.length] = name;
-				ids[ids.length] = id;
-			}
-			
+			names[id] = name;
 			updateElements();
 		}
 	}
@@ -518,18 +499,15 @@ function setUp()
 	
 	function storeNames()
 	{
-		sessionStorage["names-list"] = JSON.stringify(names);
-		sessionStorage["ids-list"] = JSON.stringify(ids);
+		sessionStorage["names"] = JSON.stringify(names);
 	}
 
 	function loadNames()
 	{
-		names = JSON.parse(sessionStorage["names-list"]);
-		ids = JSON.parse(sessionStorage["ids-list"]);
+		names = JSON.parse(sessionStorage["names"]);
 
-		if(names == null || ids == null) {
-			names = [];
-			ids = [];
+		if(names == null) {
+			names = {};
 		}
 	}
 	
