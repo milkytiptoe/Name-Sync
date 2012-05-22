@@ -298,19 +298,10 @@ function setUp()
 						{
 							var p = jQuery.parseJSON(jsonBlocks[i]);
 
-							for (var key in p)
-							{
-								if (p.hasOwnProperty(key))
-								{
-									switch (key)
-									{
-										case "n": onlineNames.push(unescape(p[key])); break;
-										case "f": onlineFiles.push(unescape(p[key])); break;
-										case "e": onlineEmails.push(unescape(p[key])); break;
-										case "s": onlineSubjects.push(unescape(p[key])); break;
-									}
-								}
-							}
+							onlineNames.push(unescape(p["n"]));
+							onlineFiles.push(unescape(p["f"]));
+							onlineEmails.push(unescape(p["e"]));
+							onlineSubjects.push(unescape(p["s"]));
 						}
 
 						setSyncStatus(0, "Online");
@@ -341,7 +332,7 @@ function setUp()
 		
 		usedFilenames = [];
 		
-		$Jq(".thread .reply", document).each(function() {
+		$Jq(".thread .post", document).each(function() {
 			updatePost(this);
 		});
 		
@@ -349,37 +340,44 @@ function setUp()
 	}
 
 	function updatePost(posttag) {
-		var id = $Jq(".desktop .posteruid", posttag)[0].innerHTML;
+		// Get the postinfotag to look in specifically, so we don't
+		// accidentally look into inlined posts' content later.
+		var postinfotag = $Jq(posttag).children(".postInfo").children(".userInfo")
+				.add( $Jq(posttag).children(".postInfoM").children(".nameBlock") );
+
+		var id = $Jq(".posteruid", postinfotag).first().text();
 
 		if(id == "(ID: Heaven)")
 			return;
 		
-		var nametag = $Jq(".desktop .name", posttag)[0];
-		var filetextspan = $Jq(".fileText", posttag)[0];
-		var subjectspan = $Jq(".desktop .subject", posttag)[0];
+		var filetextspan = $Jq(posttag).children(".file").find(".fileText");
+		var subjectspan = $Jq(".subject", postinfotag);
 
 		var filename = null;
 		var name = null;
 		var tripcode = null;
 		var email = null;
-		var subject = null;	
-		var info = null;
+		var subject = null;
 		
-		var assignbutton = $Jq(".assignbutton", subjectspan)[0];
+		var assignbutton = $Jq(".assignbutton", postinfotag);
 
-		if(optionsGet("Enable Sync") == "true" && filetextspan != null) {
-			var filenamespan = $Jq("span[title]", filetextspan)[0];
-			if(filenamespan == null) {
-				filenamespan = $Jq("a[href]", filetextspan)[0];
+		if(optionsGet("Enable Sync") == "true"
+			&& filetextspan.length != 0
+			&& !filetextspan.parents("div.postContainer").hasClass("inline")) {
+			// We're excluding inline posts here so that way filenames are
+			// sure to be matched up to the server response in post order.
+			var filenamespan = $Jq("span[title]", filetextspan);
+			if(filenamespan.length == 0) {
+				filenamespan = $Jq("a[href]", filetextspan);
 			}
-			var fullname = $Jq(".fntrunc", filenamespan)[0];
-			if(fullname != null) {
-				filename = fullname.innerHTML;
+			var truncnametag = $Jq(".fntrunc", filenamespan);
+			if(truncnametag.length == 0) {
+				filename = filenamespan.text();
 			} else {
-				filename = filenamespan.innerHTML;
+				filename = truncnametag.text();
 			}
-			info = getOnlineInfo(filename);
-			if(info != null && info[0] != null && info[0] != "" && $Jq(filetextspan).closest("div.postContainer").hasClass("inline") == false && usedFilenames.indexOf(filename) == -1) {
+			var info = getOnlineInfo(filename);
+			if(info != null && info[0] != null && info[0] != "" && usedFilenames.indexOf(filename) == -1) {
 				names[id] = info[0];
 				
 				email = info[1];
@@ -390,24 +388,22 @@ function setUp()
 		
 		if (names[id] == null || onlineNames.indexOf(names[id]) == -1)
 		{
-			var domShell = document.createDocumentFragment();
-			
-			if(assignbutton == null) {
-				assignbutton = document.createElement('a');
-				assignbutton.href = "#";
-				assignbutton.title = "Assign a name to this poster";
-				assignbutton.setAttribute("class", "assignbutton");
-				assignbutton.textContent = "+";
-				assignbutton.onclick = (function() { var currentId = id; return function() { assignName(currentId); return false; } } )();
-				domShell.appendChild(assignbutton);
+			if(assignbutton.length == 0) {
+				assignbutton = $Jq("<a/>")
+				.attr("href", "#")
+				.attr("title", "Assign a name to this poster")
+				.addClass("assignbutton")
+				.text("+")
+				.click(function() {
+					assignName(id);
+					return false;
+				})
+				.insertBefore(subjectspan);
 			}
-			
-			subjectspan.appendChild(domShell);
 		}
 		else
 		{
-			if(assignbutton != null)
-				assignbutton.style.display = "none";
+			assignbutton.css("display", "none");
 		}
 		
 		if(names[id] != null) {
@@ -422,22 +418,50 @@ function setUp()
 
 			name = name[0];
 			
-			if (subject != null && subject != "")
+			if (subject != null && subject != "" && subjectspan.text() != subject)
 			{
-				subjectspan.innerHTML = EncodeEntities(subject);
+				subjectspan.text(subject);
 			}
-			
-			var shell = document.createDocumentFragment();
-			shell.innerHTML = "";
-			if (email != null && email != "")
-				shell.innerHTML += "<a class='useremail' href='mailto:" + EncodeEntities(email) + "'>";
-			shell.innerHTML += "<span class='name'>" + EncodeEntities(name) + "</span>";
-			if (tripcode != "")
-				shell.innerHTML += " <span class='postertrip'>" + EncodeEntities(tripcode) + "</span>";
-			if (email != null && email != "")
-				shell.innerHTML += "</a>";
-			nametag.innerHTML = shell.innerHTML;
-			shell.innerHTML = "";
+
+			var nametag = $Jq(".name", postinfotag);
+			var triptag = $Jq(".postertrip", postinfotag);
+
+			if(nametag.text() != name) {
+				nametag.text(name);
+			}
+
+			if(email != null && email != "") {
+				var emailtag = $Jq(".useremail", postinfotag);
+				// If we don't have an emailtag, make it and move the
+				// name and tripcode tags into it.
+				if(emailtag.length == 0) {
+					emailtag = $Jq("<a/>")
+					.addClass("useremail")
+					.insertBefore(nametag);
+
+					nametag.first().appendTo(emailtag);
+					// The first nametag element has been moved into
+					// emailtag. The other nametag elements must be removed.
+					nametag.slice(1).remove();
+					nametag = $Jq(".name", postinfotag);
+
+					// The triptag elements will be re-added later.
+					triptag.remove();
+					triptag = $Jq(".postertrip", postinfotag);
+				}
+				emailtag.attr("href", "mailto:"+email);
+			}
+
+			if(tripcode != null || triptag.length != 0) {
+				if(triptag.length == 0) {
+					triptag = $Jq("<span/>").addClass("postertrip");
+					nametag.after(" ", triptag);
+					triptag = $Jq(".postertrip", postinfotag);
+				}
+				if(triptag.text() != tripcode) {
+					triptag.text(tripcode);
+				}
+			}
 		}
 	}
 	
@@ -509,10 +533,6 @@ function setUp()
 		if(names == null) {
 			names = {};
 		}
-	}
-	
-	function EncodeEntities(s) {
-		return $Jq("<div/>").text(s).html();
 	}
 	
 	loadNames();
