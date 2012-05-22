@@ -507,7 +507,7 @@ function setUp()
 			}
 			else
 			{
-				return "";
+				return null;
 			}
 		}
 		else
@@ -520,26 +520,22 @@ function setUp()
 	{
 		if (names.length > 40 && ids.length > 40)
 		{
-			names.splice(0, 1);
-			ids.splice(0, 1);
+			names.splice(names.length-40, names.length);
+			ids.splice(ids.length-40, ids.length);
 		}
 		
-		var namesJoin = names.join("|");
-		var idsJoin = ids.join("|");
-		
-		optionsSet("names", namesJoin);
-		optionsSet("ids", idsJoin);
+		optionsSet("names-list", JSON.stringify(names));
+		optionsSet("ids-list", JSON.stringify(ids));
 	}
 
 	function loadNames()
-	{	
-		var namesSplit = optionsGet("names");
-		var idsSplit = optionsGet("ids");
-		
-		if (namesSplit != "" && idsSplit != "")
-		{
-			names = namesSplit.split("|");
-			ids = idsSplit.split("|");
+	{
+		names = JSON.parse(optionsGet("names-list"));
+		ids = JSON.parse(optionsGet("ids-list"));
+
+		if(names == null || ids == null) {
+			names = [];
+			ids = [];
 		}
 	}
 	
