@@ -418,7 +418,7 @@ function setUp()
 
 			name = name[0];
 			
-			if (subject != null && subject != "" && subjectspan.text() != subject)
+			if (subject != null && subject != "" && subjectspan.first().text() != subject)
 			{
 				subjectspan.text(subject);
 			}
@@ -426,7 +426,7 @@ function setUp()
 			var nametag = $Jq(".name", postinfotag);
 			var triptag = $Jq(".postertrip", postinfotag);
 
-			if(nametag.text() != name) {
+			if(nametag.first().text() != name) {
 				nametag.text(name);
 			}
 
@@ -458,7 +458,7 @@ function setUp()
 					nametag.after(" ", triptag);
 					triptag = $Jq(".postertrip", postinfotag);
 				}
-				if(triptag.text() != tripcode) {
+				if(triptag.first().text() != tripcode) {
 					triptag.text(tripcode);
 				}
 			}
