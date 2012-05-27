@@ -219,7 +219,7 @@ function setUp()
 				
 				if (canSync())
 				{
-					setTimeout(function() { postSet(); }, 30000);
+					setTimeout(function() { postSet(); }, 3000);
 				}
 			}
 		});
@@ -233,7 +233,7 @@ function setUp()
 	function canSync()
 	{
 		if ($Jq("#imagecount").length && $Jq("#count").length)
-			return (parseInt(document.getElementById("imagecount").innerHTML) <= 250 && $Jq("#count").html() != "404");
+			return (parseInt($Jq("#imagecount").text()) <= 250 && $Jq("#count").text() != "404");
 		else
 			return false;
 	}
@@ -377,12 +377,12 @@ function setUp()
 				filename = truncnametag.text();
 			}
 			var info = getOnlineInfo(filename);
-			if(info != null && info[0] != null && info[0] != "" && usedFilenames.indexOf(filename) == -1) {
+			if(info != null && info[0] != null && info[0] != "" && !usedFilenames[filename]) {
 				names[id] = info[0];
 				
 				email = info[1];
 				subject = info[2];
-				usedFilenames[usedFilenames.length] = filename;
+				usedFilenames[filename] = true;
 			}
 		}
 		
