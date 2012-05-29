@@ -38,7 +38,7 @@ function setUp()
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	// Initialized by loadNames()
-	var names;
+	var names = null;
 
 	var onlineNames = [];
 	var onlineFiles = [];
@@ -512,7 +512,7 @@ function setUp()
 			}
 			else
 			{
-				return null;
+				return "";
 			}
 		}
 		else
@@ -528,11 +528,11 @@ function setUp()
 
 	function loadNames()
 	{
-		names = JSON.parse(sessionStorage["names"]);
+		if(sessionStorage["names"] != null)
+			names = JSON.parse(sessionStorage["names"]);
 
-		if(names == null) {
+		if(names == null)
 			names = {};
-		}
 	}
 	
 	loadNames();
