@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.0.53
+// @version       2.1.54
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.0.53";
+	var ver = "2.1.54";
 	var website = "http://milkytiptoe.github.com/Name-Sync/";
 	
 	// Initialized by loadNames()
