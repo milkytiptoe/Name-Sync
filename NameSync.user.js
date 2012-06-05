@@ -207,7 +207,7 @@ function setUp()
 				}
 				
 				cFile = escape(cFile);
-								
+					
 				$Jq.ajax({
 					headers: {"X-Requested-With":"Ajax"},
 					type: "POST",
@@ -298,7 +298,7 @@ function setUp()
 						{
 							var p = jQuery.parseJSON(jsonBlocks[i]);
 
-							onlineNames.push(unescape(p["n"]));
+							onlineNames.push(p["n"]);
 							onlineFiles.push(unescape(p["f"]));
 							onlineEmails.push(unescape(p["e"]));
 							onlineSubjects.push(unescape(p["s"]));
