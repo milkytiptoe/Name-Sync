@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.1.54
+// @version       2.1.55
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -29,13 +29,12 @@ function addJQuery(a)
 function setUp()
 {
 	var optionPre = "NameSync.";
-	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Append Errors", "Override Fields"];
-	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
-	var optionsDefaults = ["true", "false", "true", "true", "false"];
+	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Cross-thread Links", "Append Errors", "Override Fields"];
+	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Add >>>/b/ to cross-thread links on Ctrl+V", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
+	var optionsDefaults = ["true", "false", "true", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.1.54";
-	var website = "http://milkytiptoe.github.com/Name-Sync/";
+	var ver = "2.1.55";
 	
 	// Initialized by loadNames()
 	var names = null;
@@ -65,7 +64,7 @@ function setUp()
 	var bsheet = document.createElement('style');
 	document.body.appendChild(bsheet);
 	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; }";
+	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; }";
 	document.body.appendChild(csheet);
 	
 	function optionsShow()
@@ -90,7 +89,7 @@ function setUp()
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+optionsGet("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+optionsGet("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+optionsGet("Subject")+"' />";
 		optionsDiv.appendChild(optionsList);
 		
-		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='"+website+"' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='http://milkytiptoe.github.com/Name-Sync/' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
 		
 		$Jq('input[type="checkbox"]').live("click", function() { optionsSet($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
 		
@@ -159,6 +158,18 @@ function setUp()
 					addListenQR();
 			}, true);
 		}
+	}
+	
+	if (optionsGet("Cross-thread Links") == "true")
+	{
+		$Jq(document).on("input", function() {
+			var commentBox = $Jq('#qr textarea[name="com"]');
+			commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
+			$Jq(".thread .post", document).each(function() {
+				var id = $Jq(this).attr("id").substring(1);
+				commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
+			});
+		});
 	}
 	
 	function addListenQR()
