@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.1.55
+// @version       2.1.56
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "true", "false"];
 		
 	var $Jq = jQuery.noConflict();
-	var ver = "2.1.55";
+	var ver = "2.1.56";
 	
 	// Initialized by loadNames()
 	var names = null;
@@ -162,13 +162,17 @@ function setUp()
 	
 	if (optionsGet("Cross-thread Links") == "true")
 	{
-		$Jq(document).on("input", function() {
-			var commentBox = $Jq('#qr textarea[name="com"]');
-			commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
-			$Jq(".thread .post", document).each(function() {
-				var id = $Jq(this).attr("id").substring(1);
-				commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
-			});
+		var commentBox = $Jq('#qr textarea[name="com"]');
+		commentBox.on("keydown", function (e) {
+			if (e.ctrlKey && e.which == 86) {
+				setTimeout(function() {
+					commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
+					$Jq(".thread .post", document).each(function() {
+						var id = $Jq(this).attr("id").substring(1);
+						commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
+					});
+				}, 100);
+			}
 		});
 	}
 	
