@@ -90,7 +90,6 @@ function setUp()
 			optionsSet("lastcheck", d);
 		}
 		if (lv > v) {
-			alert(lv + " > " + v);
 			$jq("#syncStatus").before("A new update for /b/ Name Sync is available. \
 			<a href='javascript:;' onclick='window.location = \"https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js\";' https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js' target='_blank' onclick='javascript: this.innerHTML =\"\"'>Install now</a><br />After installing update, <a href='javascript:;' onclick='javascript:location.reload(true);'>refresh</a> to apply changes<br /><br />");
 		}
