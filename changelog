@@ -1,3 +1,13 @@
+2.1.57
+- Changes to sync methods
+- Removed sync error retry counter
+- Append Errors errors only appear if a different type to the last
+- Added Automatic Updates option
+- Cross-thread Links option now works with right click > paste
+
+2.1.56
+- Fixed Cross-thread Links moving cursor to end of reply text
+
 2.1.55
 - Readded Cross-thread Links option
 - Options screen CSS tweaks

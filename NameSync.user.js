@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.1.56
+// @version       2.1.57
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -29,14 +29,13 @@ function addJQuery(a)
 function setUp()
 {
 	var optionPre = "NameSync.";
-	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Cross-thread Links", "Append Errors", "Override Fields"];
-	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Add >>>/b/ to cross-thread links on Ctrl+V", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields"];
-	var optionsDefaults = ["true", "false", "true", "true", "true", "false"];
+	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Cross-thread Links", "Append Errors", "Override Fields", "Automatic Updates"];
+	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields", "Check for and notify about updates automatically"];
+	var optionsDefaults = ["true", "false", "true", "true", "true", "false", "true"];
 		
-	var $Jq = jQuery.noConflict();
-	var ver = "2.1.56";
+	var $jq = jQuery.noConflict();
+	var ver = "2.1.57";
 	
-	// Initialized by loadNames()
 	var names = null;
 
 	var onlineNames = [];
@@ -49,15 +48,13 @@ function setUp()
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
 	t = t.substring(0, 9);
-	if (t.length < 9)
-		t = "b";
 		
 	var lastFile = "";
 	var canPost = true;
-	var retries = -1;
+	var status = 0;
 	
-	$Jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='#' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
-	$Jq("#optionsPopUp").click(function() { optionsShow(); });
+	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
+	$jq("#optionsPopUp").click(function() { optionsShow(); });
 	
 	var asheet = document.createElement('style');
 	document.body.appendChild(asheet);
@@ -67,16 +64,48 @@ function setUp()
 	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; }";
 	document.body.appendChild(csheet);
 	
+	function checkUpdate()
+	{
+		var v = ver.replace(/\./g, "");
+		var d = new Date().getTime();
+		var lu = optionsGet("lastcheck");
+		var lv = optionsGet("latestversion");
+		if (lu == "") {
+			lu = d;
+			optionsSet("lastcheck", lu);
+		}
+		if (lv == "") lv = v;
+		if (d > parseInt(lu)+86400000 && lv <= v) {
+			$jq.ajax({
+				headers: {"X-Requested-With":"Ajax"},
+				url: 'http://nassign.heliohost.org/s/uq.php?v='+ver
+			}).done(function(data) {
+				lv = parseInt(data);
+				optionsSet("latestversion", lv);
+				if (lv > v) {
+					if (confirm("A new update for /b/ Name Sync is available, install now?\t\tAfter installing the update, refresh to apply changes"))
+						window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
+				}
+			});
+			optionsSet("lastcheck", d);
+		}
+		if (lv > v) {
+			alert(lv + " > " + v);
+			$jq("#syncStatus").before("A new update for /b/ Name Sync is available. \
+			<a href='javascript:;' onclick='window.location = \"https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js\";' https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js' target='_blank' onclick='javascript: this.innerHTML =\"\"'>Install now</a><br />After installing update, <a href='javascript:;' onclick='javascript:location.reload(true);'>refresh</a> to apply changes<br /><br />");
+		}
+	}
+	
 	function optionsShow()
 	{
-		$Jq("body").scrollTop(0).css("overflow", "hidden");
+		$jq("body").scrollTop(0).css("overflow", "hidden");
 		var overlayDiv = document.createElement("div");
 		overlayDiv.setAttribute("id", "optionsOverlay");
 		document.body.appendChild(overlayDiv);
 
 		var optionsDiv = document.createElement("div");
 		optionsDiv.setAttribute("id", "optionsScreen");
-		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='#' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2>";
+		optionsDiv.innerHTML = "<h1>/b/ Name Sync<a href='javascript:;'' id='closeBtn' title='Close options'>X</a></h1>"+ver+"<h2>Options</h2>";
 		
 		var optionsList = document.createElement("ul");
 		
@@ -89,39 +118,39 @@ function setUp()
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+optionsGet("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+optionsGet("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+optionsGet("Subject")+"' />";
 		optionsDiv.appendChild(optionsList);
 		
-		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='http://milkytiptoe.github.com/Name-Sync/' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='#'>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='http://milkytiptoe.github.com/Name-Sync/' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='javascript:;''>Check for update</a></li></ul><br />";
 		
-		$Jq('input[type="checkbox"]').live("click", function() { optionsSet($Jq(this).attr("name"), String($Jq(this).is(":checked"))); });
+		$jq('input[type="checkbox"]').live("click", function() { optionsSet($jq(this).attr("name"), String($jq(this).is(":checked"))); });
 		
-		$Jq("#closeBtn").live("click", function() { optionsHide(); });
+		$jq("#closeBtn").live("click", function() { optionsHide(); });
 		overlayDiv.onclick = function() { optionsHide(); };
 		document.body.appendChild(optionsDiv);
 		
-		$Jq("#bName").change(function() { optionsSet("Name", $Jq(this).val()); });
-		$Jq("#bEmail").change(function() { optionsSet("Email", $Jq(this).val()); });
-		$Jq("#bSubject").change(function() { optionsSet("Subject", $Jq(this).val()); });
-		$Jq("#updateLink").click(function() { 
-			$Jq(this).html("Checking...");
-			$Jq.ajax({
+		$jq("#bName").change(function() { optionsSet("Name", $jq(this).val()); });
+		$jq("#bEmail").change(function() { optionsSet("Email", $jq(this).val()); });
+		$jq("#bSubject").change(function() { optionsSet("Subject", $jq(this).val()); });
+		$jq("#updateLink").click(function() { 
+			$jq(this).html("Checking...");
+			$jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				url: 'http://nassign.heliohost.org/s/u.php?v='+ver
 			}).fail(function() {
-				$Jq("#updateLink").html("Error checking for update");
+				$jq("#updateLink").html("Error checking for update");
 			}).done(function(data) {
-				$Jq("#updateLink").html(data);
+				$jq("#updateLink").html(data);
 			});
 			
-			$Jq(this).attr('onclick','').unbind('click');
+			$jq(this).attr('onclick','').unbind('click');
 		});
 		
-		$Jq("#optionsScreen").fadeIn("fast");
+		$jq("#optionsScreen").fadeIn("fast");
 	}
 	
 	function optionsHide()
 	{
-		$Jq("#optionsScreen").remove();
-		$Jq("#optionsOverlay").remove();
-		$Jq("body").css("overflow", "visible");
+		$jq("#optionsScreen").remove();
+		$jq("#optionsOverlay").remove();
+		$jq("body").css("overflow", "visible");
 	}
 	
 	function hideIds()
@@ -134,7 +163,7 @@ function setUp()
 		optionsGet("Show Poster Options") == "true" ? bsheet.innerHTML = ".subject { display: inline; }" : bsheet.innerHTML = ".subject { display: none; }";
 	}
 	
-	$Jq(document).ready(function() {
+	$jq(document).ready(function() {
 		if (optionsGet("Has Run") == "")
 		{
 			optionsShow();
@@ -148,7 +177,7 @@ function setUp()
 	
 	function enableListen()
 	{		
-		if ($Jq("#qr").length)
+		if ($jq("#qr").length)
 		{
 			addListenQR();
 		}
@@ -162,37 +191,39 @@ function setUp()
 	
 	if (optionsGet("Cross-thread Links") == "true")
 	{
-		var commentBox = $Jq('#qr textarea[name="com"]');
-		commentBox.on("keydown", function (e) {
-			if (e.ctrlKey && e.which == 86) {
-				setTimeout(function() {
-					commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
-					$Jq(".thread .post", document).each(function() {
-						var id = $Jq(this).attr("id").substring(1);
-						commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
-					});
-				}, 100);
-			}
+		var commentBox = $jq('#qr textarea[name="com"]');
+		commentBox.on("paste", function() {
+			setTimeout(function() {
+				commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
+				$jq(".thread .post", document).each(function() {
+					var id = this.id.substring(1);
+					commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
+				});
+			}, 100);
 		});
+	}
+	
+	if (optionsGet("Automatic Updates") == "true")
+	{
+		checkUpdate();
 	}
 	
 	function addListenQR()
 	{
-		var qr = $Jq("#qr");
+		var qr = $jq("#qr");
 		
-		qr.contents().find(":submit").click(function()
-		{
+		$jq("form", qr).on("submit", function() {
 			var cName;
 			var cEmail;
 			var cSubject;
-			var cFile = qr.contents().find('input[type="file"]').val();
+			var cFile = $jq('input[type="file"]', qr).val();
 			
-			var queuedReplies = $Jq("#replies .preview[title]", qr);
+			var queuedReplies = $jq("#replies .preview[title]", qr);
 			if (queuedReplies.length)
 			{
 				cFile = queuedReplies.attr("title");
 			}
-
+			
 			if (optionsGet("Override Fields") == "true")
 			{
 				cName = optionsGet("Name");
@@ -201,18 +232,20 @@ function setUp()
 			}
 			else
 			{
-				cName = encodeURIComponent(qr.contents().find('input[name="name"]').val());
-				cEmail = qr.contents().find('input[name="email"]').val();
-				cSubject = qr.contents().find('input[name="sub"]').val();
+				cName = $jq('input[name="name"]', qr).val();
+				cEmail = $jq('input[name="email"]', qr).val();
+				cSubject = $jq('input[name="sub"]', qr).val();
 			}
 			
-			if (cFile != lastFile && canPost == true && cName != "" && cFile != "" && optionsGet("Enable Sync") == "true")
-			{	
-				canPost = false;
-				lastFile = cFile;
-				
+			if (cFile != lastFile && canPost && cName != "" && cFile != "" && optionsGet("Enable Sync") == "true")
+			{
 				if (cFile.indexOf("C:\\fakepath\\") > -1)
 					cFile = cFile.split("C:\\fakepath\\")[1];
+					
+				if (onlineFiles.indexOf(cFile) > -1) return;
+				
+				canPost = false;
+				lastFile = cFile;
 				
 				if (cFile.length-4 > 30)
 				{
@@ -221,20 +254,19 @@ function setUp()
 					cFile = start + "(...)" + end;
 				}
 				
-				cFile = escape(cFile);
-					
-				$Jq.ajax({
+				var d = "f="+encodeURIComponent(cFile)+"&n="+encodeURIComponent(cName)+"&t="+t+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+				$jq.ajax({
 					headers: {"X-Requested-With":"Ajax"},
 					type: "POST",
 					url: "http://nassign.heliohost.org/s/s.php",
-					data: "f="+cFile+"&n="+cName+"&t="+t+"&s="+cSubject+"&e="+cEmail
+					data: d
 				}).fail(function() {
-					setSyncStatus(1, "Error sending name");
+					setSyncStatus(1, "Offline (Error sending)");
 				});
 				
 				if (canSync())
 				{
-					setTimeout(function() { postSet(); }, 3000);
+					setTimeout(function() { postSet(); }, 30000);
 				}
 			}
 		});
@@ -247,8 +279,8 @@ function setUp()
 	
 	function canSync()
 	{
-		if ($Jq("#imagecount").length && $Jq("#count").length)
-			return (parseInt($Jq("#imagecount").text()) <= 250 && $Jq("#count").text() != "404");
+		if ($jq("#imagecount").length && $jq("#count").length)
+			return (parseInt($jq("#imagecount").text()) <= 250 && $jq("#count").text() != "404");
 		else
 			return false;
 	}
@@ -259,73 +291,53 @@ function setUp()
 		
 		switch (type)
 		{
-			case 0: retries = -1; break;
-			case 1: colour = "red"; retries++; break;
+			case 1: colour = "red"; break;
 			case 2: colour = "gray"; break;
 		}
 		
-		if (retries >= 1)
-			msg += " (retries: "+retries+")";
+		$jq("#syncStatus").html(msg).css("color", colour);
 		
-		$Jq("#syncStatus").html(msg).css("color", colour);
-		
-		if (type == 1 && optionsGet("Append Errors") == "true")
+		if (status != type && optionsGet("Append Errors") == "true")
 		{
-			$Jq("div.warning").html("Sync: "+msg);
-			setTimeout(function() { $Jq("div.warning").html(""); }, 5000);
+			$jq("div.warning").html("<span style='color: "+colour+" !important;'>Sync is "+msg+"</span>");
+			setTimeout(function() { $jq("div.warning").html(""); }, 5000);
 		}
+		
+		status = type;
 	}
 	
 	function sync()
 	{		
-		if (t == "b")
-		{
-			setSyncStatus(2, "Not available on board index");
-			return;
-		}
-			
 		if (optionsGet("Enable Sync") == "true")
 		{
-			$Jq.ajax({
+			$jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/q.php?t='+t,
+				dataType: "json",
+				url: 'http://nassign.heliohost.org/s/qj.php?t='+t,
 			}).fail(function() {
-				setSyncStatus(1, "Error retrieving names");
+				setSyncStatus(1, "Offline (Error retrieving)");
 			}).done(function(data) {
-				if (data.length == 0)
+				if (data == null)
 				{
 					setSyncStatus(0, "Online");
 				}
 				else
 				{
-					var content = data;
-						
-					try
+					onlineNames = [];
+					onlineFiles = [];
+					onlineSubjects = [];
+					onlineEmails = [];
+					
+					for (var i = 0, len = data.length; i < len; i++)
 					{
-						var jsonBlocks = content.split("|");
-						
-						onlineNames = [];
-						onlineFiles = [];
-						onlineSubjects = [];
-						onlineEmails = [];
-						
-						for (var i = 0, len = jsonBlocks.length -1; i < len; i++)
-						{
-							var p = jQuery.parseJSON(jsonBlocks[i]);
-
-							onlineNames.push(p["n"]);
-							onlineFiles.push(unescape(p["f"]));
-							onlineEmails.push(unescape(p["e"]));
-							onlineSubjects.push(unescape(p["s"]));
-						}
-
-						setSyncStatus(0, "Online");
-						updateElements();
+						onlineNames.push(data[i].n);
+						onlineFiles.push(data[i].f);
+						onlineEmails.push(data[i].e);
+						onlineSubjects.push(data[i].s);
 					}
-					catch (err)
-					{
-						setSyncStatus(1, "Error retrieving names (Script error)");
-					}
+
+					setSyncStatus(0, "Online");
+					updateElements();
 				}
 			});
 		}
@@ -342,12 +354,9 @@ function setUp()
 	
 	function updateElements()
 	{
-		if (t == "b")
-			return;
-		
 		usedFilenames = [];
 		
-		$Jq(".thread .post", document).each(function() {
+		$jq(".thread .post", document).each(function() {
 			updatePost(this);
 		});
 		
@@ -357,16 +366,16 @@ function setUp()
 	function updatePost(posttag) {
 		// Get the postinfotag to look in specifically, so we don't
 		// accidentally look into inlined posts' content later.
-		var postinfotag = $Jq(posttag).children(".postInfo").children(".userInfo")
-				.add( $Jq(posttag).children(".postInfoM").children(".nameBlock") );
+		var postinfotag = $jq(posttag).children(".postInfo").children(".userInfo")
+				.add( $jq(posttag).children(".postInfoM").children(".nameBlock") );
 
-		var id = $Jq(".posteruid", postinfotag).first().text();
+		var id = $jq(".posteruid", postinfotag).first().text();
 
 		if(id == "(ID: Heaven)")
 			return;
 		
-		var filetextspan = $Jq(posttag).children(".file").find(".fileText");
-		var subjectspan = $Jq(".subject", postinfotag);
+		var filetextspan = $jq(posttag).children(".file").find(".fileText");
+		var subjectspan = $jq(".subject", postinfotag);
 
 		var filename = null;
 		var name = null;
@@ -374,18 +383,18 @@ function setUp()
 		var email = null;
 		var subject = null;
 		
-		var assignbutton = $Jq(".assignbutton", postinfotag);
+		var assignbutton = $jq(".assignbutton", postinfotag);
 
 		if(optionsGet("Enable Sync") == "true"
 			&& filetextspan.length != 0
 			&& !filetextspan.parents("div.postContainer").hasClass("inline")) {
 			// We're excluding inline posts here so that way filenames are
 			// sure to be matched up to the server response in post order.
-			var filenamespan = $Jq("span[title]", filetextspan);
+			var filenamespan = $jq("span[title]", filetextspan);
 			if(filenamespan.length == 0) {
-				filenamespan = $Jq("a[href]", filetextspan);
+				filenamespan = $jq("a[href]", filetextspan);
 			}
-			var truncnametag = $Jq(".fntrunc", filenamespan);
+			var truncnametag = $jq(".fntrunc", filenamespan);
 			if(truncnametag.length == 0) {
 				filename = filenamespan.text();
 			} else {
@@ -404,8 +413,8 @@ function setUp()
 		if (names[id] == null || onlineNames.indexOf(names[id]) == -1)
 		{
 			if(assignbutton.length == 0) {
-				assignbutton = $Jq("<a/>")
-				.attr("href", "#")
+				assignbutton = $jq("<a/>")
+				.attr("href", "javascript:;")
 				.attr("title", "Assign a name to this poster")
 				.addClass("assignbutton")
 				.text("+")
@@ -438,19 +447,19 @@ function setUp()
 				subjectspan.text(subject);
 			}
 
-			var nametag = $Jq(".name", postinfotag);
-			var triptag = $Jq(".postertrip", postinfotag);
+			var nametag = $jq(".name", postinfotag);
+			var triptag = $jq(".postertrip", postinfotag);
 
 			if(nametag.first().text() != name) {
 				nametag.text(name);
 			}
 
 			if(email != null && email != "") {
-				var emailtag = $Jq(".useremail", postinfotag);
+				var emailtag = $jq(".useremail", postinfotag);
 				// If we don't have an emailtag, make it and move the
 				// name and tripcode tags into it.
 				if(emailtag.length == 0) {
-					emailtag = $Jq("<a/>")
+					emailtag = $jq("<a/>")
 					.addClass("useremail")
 					.insertBefore(nametag);
 
@@ -458,20 +467,20 @@ function setUp()
 					// The first nametag element has been moved into
 					// emailtag. The other nametag elements must be removed.
 					nametag.slice(1).remove();
-					nametag = $Jq(".name", postinfotag);
+					nametag = $jq(".name", postinfotag);
 
 					// The triptag elements will be re-added later.
 					triptag.remove();
-					triptag = $Jq(".postertrip", postinfotag);
+					triptag = $jq(".postertrip", postinfotag);
 				}
 				emailtag.attr("href", "mailto:"+email);
 			}
 
 			if(tripcode != null || triptag.length != 0) {
 				if(triptag.length == 0) {
-					triptag = $Jq("<span/>").addClass("postertrip");
+					triptag = $jq("<span/>").addClass("postertrip");
 					nametag.after(" ", triptag);
-					triptag = $Jq(".postertrip", postinfotag);
+					triptag = $jq(".postertrip", postinfotag);
 				}
 				if(triptag.first().text() != tripcode) {
 					triptag.text(tripcode);
@@ -556,8 +565,8 @@ function setUp()
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
-		if(e.target.nodeName=='DIV' && $Jq(e.target).hasClass("replyContainer") && !$Jq(e.target).hasClass("inline")) {
-			updatePost($Jq(".reply", e.target));
+		if(e.target.nodeName=='DIV' && $jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline")) {
+			updatePost($jq(".reply", e.target));
 		}
 	}, true);
 }
