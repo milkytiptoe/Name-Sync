@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.1.57
+// @version       2.1.58
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -29,12 +29,12 @@ function addJQuery(a)
 function setUp()
 {
 	var optionPre = "NameSync.";
-	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Cross-thread Links", "Append Errors", "Override Fields", "Automatic Updates"];
-	var optionsDescriptions = ["Share and download names online", "Hide IDs next to poster names", "Show poster options next to poster names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Share these instead of the quick reply fields", "Check for and notify about updates automatically"];
-	var optionsDefaults = ["true", "false", "true", "true", "true", "false", "true"];
+	var optionsNames = ["Enable Sync", "Hide IDs", "Show Poster Options", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
+	var optionsDescriptions = ["Share names online", "Hide IDs next to names", "Show poster options next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
+	var optionsDefaults = ["true", "false", "true", "true", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.1.57";
+	var ver = "2.1.58";
 	
 	var names = null;
 
@@ -117,7 +117,7 @@ function setUp()
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+optionsGet("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+optionsGet("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+optionsGet("Subject")+"' />";
 		optionsDiv.appendChild(optionsList);
 		
-		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='http://milkytiptoe.github.com/Name-Sync/' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='javascript:;''>Check for update</a></li></ul><br />";
+		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='http://milkytiptoe.github.com/Name-Sync/' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li></ul><br />";
 		
 		$jq('input[type="checkbox"]').live("click", function() { optionsSet($jq(this).attr("name"), String($jq(this).is(":checked"))); });
 		
@@ -128,19 +128,6 @@ function setUp()
 		$jq("#bName").change(function() { optionsSet("Name", $jq(this).val()); });
 		$jq("#bEmail").change(function() { optionsSet("Email", $jq(this).val()); });
 		$jq("#bSubject").change(function() { optionsSet("Subject", $jq(this).val()); });
-		$jq("#updateLink").click(function() { 
-			$jq(this).html("Checking...");
-			$jq.ajax({
-				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/u.php?v='+ver
-			}).fail(function() {
-				$jq("#updateLink").html("Error checking for update");
-			}).done(function(data) {
-				$jq("#updateLink").html(data);
-			});
-			
-			$jq(this).attr('onclick','').unbind('click');
-		});
 		
 		$jq("#optionsScreen").fadeIn("fast");
 	}
