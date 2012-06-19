@@ -1,3 +1,8 @@
+2.1.59
+- Fixed Show Poster Options option
+- Renamed Show Poster Options option to Show Assign Button
+- Hide assign button on inline and hover preview posts
+
 2.1.58
 - Changes to options descriptions and ordering
 - Removed Check for update link
