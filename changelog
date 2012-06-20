@@ -1,6 +1,7 @@
 2.1.60
 - Readded Check for update link
 - Cross-thread Links disabled by default
+- Fixed extra space after a name with no tripcode
 
 2.1.59
 - Fixed Show Poster Options option

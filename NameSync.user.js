@@ -425,7 +425,7 @@ function setUp()
 			name = name.split("#");
 			if (typeof name[1] != "undefined")
 			{
-				tripcode = "!" + name[1];
+				tripcode = " !" + name[1];
 			}
 
 			name = name[0];
@@ -467,7 +467,7 @@ function setUp()
 			if(tripcode != null || triptag.length != 0) {
 				if(triptag.length == 0) {
 					triptag = $jq("<span/>").addClass("postertrip");
-					nametag.after(" ", triptag);
+					nametag.after(triptag);
 					triptag = $jq(".postertrip", postinfotag);
 				}
 				if(triptag.first().text() != tripcode) {
