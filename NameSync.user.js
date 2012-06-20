@@ -31,7 +31,7 @@ function setUp()
 	var optionPre = "NameSync.";
 	var optionsNames = ["Enable Sync", "Hide IDs", "Show Assign Button", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
 	var optionsDescriptions = ["Share names online", "Hide IDs next to names", "Show assign button next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
-	var optionsDefaults = ["true", "false", "true", "true", "true", "true", "false"];
+	var optionsDefaults = ["true", "false", "true", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
 	var ver = "2.1.60";
@@ -182,7 +182,7 @@ function setUp()
 		}
 	}
 	
-	if (optionsGet("Cross-thread Links") == "false")
+	if (optionsGet("Cross-thread Links") == "true")
 	{
 		var commentBox = $jq('#qr textarea[name="com"]');
 		commentBox.on("paste", function() {
