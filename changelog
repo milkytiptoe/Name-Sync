@@ -1,3 +1,7 @@
+2.1.60
+- Readded Check for update link
+- Cross-thread Links disabled by default
+
 2.1.59
 - Fixed Show Poster Options option
 - Renamed Show Poster Options option to Show Assign Button

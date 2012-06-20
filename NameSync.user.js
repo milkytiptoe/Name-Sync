@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.1.59
+// @version       2.1.60
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,14 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "true", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.1.59";
+	var ver = "2.1.60";
+	
+	var uv = ver.replace(/\./g, "");
+	var ut = new Date().getTime();
+	var ulv = optionsGet("latestversion");
+	var ulc = optionsGet("lastcheck");
+	if (ulv == "") lv = uv;
+	if (ulc == "") lc = ut;	
 	
 	var names = null;
 
@@ -63,33 +70,32 @@ function setUp()
 	var csheet = document.createElement('style');
 	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
 	document.body.appendChild(csheet);
+		
+	function update() {
+		var ul = $jq("#updateLink");
+		ul.html("Checking...");
+		$jq.ajax({
+			headers: {"X-Requested-With":"Ajax"},
+			url: 'http://nassign.heliohost.org/s/uq.php'
+		}).done(function(lv) {
+			optionsSet("latestversion", lv);
+			optionsSet("lastcheck", ut);
+			if (lv > uv) {
+				ul.html("Update available");
+				if (confirm("A new update for /b/ Name Sync is available, install now?"))
+					window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
+			} else
+				ul.html("No update available");
+		}).fail(function() {
+			ul.html("Error checking for update");
+		});
+	}
 	
-	function checkUpdate()
-	{
-		var v = ver.replace(/\./g, "");
-		var d = new Date().getTime();
-		var lu = optionsGet("lastcheck");
-		var lv = optionsGet("latestversion");
-		if (lu == "") {
-			lu = d;
-			optionsSet("lastcheck", lu);
+	if (optionsGet("Automatic Updates") == "true") {
+		if (ut > ulc+86400000 && ulv <= uv) {
+			update();
 		}
-		if (lv == "") lv = v;
-		if (d > parseInt(lu)+86400000 && lv <= v) {
-			$jq.ajax({
-				headers: {"X-Requested-With":"Ajax"},
-				url: 'http://nassign.heliohost.org/s/uq.php?v='+ver
-			}).done(function(data) {
-				lv = parseInt(data);
-				optionsSet("latestversion", lv);
-				if (lv > v) {
-					if (confirm("A new update for /b/ Name Sync is available, install now?\t\tAfter installing the update, refresh to apply changes"))
-						window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
-				}
-			});
-			optionsSet("lastcheck", d);
-		}
-		if (lv > v) {
+		if (ulv > uv) {
 			$jq("#syncStatus").before("A new update for /b/ Name Sync is available. \
 			<a href='javascript:;' onclick='window.location = \"https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js\";' https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js' target='_blank' onclick='javascript: this.innerHTML =\"\"'>Install now</a><br />After installing update, <a href='javascript:;' onclick='javascript:location.reload(true);'>refresh</a> to apply changes<br /><br />");
 		}
@@ -117,7 +123,7 @@ function setUp()
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+optionsGet("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+optionsGet("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+optionsGet("Subject")+"' />";
 		optionsDiv.appendChild(optionsList);
 		
-		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='http://milkytiptoe.github.com/Name-Sync/' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li></ul><br />";
+		optionsDiv.innerHTML += "<h2>More</h2><ul><li><a href='http://mayhemydg.github.com/4chan-x/' target='_blank'>4chan X</a></li><li><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></li><li><a href='http://milkytiptoe.github.com/Name-Sync/' target='_blank'>Website</a></li><li><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcode</a></li><li id='updateLink'><a href='javascript:;''>Check for update</a></li></ul><br />";
 		
 		$jq('input[type="checkbox"]').live("click", function() { optionsSet($jq(this).attr("name"), String($jq(this).is(":checked"))); });
 		
@@ -128,6 +134,7 @@ function setUp()
 		$jq("#bName").change(function() { optionsSet("Name", $jq(this).val()); });
 		$jq("#bEmail").change(function() { optionsSet("Email", $jq(this).val()); });
 		$jq("#bSubject").change(function() { optionsSet("Subject", $jq(this).val()); });
+		$jq("#updateLink").click(function() { update(); $jq(this).unbind("click"); });
 		
 		$jq("#optionsScreen").fadeIn("fast");
 	}
@@ -175,7 +182,7 @@ function setUp()
 		}
 	}
 	
-	if (optionsGet("Cross-thread Links") == "true")
+	if (optionsGet("Cross-thread Links") == "false")
 	{
 		var commentBox = $jq('#qr textarea[name="com"]');
 		commentBox.on("paste", function() {
@@ -187,11 +194,6 @@ function setUp()
 				});
 			}, 100);
 		});
-	}
-	
-	if (optionsGet("Automatic Updates") == "true")
-	{
-		checkUpdate();
 	}
 	
 	function addListenQR()
