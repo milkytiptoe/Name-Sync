@@ -46,7 +46,7 @@ function setUp()
 	var names = null;
 
 	var onlineNames = [];
-	var onlineFiles = [];
+	var onlinePosts = [];
 	var onlineEmails = [];
 	var onlineSubjects = [];
 	
@@ -55,8 +55,7 @@ function setUp()
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
 	t = t.substring(0, 9);
-		
-	var lastFile = "";
+	
 	var status = 0;
 	
 	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
@@ -168,13 +167,15 @@ function setUp()
 	
 	function QRListen() {
 		var qr = $jq("#qr")[0];
-		qr.addEventListener('QRPostSuccessful', function(e) {
+		qr.removeEventListener("QRPostSuccessful");
+		qr.addEventListener("QRPostSuccessful", function(e) {
 			if (!optionsGetB("Enable Sync")) return;
+			
+			var postID = e.detail.postID;
+			var threadID = e.detail.threadID;
 			var cName;
 			var cEmail;
 			var cSubject;
-			var cFile = $jq("#replies .thumbnail[title]", qr).first().attr("title");
-			cFile = cFile.substring(0, cFile.lastIndexOf(" ("));
 			
 			if (optionsGetB("Override Fields")) {
 				cName = optionsGet("Name");
@@ -186,27 +187,17 @@ function setUp()
 				cSubject = $jq('input[name="sub"]', qr).val();
 			}
 				
-			if (cFile != lastFile && cName != "" && cFile != "") {
-				if (onlineFiles.indexOf(cFile) > -1) return;
+			if ($jq.trim(cName) == "") return;
 				
-				lastFile = cFile;
-				
-				if (cFile.length-4 > 30) {
-					var start = cFile.substring(0, 30);
-					var end = cFile.substring(cFile.length-4, cFile.length);
-					cFile = start + "(...)" + end;
-				}
-				
-				var d = "f="+encodeURIComponent(cFile)+"&n="+encodeURIComponent(cName)+"&t="+t+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
-				$jq.ajax({
-					headers: {"X-Requested-With":"Ajax"},
-					type: "POST",
-					url: "http://nassign.heliohost.org/s/s.php",
-					data: d
-				}).fail(function() {
-					setSyncStatus(1, "Offline (Error sending)");
-				});
-			}
+			var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+			$jq.ajax({
+				headers: {"X-Requested-With":"Ajax"},
+				type: "POST",
+				url: "http://nassign.heliohost.org/s/sp.php",
+				data: d
+			}).fail(function() {
+				setSyncStatus(1, "Offline (Error sending)");
+			});
 		});
 	}
 	
@@ -271,14 +262,14 @@ function setUp()
 				else
 				{
 					onlineNames = [];
-					onlineFiles = [];
+					onlinePosts = [];
 					onlineSubjects = [];
 					onlineEmails = [];
 					
 					for (var i = 0, len = data.length; i < len; i++)
 					{
 						onlineNames.push(data[i].n);
-						onlineFiles.push(data[i].f);
+						onlinePosts.push(data[i].f);
 						onlineEmails.push(data[i].e);
 						onlineSubjects.push(data[i].s);
 					}
@@ -424,7 +415,7 @@ function setUp()
 	
 	function getOnlineInfo(filename)
 	{
-		var index = onlineFiles.indexOf(filename);
+		var index = onlinePosts.indexOf(filename);
 		
 		if (index > -1)
 		{
