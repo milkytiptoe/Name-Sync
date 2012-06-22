@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/res/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.1.60
+// @version       2.1.61
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function setUp()
 	var optionsDefaults = ["true", "false", "true", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.1.60";
+	var ver = "2.1.61";
 	
 	var uv = ver.replace(/\./g, "");
 	var ut = new Date().getTime();
@@ -91,7 +91,7 @@ function setUp()
 		});
 	}
 	
-	if (optionsGet("Automatic Updates") == "true") {
+	if (optionsGetB("Automatic Updates")) {
 		if (ut > ulc+86400000 && ulv <= uv) {
 			update();
 		}
@@ -116,7 +116,7 @@ function setUp()
 		
 		for (var i = 0, len = optionsNames.length; i < len; i++)
 		{
-			var checked = optionsGet(optionsNames[i]) == "true" ? 'checked' : '';
+			var checked = optionsGetB(optionsNames[i]) ? 'checked' : '';
 			optionsList.innerHTML += "<li><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</li>";
 		}
 		
@@ -148,95 +148,52 @@ function setUp()
 	
 	function hideIds()
 	{
-		optionsGet("Hide IDs") == "true" ? asheet.innerHTML = ".posteruid { display: none; }" : asheet.innerHTML = ".posteruid { display: inline; }";
+		optionsGetB("Hide IDs") ? asheet.innerHTML = ".posteruid { display: none; }" : asheet.innerHTML = ".posteruid { display: inline; }";
 	}
 
 	function hidePstrOpts()
 	{
-		optionsGet("Show Assign Button") == "true" ? bsheet.innerHTML = ".assignbutton { display: inline; }" : bsheet.innerHTML = ".assignbutton { display: none; }";
+		optionsGetB("Show Assign Button") ? bsheet.innerHTML = ".assignbutton { display: inline; }" : bsheet.innerHTML = ".assignbutton { display: none; }";
 	}
 	
 	$jq(document).ready(function() {
-		if (optionsGet("Has Run") == "")
-		{
+		if (!optionsGet("Has Run")) {
 			optionsShow();
 			optionsSet("Has Run", "true");
 		}
 		
-		enableListen();
-
-		setTimeout(function() { sync(); }, 1000);
+		QRListen();
+		sync();
 	});
 	
-	function enableListen()
-	{		
-		if ($jq("#qr").length)
-		{
-			addListenQR();
-		}
-		else
-		{
-			document.body.addEventListener('QRDialogCreation', function() {
-					addListenQR();
-			}, true);
-		}
-	}
-	
-	if (optionsGet("Cross-thread Links") == "true")
-	{
-		var commentBox = $jq('#qr textarea[name="com"]');
-		commentBox.on("paste", function() {
-			setTimeout(function() {
-				commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
-				$jq(".thread .post", document).each(function() {
-					var id = this.id.substring(1);
-					commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
-				});
-			}, 100);
-		});
-	}
-	
-	function addListenQR()
-	{
-		var qr = $jq("#qr");
-		
-		$jq("form", qr).on("submit", function() {
+	function QRListen() {
+		$jq(document).on("QRPostSuccessful", function() {
+			if (!optionsGetB("Enable Sync")) return;
+			
+			var qr = $jq("#qr");
 			var cName;
 			var cEmail;
 			var cSubject;
-			var cFile = $jq('input[type="file"]', qr).val();
+			var cFile = $jq("#replies .thumbnail[title]", qr).first().attr("title");
+			cFile = cFile.substring(0, cFile.lastIndexOf(" ("));
 			
-			var queuedReplies = $jq("#replies .preview[title]", qr);
-			if (queuedReplies.length)
-			{
-				cFile = queuedReplies.attr("title");
-			}
-			
-			if (optionsGet("Override Fields") == "true")
-			{
+			if (optionsGetB("Override Fields")) {
 				cName = optionsGet("Name");
 				cEmail = optionsGet("Email");
 				cSubject = optionsGet("Subject");
-			}
-			else
-			{
+			} else {
 				cName = $jq('input[name="name"]', qr).val();
 				cEmail = $jq('input[name="email"]', qr).val();
 				cSubject = $jq('input[name="sub"]', qr).val();
 			}
-			
-			if (cFile != lastFile && canPost && cName != "" && cFile != "" && optionsGet("Enable Sync") == "true")
-			{
-				if (cFile.indexOf("C:\\fakepath\\") > -1)
-					cFile = cFile.split("C:\\fakepath\\")[1];
-					
+				
+			if (cFile != lastFile && canPost && cName != "" && cFile != "") {
 				if (onlineFiles.indexOf(cFile) > -1) return;
 				
 				canPost = false;
 				lastFile = cFile;
 				
-				if (cFile.length-4 > 30)
-				{
+				if (cFile.length-4 > 30) {
 					var start = cFile.substring(0, 30);
 					var end = cFile.substring(cFile.length-4, cFile.length);
 					cFile = start + "(...)" + end;
@@ -252,11 +209,24 @@ function setUp()
 					setSyncStatus(1, "Offline (Error sending)");
 				});
 				
-				if (canSync())
-				{
+				if (canSync()) {
 					setTimeout(function() { postSet(); }, 30000);
 				}
 			}
+		});
+	}
+	
+	if (optionsGetB("Cross-thread Links"))
+	{
+		var commentBox = $jq('#qr textarea[name="com"]');
+		commentBox.on("paste", function() {
+			setTimeout(function() {
+				commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
+				$jq(".thread .post", document).each(function() {
+					var id = this.id.substring(1);
+					commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
+				});
+			}, 100);
 		});
 	}
 	
@@ -267,10 +237,11 @@ function setUp()
 	
 	function canSync()
 	{
-		if ($jq("#imagecount").length && $jq("#count").length)
-			return (parseInt($jq("#imagecount").text()) <= 250 && $jq("#count").text() != "404");
-		else
-			return false;
+		var ic = $jq("#imagecount");
+		if (ic.length && ic.hasClass("warning")) return false;
+		var c = $jq("#count");
+		if (c.length == 0 || c.text() == "404") return false;
+		return true;
 	}
 	
 	var setSyncStatus = function(type, msg)
@@ -285,7 +256,7 @@ function setUp()
 		
 		$jq("#syncStatus").html(msg).css("color", colour);
 		
-		if (status != type && optionsGet("Append Errors") == "true")
+		if (status != type && optionsGetB("Append Errors"))
 		{
 			$jq("div.warning").html("<span style='color: "+colour+" !important;'>Sync is "+msg+"</span>");
 			setTimeout(function() { $jq("div.warning").html(""); }, 5000);
@@ -296,7 +267,7 @@ function setUp()
 	
 	function sync()
 	{		
-		if (optionsGet("Enable Sync") == "true")
+		if (optionsGetB("Enable Sync"))
 		{
 			$jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
@@ -352,8 +323,6 @@ function setUp()
 	}
 
 	function updatePost(posttag) {
-		// Get the postinfotag to look in specifically, so we don't
-		// accidentally look into inlined posts' content later.
 		var postinfotag = $jq(posttag).children(".postInfo").children(".userInfo")
 				.add( $jq(posttag).children(".postInfoM").children(".nameBlock") );
 
@@ -373,11 +342,9 @@ function setUp()
 		
 		var assignbutton = $jq(".assignbutton", postinfotag);
 
-		if(optionsGet("Enable Sync") == "true"
+		if (optionsGetB("Enable Sync")
 			&& filetextspan.length != 0
 			&& !filetextspan.parents("div.postContainer").hasClass("inline")) {
-			// We're excluding inline posts here so that way filenames are
-			// sure to be matched up to the server response in post order.
 			var filenamespan = $jq("span[title]", filetextspan);
 			if(filenamespan.length == 0) {
 				filenamespan = $jq("a[href]", filetextspan);
@@ -391,7 +358,6 @@ function setUp()
 			var info = getOnlineInfo(filename);
 			if(info != null && info[0] != null && info[0] != "" && !usedFilenames[filename]) {
 				names[id] = info[0];
-				
 				email = info[1];
 				subject = info[2];
 				usedFilenames[filename] = true;
@@ -423,41 +389,32 @@ function setUp()
 			tripcode = "";
 			
 			name = name.split("#");
+			
 			if (typeof name[1] != "undefined")
-			{
 				tripcode = " !" + name[1];
-			}
 
 			name = name[0];
 			
 			if (subject != null && subject != "" && subjectspan.first().text() != subject)
-			{
 				subjectspan.text(subject);
-			}
 
 			var nametag = $jq(".name", postinfotag);
 			var triptag = $jq(".postertrip", postinfotag);
 
-			if(nametag.first().text() != name) {
+			if(nametag.first().text() != name)
 				nametag.text(name);
-			}
 
 			if(email != null && email != "") {
 				var emailtag = $jq(".useremail", postinfotag);
-				// If we don't have an emailtag, make it and move the
-				// name and tripcode tags into it.
 				if(emailtag.length == 0) {
 					emailtag = $jq("<a/>")
 					.addClass("useremail")
 					.insertBefore(nametag);
 
 					nametag.first().appendTo(emailtag);
-					// The first nametag element has been moved into
-					// emailtag. The other nametag elements must be removed.
 					nametag.slice(1).remove();
 					nametag = $jq(".name", postinfotag);
 
-					// The triptag elements will be re-added later.
 					triptag.remove();
 					triptag = $jq(".postertrip", postinfotag);
 				}
@@ -510,6 +467,11 @@ function setUp()
 			hideIds();
 		if (name == "Show Assign Button")
 			hidePstrOpts();
+	}
+	
+	function optionsGetB(name)
+	{
+		return optionsGet(name) == "true";
 	}
 	
 	function optionsGet(name)

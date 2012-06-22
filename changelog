@@ -1,3 +1,8 @@
+2.1.61 (Requires Mayhem 4chan X 2.33.1)
+- Changes to name send method
+- Fixed sending name using auto mode
+- Fixed sync with thread stats disabled
+
 2.1.60
 - Readded Check for update link
 - Cross-thread Links disabled by default
