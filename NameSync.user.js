@@ -161,15 +161,15 @@ function setUp()
 			optionsSet("Has Run", "true");
 		}
 		
-		QRListen();
+		if ($jq("#qr").length)
+			QRListen();
 		sync();
 	});
 	
 	function QRListen() {
-		$jq(document).on("QRPostSuccessful", function() {
+		var qr = $jq("#qr")[0];
+		qr.addEventListener('QRPostSuccessful', function(e) {
 			if (!optionsGetB("Enable Sync")) return;
-			
-			var qr = $jq("#qr");
 			var cName;
 			var cEmail;
 			var cSubject;
@@ -503,8 +503,12 @@ function setUp()
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
-		if(e.target.nodeName=='DIV' && $jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline")) {
-			updatePost($jq(".reply", e.target));
+		if (e.target.nodeName=='DIV') {
+			if ($jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline"))
+				updatePost($jq(".reply", e.target));
+				
+			if (e.target.id == "qr")
+				QRListen();
 		}
 	}, true);
 }
