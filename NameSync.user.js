@@ -163,40 +163,43 @@ function setUp()
 		sync();
 	});
 	
+	function send(e) {
+		if (!optionsGetB("Enable Sync")) return;
+		
+		var qr = $jq("#qr");
+		var postID = e.detail.postID;
+		var threadID = e.detail.threadID;
+		var cName;
+		var cEmail;
+		var cSubject;
+		
+		if (optionsGetB("Override Fields")) {
+			cName = optionsGet("Name");
+			cEmail = optionsGet("Email");
+			cSubject = optionsGet("Subject");
+		} else {
+			cName = $jq('input[name="name"]', qr).val();
+			cEmail = $jq('input[name="email"]', qr).val();
+			cSubject = $jq('input[name="sub"]', qr).val();
+		}
+			
+		if ($jq.trim(cName) == "" || cEmail == "sage") return;
+			
+		var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+		$jq.ajax({
+			headers: {"X-Requested-With":"Ajax"},
+			type: "POST",
+			url: "http://nassign.heliohost.org/s/sp.php",
+			data: d
+		}).fail(function() {
+			setSyncStatus(1, "Offline (Error sending)");
+		});
+	}
+	
 	function QRListen() {
 		var qr = $jq("#qr")[0];
-		qr.removeEventListener("QRPostSuccessful");
-		qr.addEventListener("QRPostSuccessful", function(e) {
-			if (!optionsGetB("Enable Sync")) return;
-			
-			var postID = e.detail.postID;
-			var threadID = e.detail.threadID;
-			var cName;
-			var cEmail;
-			var cSubject;
-			
-			if (optionsGetB("Override Fields")) {
-				cName = optionsGet("Name");
-				cEmail = optionsGet("Email");
-				cSubject = optionsGet("Subject");
-			} else {
-				cName = $jq('input[name="name"]', qr).val();
-				cEmail = $jq('input[name="email"]', qr).val();
-				cSubject = $jq('input[name="sub"]', qr).val();
-			}
-				
-			if ($jq.trim(cName) == "" || cEmail == "sage") return;
-				
-			var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
-			$jq.ajax({
-				headers: {"X-Requested-With":"Ajax"},
-				type: "POST",
-				url: "http://nassign.heliohost.org/s/sp.php",
-				data: d
-			}).fail(function() {
-				setSyncStatus(1, "Offline (Error sending)");
-			});
-		});
+		qr.removeEventListener("QRPostSuccessful", send, true);
+		qr.addEventListener("QRPostSuccessful", send, true);
 	}
 	
 	if (optionsGetB("Cross-thread Links")) {
@@ -314,7 +317,7 @@ function setUp()
 		if (optionsGetB("Enable Sync")
 			&& postnumspan.length != 0
 			&& !postnumspan.parents("div.postContainer").hasClass("inline")) {
-			postnum = $jq("a[title='Quote this post']", postnumspan).html();
+			postnum = $jq("a[title='Quote this post']", postnumspan).text();
 			var info = getOnlineInfo(postnum);
 			if(info != null && info[0] != null && info[0] != "") {
 				names[id] = info[0];
