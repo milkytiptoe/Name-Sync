@@ -57,7 +57,6 @@ function setUp()
 	t = t.substring(0, 9);
 		
 	var lastFile = "";
-	var canPost = true;
 	var status = 0;
 	
 	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
@@ -187,10 +186,9 @@ function setUp()
 				cSubject = $jq('input[name="sub"]', qr).val();
 			}
 				
-			if (cFile != lastFile && canPost && cName != "" && cFile != "") {
+			if (cFile != lastFile && cName != "" && cFile != "") {
 				if (onlineFiles.indexOf(cFile) > -1) return;
 				
-				canPost = false;
 				lastFile = cFile;
 				
 				if (cFile.length-4 > 30) {
@@ -208,16 +206,11 @@ function setUp()
 				}).fail(function() {
 					setSyncStatus(1, "Offline (Error sending)");
 				});
-				
-				if (canSync()) {
-					setTimeout(function() { postSet(); }, 30000);
-				}
 			}
 		});
 	}
 	
-	if (optionsGetB("Cross-thread Links"))
-	{
+	if (optionsGetB("Cross-thread Links")) {
 		var commentBox = $jq('#qr textarea[name="com"]');
 		commentBox.on("paste", function() {
 			setTimeout(function() {
@@ -228,11 +221,6 @@ function setUp()
 				});
 			}, 100);
 		});
-	}
-	
-	function postSet()
-	{
-		canPost = true;
 	}
 	
 	function canSync()
