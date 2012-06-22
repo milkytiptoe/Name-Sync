@@ -50,8 +50,6 @@ function setUp()
 	var onlineEmails = [];
 	var onlineSubjects = [];
 	
-	var usedFilenames = [];
-	
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
 	t = t.substring(0, 9);
@@ -187,7 +185,7 @@ function setUp()
 				cSubject = $jq('input[name="sub"]', qr).val();
 			}
 				
-			if ($jq.trim(cName) == "") return;
+			if ($jq.trim(cName) == "" || cEmail == "sage") return;
 				
 			var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
 			$jq.ajax({
@@ -244,23 +242,18 @@ function setUp()
 		status = type;
 	}
 	
-	function sync()
-	{		
-		if (optionsGetB("Enable Sync"))
-		{
+	function sync() {
+		if (optionsGetB("Enable Sync"))	{
 			$jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				dataType: "json",
-				url: 'http://nassign.heliohost.org/s/qj.php?t='+t,
+				url: 'http://nassign.heliohost.org/s/qp.php?t='+t,
 			}).fail(function() {
 				setSyncStatus(1, "Offline (Error retrieving)");
 			}).done(function(data) {
-				if (data == null)
-				{
+				if (data == null) {
 					setSyncStatus(0, "Online");
-				}
-				else
-				{
+				} else {
 					onlineNames = [];
 					onlinePosts = [];
 					onlineSubjects = [];
@@ -269,7 +262,7 @@ function setUp()
 					for (var i = 0, len = data.length; i < len; i++)
 					{
 						onlineNames.push(data[i].n);
-						onlinePosts.push(data[i].f);
+						onlinePosts.push(data[i].p);
 						onlineEmails.push(data[i].e);
 						onlineSubjects.push(data[i].s);
 					}
@@ -278,14 +271,11 @@ function setUp()
 					updateElements();
 				}
 			});
-		}
-		else
-		{
+		} else {
 			setSyncStatus(2, "Disabled");
 		}
 		
-		if (canSync())
-		{
+		if (canSync()) {
 			setTimeout(function() { sync(); }, 30000);
 		}
 	}
@@ -310,10 +300,10 @@ function setUp()
 		if(id == "(ID: Heaven)")
 			return;
 		
-		var filetextspan = $jq(posttag).children(".file").find(".fileText");
+		var postnumspan = $jq(posttag).children(".postInfo").find(".postNum");
 		var subjectspan = $jq(".subject", postinfotag);
 
-		var filename = null;
+		var postnum = null;
 		var name = null;
 		var tripcode = null;
 		var email = null;
@@ -322,24 +312,14 @@ function setUp()
 		var assignbutton = $jq(".assignbutton", postinfotag);
 
 		if (optionsGetB("Enable Sync")
-			&& filetextspan.length != 0
-			&& !filetextspan.parents("div.postContainer").hasClass("inline")) {
-			var filenamespan = $jq("span[title]", filetextspan);
-			if(filenamespan.length == 0) {
-				filenamespan = $jq("a[href]", filetextspan);
-			}
-			var truncnametag = $jq(".fntrunc", filenamespan);
-			if(truncnametag.length == 0) {
-				filename = filenamespan.text();
-			} else {
-				filename = truncnametag.text();
-			}
-			var info = getOnlineInfo(filename);
-			if(info != null && info[0] != null && info[0] != "" && !usedFilenames[filename]) {
+			&& postnumspan.length != 0
+			&& !postnumspan.parents("div.postContainer").hasClass("inline")) {
+			postnum = $jq("a[title='Quote this post']", postnumspan).html();
+			var info = getOnlineInfo(postnum);
+			if(info != null && info[0] != null && info[0] != "") {
 				names[id] = info[0];
 				email = info[1];
 				subject = info[2];
-				usedFilenames[filename] = true;
 			}
 		}
 		
