@@ -17,7 +17,7 @@
 function addJQuery(a)
 {
 	var script = document.createElement("script");
-	script.setAttribute("src", "http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
+	script.setAttribute("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 	script.addEventListener('load', function() {
 	var script = document.createElement("script");
 	script.textContent = "(" + a.toString() + ")();";
