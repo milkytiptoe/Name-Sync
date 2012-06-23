@@ -14,7 +14,7 @@
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
-function addJQuery(a)
+function addjQuery(a)
 {
 	var script = document.createElement("script");
 	script.setAttribute("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
@@ -26,7 +26,7 @@ function addJQuery(a)
 	document.body.appendChild(script);
 }
 
-function setUp()
+function NameSync()
 {
 	var optionPre = "NameSync.";
 	var optionsNames = ["Enable Sync", "Hide IDs", "Show Assign Button", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
@@ -148,7 +148,7 @@ function setUp()
 		optionsGetB("Hide IDs") ? asheet.innerHTML = ".posteruid { display: none; }" : asheet.innerHTML = ".posteruid { display: inline; }";
 	}
 
-	function hidePstrOpts()
+	function hideAssBtn()
 	{
 		optionsGetB("Show Assign Button") ? bsheet.innerHTML = ".assignbutton { display: inline; }" : bsheet.innerHTML = ".assignbutton { display: none; }";
 	}
@@ -427,7 +427,7 @@ function setUp()
 		if (name == "Hide IDs")
 			hideIds();
 		if (name == "Show Assign Button")
-			hidePstrOpts();
+			hideAssBtn();
 	}
 	
 	function optionsGetB(name)
@@ -472,7 +472,7 @@ function setUp()
 	
 	loadNames();
 	hideIds();
-	hidePstrOpts();
+	hideAssBtn();
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
@@ -486,4 +486,4 @@ function setUp()
 	}, true);
 }
 
-addJQuery(setUp);
+addjQuery(NameSync);
