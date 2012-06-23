@@ -99,7 +99,8 @@ function setUp()
 	
 	function optionsShow()
 	{
-		$jq("body").scrollTop(0).css("overflow", "hidden");
+		$jq("body").css("overflow", "hidden");
+		$jq(window).scrollTop(0);
 		var overlayDiv = document.createElement("div");
 		overlayDiv.setAttribute("id", "optionsOverlay");
 		document.body.appendChild(overlayDiv);
@@ -285,8 +286,6 @@ function setUp()
 	
 	function updateElements()
 	{
-		usedFilenames = [];
-		
 		$jq(".thread .post", document).each(function() {
 			updatePost(this);
 		});
@@ -396,9 +395,9 @@ function setUp()
 		}
 	}
 	
-	function getOnlineInfo(filename)
+	function getOnlineInfo(postnum)
 	{
-		var index = onlinePosts.indexOf(filename);
+		var index = onlinePosts.indexOf(postnum);
 		
 		if (index > -1)
 		{
