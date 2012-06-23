@@ -314,7 +314,6 @@ function NameSync()
 		var assignbutton = $jq(".assignbutton", postinfotag);
 
 		if (optionsGetB("Enable Sync")
-			&& postnumspan.length != 0
 			&& !postnumspan.parents("div.postContainer").hasClass("inline")) {
 			postnum = $jq("a[title='Quote this post']", postnumspan).text();
 			var info = getOnlineInfo(postnum);
