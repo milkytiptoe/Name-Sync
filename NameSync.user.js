@@ -225,7 +225,7 @@ function NameSync()
 		return true;
 	}
 	
-	var setSyncStatus = function(type, msg)
+	function setSyncStatus(type, msg)
 	{
 		var colour = "green";
 		
