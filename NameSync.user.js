@@ -59,14 +59,12 @@ function NameSync()
 	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$jq("#optionsPopUp").click(function() { optionsShow(); });
 	
-	var asheet = document.createElement('style');
-	document.body.appendChild(asheet);
-	var bsheet = document.createElement('style');
-	document.body.appendChild(bsheet);
-	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
-	document.body.appendChild(csheet);
-		
+	var dstyle = document.createElement('style');
+	document.body.appendChild(dstyle);
+	var sstyle = document.createElement('style');
+	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
+	document.body.appendChild(sstyle);
+	
 	function update() {
 		var ul = $jq("#updateLink");
 		ul.html("Checking...");
@@ -143,18 +141,13 @@ function NameSync()
 		$jq("body").css("overflow", "visible");
 	}
 	
-	function hideIds()
-	{
-		optionsGetB("Hide IDs") ? asheet.innerHTML = ".posteruid { display: none; }" : asheet.innerHTML = ".posteruid { display: inline; }";
-	}
-
-	function hideAssBtn()
-	{
-		optionsGetB("Show Assign Button") ? bsheet.innerHTML = ".assignbutton { display: inline; }" : bsheet.innerHTML = ".assignbutton { display: none; }";
+	function changeStyle() {
+		dstyle.textContent = ".posteruid { display: " + (optionsGetB("Hide IDs") ? "none" : "inline") + "; }\
+		.assignbutton { display: " + (optionsGetB("Show Assign Button") ? "inline" : "none") + "; }";
 	}
 	
 	$jq(document).ready(function() {
-		if (!optionsGet("Has Run")) {
+		if (!optionsGetB("Has Run")) {
 			optionsShow();
 			optionsSet("Has Run", "true");
 		}
@@ -423,10 +416,8 @@ function NameSync()
 	{
 		localStorage.setItem(optionPre + name, value);
 		
-		if (name == "Hide IDs")
-			hideIds();
-		if (name == "Show Assign Button")
-			hideAssBtn();
+		if (name == "Hide IDs" || name == "Show Assign Button")
+			changeStyle();
 	}
 	
 	function optionsGetB(name)
@@ -470,8 +461,7 @@ function NameSync()
 	}
 	
 	loadNames();
-	hideIds();
-	hideAssBtn();
+	changeStyle();
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
