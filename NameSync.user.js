@@ -35,7 +35,7 @@ function NameSync() {
 	var ver = "2.1.61";
 	
 	var uv = ver.replace(/\./g, "");
-	var ut = new Date().getTime();
+	var ut = Date.now();
 	var ulv = optionsGet("latestversion");
 	var ulc = optionsGet("lastcheck");
 	if (ulv == "") lv = uv;
@@ -60,7 +60,7 @@ function NameSync() {
 	var dstyle = document.createElement('style');
 	document.body.appendChild(dstyle);
 	var sstyle = document.createElement('style');
-	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
+	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+Date.now()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
 	document.body.appendChild(sstyle);
 	
 	function update() {
