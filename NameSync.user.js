@@ -11,7 +11,7 @@
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
 // @version       2.1.61
-// @icon          http://i.imgur.com/12a0D.jpg
+// @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
 function addjQuery(a) {
@@ -400,15 +400,10 @@ function NameSync() {
 	function optionsGet(name) {
 		var value = localStorage.getItem(optionPre + name);
 
-		if (value == null || typeof value == "undefined") {
-			if (typeof optionsDefaults[optionsNames.indexOf(name)] != "undefined") {
-				return optionsDefaults[optionsNames.indexOf(name)];
-			} else {
-				return "";
-			}
-		} else {
-			return value;
-		}
+		if (value == null || typeof value == "undefined")
+			return typeof optionsDefaults[optionsNames.indexOf(name)] != "undefined" ? optionsDefaults[optionsNames.indexOf(name)] : "";
+
+		return value;
 	}
 	
 	function storeNames() {
