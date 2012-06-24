@@ -14,20 +14,18 @@
 // @icon          http://i.imgur.com/12a0D.jpg
 // ==/UserScript==
 
-function addjQuery(a)
-{
+function addjQuery(a) {
 	var script = document.createElement("script");
 	script.setAttribute("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 	script.addEventListener('load', function() {
-	var script = document.createElement("script");
-	script.textContent = "(" + a.toString() + ")();";
-	document.body.appendChild(script);
+		var script = document.createElement("script");
+		script.textContent = "(" + a.toString() + ")();";
+		document.body.appendChild(script);
 	}, false);
 	document.body.appendChild(script);
 }
 
-function NameSync()
-{
+function NameSync() {
 	var optionPre = "NameSync.";
 	var optionsNames = ["Enable Sync", "Hide IDs", "Show Assign Button", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
 	var optionsDescriptions = ["Share names online", "Hide IDs next to names", "Show assign button next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
@@ -95,8 +93,7 @@ function NameSync()
 		}
 	}
 	
-	function optionsShow()
-	{
+	function optionsShow() {
 		$jq("body").css("overflow", "hidden");
 		$jq(window).scrollTop(0);
 		var overlayDiv = document.createElement("div");
@@ -109,8 +106,7 @@ function NameSync()
 		
 		var optionsList = document.createElement("ul");
 		
-		for (var i = 0, len = optionsNames.length; i < len; i++)
-		{
+		for (var i = 0, len = optionsNames.length; i < len; i++) {
 			var checked = optionsGetB(optionsNames[i]) ? 'checked' : '';
 			optionsList.innerHTML += "<li><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</li>";
 		}
@@ -134,14 +130,13 @@ function NameSync()
 		$jq("#optionsScreen").fadeIn("fast");
 	}
 	
-	function optionsHide()
-	{
+	function optionsHide() {
 		$jq("#optionsScreen").remove();
 		$jq("#optionsOverlay").remove();
 		$jq("body").css("overflow", "visible");
 	}
 	
-	function changeStyle() {
+	function styles() {
 		dstyle.textContent = ".posteruid { display: " + (optionsGetB("Hide IDs") ? "none" : "inline") + "; }\
 		.assignbutton { display: " + (optionsGetB("Show Assign Button") ? "inline" : "none") + "; }";
 	}
@@ -209,8 +204,7 @@ function NameSync()
 		});
 	}
 	
-	function canSync()
-	{
+	function canSync() {
 		var ic = $jq("#imagecount");
 		if (ic.length && ic.hasClass("warning")) return false;
 		var c = $jq("#count");
@@ -218,20 +212,17 @@ function NameSync()
 		return true;
 	}
 	
-	function setSyncStatus(type, msg)
-	{
+	function setSyncStatus(type, msg) {
 		var colour = "green";
 		
-		switch (type)
-		{
+		switch (type) {
 			case 1: colour = "red"; break;
 			case 2: colour = "gray"; break;
 		}
 		
 		$jq("#syncStatus").html(msg).css("color", colour);
 		
-		if (status != type && optionsGetB("Append Errors"))
-		{
+		if (status != type && optionsGetB("Append Errors"))	{
 			$jq("div.warning").html("<span style='color: "+colour+" !important;'>Sync is "+msg+"</span>");
 			setTimeout(function() { $jq("div.warning").html(""); }, 5000);
 		}
@@ -256,8 +247,7 @@ function NameSync()
 					onlineSubjects = [];
 					onlineEmails = [];
 					
-					for (var i = 0, len = data.length; i < len; i++)
-					{
+					for (var i = 0, len = data.length; i < len; i++) {
 						onlineNames.push(data[i].n);
 						onlinePosts.push(data[i].p);
 						onlineEmails.push(data[i].e);
@@ -277,8 +267,7 @@ function NameSync()
 		}
 	}
 	
-	function updateElements()
-	{
+	function updateElements() {
 		$jq(".thread .post", document).each(function() {
 			updatePost(this);
 		});
@@ -306,20 +295,18 @@ function NameSync()
 		
 		var assignbutton = $jq(".assignbutton", postinfotag);
 
-		if (optionsGetB("Enable Sync")
-			&& !postnumspan.parents("div.postContainer").hasClass("inline")) {
+		if (optionsGetB("Enable Sync") && !postnumspan.parents("div.postContainer").hasClass("inline")) {
 			postnum = $jq("a[title='Quote this post']", postnumspan).text();
 			var info = getOnlineInfo(postnum);
-			if(info != null && info[0] != null && info[0] != "") {
+			if (info != null && info[0] != null && info[0] != "") {
 				names[id] = info[0];
 				email = info[1];
 				subject = info[2];
 			}
 		}
 		
-		if (names[id] == null || onlineNames.indexOf(names[id]) == -1)
-		{
-			if(assignbutton.length == 0) {
+		if (names[id] == null || onlineNames.indexOf(names[id]) == -1) {
+			if (assignbutton.length == 0) {
 				assignbutton = $jq("<a/>")
 				.attr("href", "javascript:;")
 				.attr("title", "Assign a name to this poster")
@@ -331,13 +318,11 @@ function NameSync()
 				})
 				.insertBefore(subjectspan);
 			}
-		}
-		else
-		{
+		} else {
 			assignbutton.css("display", "none");
 		}
 		
-		if(names[id] != null) {
+		if (names[id] != null) {
 			name = names[id];
 			tripcode = "";
 			
@@ -354,12 +339,12 @@ function NameSync()
 			var nametag = $jq(".name", postinfotag);
 			var triptag = $jq(".postertrip", postinfotag);
 
-			if(nametag.first().text() != name)
+			if (nametag.first().text() != name)
 				nametag.text(name);
 
-			if(email != null && email != "") {
+			if (email != null && email != "") {
 				var emailtag = $jq(".useremail", postinfotag);
-				if(emailtag.length == 0) {
+				if (emailtag.length == 0) {
 					emailtag = $jq("<a/>")
 					.addClass("useremail")
 					.insertBefore(nametag);
@@ -374,85 +359,63 @@ function NameSync()
 				emailtag.attr("href", "mailto:"+email);
 			}
 
-			if(tripcode != null || triptag.length != 0) {
-				if(triptag.length == 0) {
+			if (tripcode != null || triptag.length != 0) {
+				if (triptag.length == 0) {
 					triptag = $jq("<span/>").addClass("postertrip");
 					nametag.after(triptag);
 					triptag = $jq(".postertrip", postinfotag);
 				}
-				if(triptag.first().text() != tripcode) {
+				if (triptag.first().text() != tripcode) {
 					triptag.text(tripcode);
 				}
 			}
 		}
 	}
 	
-	function getOnlineInfo(postnum)
-	{
+	function getOnlineInfo(postnum) {
 		var index = onlinePosts.indexOf(postnum);
-		
-		if (index > -1)
-		{
-			return [onlineNames[index], onlineEmails[index], onlineSubjects[index]];
-		}
-		else
-		{
-			return null;
-		}
+		return index > -1 ? [onlineNames[index], onlineEmails[index], onlineSubjects[index]] : null;
 	}
 	
-	function assignName(id)
-	{
+	function assignName(id) {
 		var name = prompt("What would you like this poster to be named?","");
 		
-		if (name != null && name != "")
-		{
+		if (name != null && name != "")	{
 			names[id] = name;
 			updateElements();
 		}
 	}
 	
-	function optionsSet(name, value)
-	{
+	function optionsSet(name, value) {
 		localStorage.setItem(optionPre + name, value);
 		
 		if (name == "Hide IDs" || name == "Show Assign Button")
-			changeStyle();
+			styles();
 	}
 	
-	function optionsGetB(name)
-	{
+	function optionsGetB(name) {
 		return optionsGet(name) == "true";
 	}
 	
-	function optionsGet(name)
-	{
+	function optionsGet(name) {
 		var value = localStorage.getItem(optionPre + name);
 
-		if (value == null || typeof value == "undefined")
-		{
-			if (typeof optionsDefaults[optionsNames.indexOf(name)] != "undefined")
-			{
+		if (value == null || typeof value == "undefined") {
+			if (typeof optionsDefaults[optionsNames.indexOf(name)] != "undefined") {
 				return optionsDefaults[optionsNames.indexOf(name)];
-			}
-			else
-			{
+			} else {
 				return "";
 			}
-		}
-		else
-		{
+		} else {
 			return value;
 		}
 	}
 	
-	function storeNames()
-	{
+	function storeNames() {
 		sessionStorage["names"] = JSON.stringify(names);
 	}
 
-	function loadNames()
-	{
+	function loadNames() {
 		if(sessionStorage["names"] != null)
 			names = JSON.parse(sessionStorage["names"]);
 
@@ -461,7 +424,7 @@ function NameSync()
 	}
 	
 	loadNames();
-	changeStyle();
+	styles();
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
