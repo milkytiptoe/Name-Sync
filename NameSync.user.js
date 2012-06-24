@@ -284,7 +284,7 @@ function NameSync() {
 		if(id == "(ID: Heaven)")
 			return;
 		
-		var postnumspan = $jq(posttag).children(".postInfo").find(".postNum");
+		var postnumspan = $jq(".postNum.desktop", posttag);
 		var subjectspan = $jq(".subject", postinfotag);
 
 		var postnum = null;
