@@ -182,7 +182,7 @@ function NameSync() {
 	function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
 
-		if(t == "b")
+		if (t == "b")
 			isLateOpSend = true;
 
 		$jq.ajax({
@@ -191,7 +191,7 @@ function NameSync() {
 			url: "http://nassign.heliohost.org/s/sp.php",
 			data: d
 		}).fail(function() {
-			if(t=="b") {
+			if (t=="b") {
 				sessionStorage["namesync-tosend"] = JSON.stringify({
 					name: cName,
 					email: cEmail,
@@ -203,7 +203,7 @@ function NameSync() {
 			setSyncStatus(1, "Offline (Error sending)");
 			setTimeout(uploadName, 30*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 		}).success(function() {
-			if(isLateOpSend) {
+			if (isLateOpSend) {
 				delete sessionStorage["namesync-tosend"];
 			}
 		});
@@ -455,7 +455,7 @@ function NameSync() {
 		}
 	}, true);
 
-	if(sessionStorage["namesync-tosend"]) {
+	if (sessionStorage["namesync-tosend"]) {
 		var r = JSON.parse(sessionStorage["namesync-tosend"]);
 		uploadName(r.name, r.email, r.subject, r.postID, r.threadID, true);
 	}
