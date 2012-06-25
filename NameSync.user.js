@@ -158,12 +158,12 @@ function NameSync() {
 		if (!optionsGetB("Enable Sync")) return;
 		
 		var qr = $jq("#qr");
-		var postID = e.detail.postID;
-		var threadID = e.detail.threadID;
+		var postID = e.originalEvent.detail.postID;
+		var threadID = e.originalEvent.detail.threadID;
 		var cName;
 		var cEmail;
 		var cSubject;
-		
+
 		if (optionsGetB("Override Fields")) {
 			cName = optionsGet("Name");
 			cEmail = optionsGet("Email");
@@ -211,14 +211,14 @@ function NameSync() {
 	}
 	
 	function QRListen() {
-		var qr = $jq("#qr")[0];
-		qr.removeEventListener("QRPostSuccessful", send, true);
-		qr.addEventListener("QRPostSuccessful", send, true);
+		$("#qr")
+			.off("QRPostSuccessful.namesync", send)
+			.on("QRPostSuccessful.namesync", send);
 	}
 	
 	if (optionsGetB("Cross-thread Links")) {
 		var commentBox = $jq('#qr textarea[name="com"]');
-		commentBox.on("paste", function() {
+		commentBox.off("paste.namesyc").on("paste.namesync", function() {
 			setTimeout(function() {
 				commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
 				$jq(".thread .post", document).each(function() {
