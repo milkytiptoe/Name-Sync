@@ -211,7 +211,7 @@ function NameSync() {
 	}
 	
 	function QRListen() {
-		$("#qr")
+		$jq("#qr")
 			.off("QRPostSuccessful.namesync", send)
 			.on("QRPostSuccessful.namesync", send);
 	}
