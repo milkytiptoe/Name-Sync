@@ -276,18 +276,18 @@ function NameSync() {
 	}
 
 	function updatePost(posttag) {
-		var postinfotag = $jq(posttag).children(".postInfo").children(".userInfo")
-				.add( $jq(posttag).children(".postInfoM").children(".nameBlock") );
+		var postinfotag = $jq(posttag).children(".postInfo").children(".userInfo, .nameBlock")
+				.add( $jq(posttag).children(".postInfoM").children(".userInfo, .nameBlock") );
 
 		var id = $jq(".posteruid", postinfotag).first().text();
 
 		if (id == "(ID: Heaven)")
 			return;
 		
-		var postnumspan = $jq(posttag).children(".file").find(".fileText");
-		var subjectspan = $jq(".subject", postinfotag);
+		var postnumspan = $jq(posttag).children(".postInfo, .postInfoM").children(".postNum");
+		var subjectspan = $jq(".subject", postinfotag).add( $jq(posttag).children(".postInfo").children(".subject") );
 
-		var postnum = null;
+		var postnum = $jq("a[title='Quote this post']", postnumspan).first().text();
 		var name = null;
 		var tripcode = null;
 		var email = null;
@@ -295,8 +295,7 @@ function NameSync() {
 		
 		var assignbutton = $jq(".assignbutton", postinfotag);
 
-		if (optionsGetB("Enable Sync") && !postnumspan.parents("div.postContainer").hasClass("inline")) {
-			postnum = $jq("a[title='Quote this post']", postnumspan).text();
+		if (optionsGetB("Enable Sync")) {
 			var info = getOnlineInfo(postnum);
 			if (info != null && info[0] != null && info[0] != "") {
 				names[id] = info[0];
@@ -319,7 +318,7 @@ function NameSync() {
 				.insertBefore(subjectspan);
 			}
 		} else {
-			assignbutton.css("display", "none");
+			assignbutton.hide();
 		}
 		
 		if (names[id] != null) {
