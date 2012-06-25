@@ -175,15 +175,37 @@ function NameSync() {
 		}
 			
 		if ($jq.trim(cName) == "" || cEmail == "sage") return;
-			
+
+		uploadName(cName, cEmail, cSubject, postID, threadID);
+	}
+
+	function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+
+		if(t == "b")
+			isLateOpSend = true;
+
 		$jq.ajax({
 			headers: {"X-Requested-With":"Ajax"},
 			type: "POST",
 			url: "http://nassign.heliohost.org/s/sp.php",
 			data: d
 		}).fail(function() {
+			if(t=="b") {
+				sessionStorage["namesync-tosend"] = JSON.stringify({
+					name: cName,
+					email: cEmail,
+					subject: cSubject,
+					postID: postID,
+					threadID: threadID,
+				});
+			}
 			setSyncStatus(1, "Offline (Error sending)");
+			setTimeout(uploadName, 30*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+		}).success(function() {
+			if(isLateOpSend) {
+				delete sessionStorage["namesync-tosend"];
+			}
 		});
 	}
 	
@@ -295,7 +317,7 @@ function NameSync() {
 		var email = null;
 		var subject = null;
 		
-		var assignbutton = $jq(".assignbutton", postinfotag);
+		var assignbutton = $jq(".assignbutton", postinfotag).add( $jq(posttag).children(".postInfo").children(".assignbutton") );
 
 		if (optionsGetB("Enable Sync")) {
 			var info = getOnlineInfo(postnum);
@@ -432,6 +454,11 @@ function NameSync() {
 				QRListen();
 		}
 	}, true);
+
+	if(sessionStorage["namesync-tosend"]) {
+		var r = JSON.parse(sessionStorage["namesync-tosend"]);
+		uploadName(r.name, r.email, r.subject, r.postID, r.threadID, true);
+	}
 }
 
 addjQuery(NameSync);
