@@ -1,5 +1,12 @@
-2.1.61 (Requires Mayhem 4chan X 2.33.1)
-- Changes to name send method
+2.2.62 (Requires Mayhem 4chan X 2.33.4)
+- Images no longer required
+- Fixed options overlay in Firefox
+- Fixed insecure content warning on https
+- (Macil) Fixed OP names
+- (Macil) Added failed send autoretry
+
+2.1.61
+- Changes to send method
 - Fixed sending name using auto mode
 - Fixed sync with thread stats disabled
 
