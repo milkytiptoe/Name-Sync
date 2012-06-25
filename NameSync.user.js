@@ -7,27 +7,25 @@
 // @contributor   Macil
 // @contributor   ihavenoface
 // @contributor   Finer
-// @include       http*://boards.4chan.org/b/res/*
+// @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
 // @version       2.1.61
-// @icon          http://i.imgur.com/12a0D.jpg
+// @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
-function addJQuery(a)
-{
+function addjQuery(a) {
 	var script = document.createElement("script");
-	script.setAttribute("src", "http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
+	script.setAttribute("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 	script.addEventListener('load', function() {
-	var script = document.createElement("script");
-	script.textContent = "(" + a.toString() + ")();";
-	document.body.appendChild(script);
+		var script = document.createElement("script");
+		script.textContent = "(" + a.toString() + ")();";
+		document.body.appendChild(script);
 	}, false);
 	document.body.appendChild(script);
 }
 
-function setUp()
-{
+function NameSync() {
 	var optionPre = "NameSync.";
 	var optionsNames = ["Enable Sync", "Hide IDs", "Show Assign Button", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
 	var optionsDescriptions = ["Share names online", "Hide IDs next to names", "Show assign button next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
@@ -37,7 +35,7 @@ function setUp()
 	var ver = "2.1.61";
 	
 	var uv = ver.replace(/\./g, "");
-	var ut = new Date().getTime();
+	var ut = Date.now();
 	var ulv = optionsGet("latestversion");
 	var ulc = optionsGet("lastcheck");
 	if (ulv == "") lv = uv;
@@ -46,30 +44,26 @@ function setUp()
 	var names = null;
 
 	var onlineNames = [];
-	var onlineFiles = [];
+	var onlinePosts = [];
 	var onlineEmails = [];
 	var onlineSubjects = [];
-	
-	var usedFilenames = [];
 	
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
 	t = t.substring(0, 9);
-		
-	var lastFile = "";
+	if (t.length < 9) t = "b";
+	
 	var status = 0;
 	
 	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$jq("#optionsPopUp").click(function() { optionsShow(); });
 	
-	var asheet = document.createElement('style');
-	document.body.appendChild(asheet);
-	var bsheet = document.createElement('style');
-	document.body.appendChild(bsheet);
-	var csheet = document.createElement('style');
-	csheet.innerHTML = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+new Date().getTime()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
-	document.body.appendChild(csheet);
-		
+	var dstyle = document.createElement('style');
+	document.body.appendChild(dstyle);
+	var sstyle = document.createElement('style');
+	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+Date.now()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
+	document.body.appendChild(sstyle);
+	
 	function update() {
 		var ul = $jq("#updateLink");
 		ul.html("Checking...");
@@ -100,9 +94,9 @@ function setUp()
 		}
 	}
 	
-	function optionsShow()
-	{
-		$jq("body").scrollTop(0).css("overflow", "hidden");
+	function optionsShow() {
+		$jq("body").css("overflow", "hidden");
+		$jq(window).scrollTop(0);
 		var overlayDiv = document.createElement("div");
 		overlayDiv.setAttribute("id", "optionsOverlay");
 		document.body.appendChild(overlayDiv);
@@ -113,8 +107,7 @@ function setUp()
 		
 		var optionsList = document.createElement("ul");
 		
-		for (var i = 0, len = optionsNames.length; i < len; i++)
-		{
+		for (var i = 0, len = optionsNames.length; i < len; i++) {
 			var checked = optionsGetB(optionsNames[i]) ? 'checked' : '';
 			optionsList.innerHTML += "<li><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</li>";
 		}
@@ -138,76 +131,89 @@ function setUp()
 		$jq("#optionsScreen").fadeIn("fast");
 	}
 	
-	function optionsHide()
-	{
+	function optionsHide() {
 		$jq("#optionsScreen").remove();
 		$jq("#optionsOverlay").remove();
 		$jq("body").css("overflow", "visible");
 	}
 	
-	function hideIds()
-	{
-		optionsGetB("Hide IDs") ? asheet.innerHTML = ".posteruid { display: none; }" : asheet.innerHTML = ".posteruid { display: inline; }";
-	}
-
-	function hidePstrOpts()
-	{
-		optionsGetB("Show Assign Button") ? bsheet.innerHTML = ".assignbutton { display: inline; }" : bsheet.innerHTML = ".assignbutton { display: none; }";
+	function styles() {
+		dstyle.textContent = ".posteruid { display: " + (optionsGetB("Hide IDs") ? "none" : "inline") + "; }\
+		.assignbutton { display: " + (optionsGetB("Show Assign Button") ? "inline" : "none") + "; }";
 	}
 	
 	$jq(document).ready(function() {
-		if (!optionsGet("Has Run")) {
+		if (!optionsGetB("Has Run")) {
 			optionsShow();
 			optionsSet("Has Run", "true");
 		}
 		
-		QRListen();
-		sync();
+		if ($jq("#qr").length)
+			QRListen();
+			
+		t == "b" ? setSyncStatus(2, "Disabled") : sync();
 	});
 	
-	function QRListen() {
-		$jq(document).on("QRPostSuccessful", function() {
-			if (!optionsGetB("Enable Sync")) return;
+	function send(e) {
+		if (!optionsGetB("Enable Sync")) return;
+		
+		var qr = $jq("#qr");
+		var postID = e.detail.postID;
+		var threadID = e.detail.threadID;
+		var cName;
+		var cEmail;
+		var cSubject;
+		
+		if (optionsGetB("Override Fields")) {
+			cName = optionsGet("Name");
+			cEmail = optionsGet("Email");
+			cSubject = optionsGet("Subject");
+		} else {
+			cName = $jq('input[name="name"]', qr).val();
+			cEmail = $jq('input[name="email"]', qr).val();
+			cSubject = $jq('input[name="sub"]', qr).val();
+		}
 			
-			var qr = $jq("#qr");
-			var cName;
-			var cEmail;
-			var cSubject;
-			var cFile = $jq("#replies .thumbnail[title]", qr).first().attr("title");
-			cFile = cFile.substring(0, cFile.lastIndexOf(" ("));
-			
-			if (optionsGetB("Override Fields")) {
-				cName = optionsGet("Name");
-				cEmail = optionsGet("Email");
-				cSubject = optionsGet("Subject");
-			} else {
-				cName = $jq('input[name="name"]', qr).val();
-				cEmail = $jq('input[name="email"]', qr).val();
-				cSubject = $jq('input[name="sub"]', qr).val();
-			}
-				
-			if (cFile != lastFile && cName != "" && cFile != "") {
-				if (onlineFiles.indexOf(cFile) > -1) return;
-				
-				lastFile = cFile;
-				
-				if (cFile.length-4 > 30) {
-					var start = cFile.substring(0, 30);
-					var end = cFile.substring(cFile.length-4, cFile.length);
-					cFile = start + "(...)" + end;
-				}
-				
-				var d = "f="+encodeURIComponent(cFile)+"&n="+encodeURIComponent(cName)+"&t="+t+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
-				$jq.ajax({
-					headers: {"X-Requested-With":"Ajax"},
-					type: "POST",
-					url: "http://nassign.heliohost.org/s/s.php",
-					data: d
-				}).fail(function() {
-					setSyncStatus(1, "Offline (Error sending)");
-				});
-			}
+		if ($jq.trim(cName) == "" || cEmail == "sage") return;
+
+		uploadName(cName, cEmail, cSubject, postID, threadID);
+	}
+
+	function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
+		var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+
+		if (isLateOpSend && !sessionStorage["namesync-tosend"])
+			return;
+
+		if (t == "b") {
+			isLateOpSend = true;
+			sessionStorage["namesync-tosend"] = JSON.stringify({
+				name: cName,
+				email: cEmail,
+				subject: cSubject,
+				postID: postID,
+				threadID: threadID,
+			});
+		}
+
+		$jq.ajax({
+			headers: {"X-Requested-With":"Ajax"},
+			type: "POST",
+			url: "http://nassign.heliohost.org/s/sp.php",
+			data: d
+		}).fail(function() {
+			setSyncStatus(1, "Offline (Error sending)");
+			setTimeout(uploadName, 30*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+		}).success(function() {
+			if (isLateOpSend)
+				delete sessionStorage["namesync-tosend"];
 		});
+	}
+	
+	function QRListen() {
+		var qr = $jq("#qr")[0];
+		qr.removeEventListener("QRPostSuccessful", send, true);
+		qr.addEventListener("QRPostSuccessful", send, true);
 	}
 	
 	if (optionsGetB("Cross-thread Links")) {
@@ -223,8 +229,7 @@ function setUp()
 		});
 	}
 	
-	function canSync()
-	{
+	function canSync() {
 		var ic = $jq("#imagecount");
 		if (ic.length && ic.hasClass("warning")) return false;
 		var c = $jq("#count");
@@ -232,20 +237,17 @@ function setUp()
 		return true;
 	}
 	
-	var setSyncStatus = function(type, msg)
-	{
+	function setSyncStatus(type, msg) {
 		var colour = "green";
 		
-		switch (type)
-		{
+		switch (type) {
 			case 1: colour = "red"; break;
 			case 2: colour = "gray"; break;
 		}
 		
 		$jq("#syncStatus").html(msg).css("color", colour);
 		
-		if (status != type && optionsGetB("Append Errors"))
-		{
+		if (status != type && optionsGetB("Append Errors"))	{
 			$jq("div.warning").html("<span style='color: "+colour+" !important;'>Sync is "+msg+"</span>");
 			setTimeout(function() { $jq("div.warning").html(""); }, 5000);
 		}
@@ -253,32 +255,26 @@ function setUp()
 		status = type;
 	}
 	
-	function sync()
-	{		
-		if (optionsGetB("Enable Sync"))
-		{
+	function sync() {
+		if (optionsGetB("Enable Sync"))	{
 			$jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				dataType: "json",
-				url: 'http://nassign.heliohost.org/s/qj.php?t='+t,
+				url: 'http://nassign.heliohost.org/s/qp.php?t='+t,
 			}).fail(function() {
 				setSyncStatus(1, "Offline (Error retrieving)");
 			}).done(function(data) {
-				if (data == null)
-				{
+				if (data == null) {
 					setSyncStatus(0, "Online");
-				}
-				else
-				{
+				} else {
 					onlineNames = [];
-					onlineFiles = [];
+					onlinePosts = [];
 					onlineSubjects = [];
 					onlineEmails = [];
 					
-					for (var i = 0, len = data.length; i < len; i++)
-					{
+					for (var i = 0, len = data.length; i < len; i++) {
 						onlineNames.push(data[i].n);
-						onlineFiles.push(data[i].f);
+						onlinePosts.push(data[i].p);
 						onlineEmails.push(data[i].e);
 						onlineSubjects.push(data[i].s);
 					}
@@ -287,22 +283,16 @@ function setUp()
 					updateElements();
 				}
 			});
-		}
-		else
-		{
+		} else {
 			setSyncStatus(2, "Disabled");
 		}
 		
-		if (canSync())
-		{
+		if (canSync()) {
 			setTimeout(function() { sync(); }, 30000);
 		}
 	}
 	
-	function updateElements()
-	{
-		usedFilenames = [];
-		
+	function updateElements() {
 		$jq(".thread .post", document).each(function() {
 			updatePost(this);
 		});
@@ -311,50 +301,36 @@ function setUp()
 	}
 
 	function updatePost(posttag) {
-		var postinfotag = $jq(posttag).children(".postInfo").children(".userInfo")
-				.add( $jq(posttag).children(".postInfoM").children(".nameBlock") );
+		var postinfotag = $jq(posttag).children(".postInfo").children(".userInfo, .nameBlock")
+				.add( $jq(posttag).children(".postInfoM").children(".userInfo, .nameBlock") );
 
 		var id = $jq(".posteruid", postinfotag).first().text();
 
-		if(id == "(ID: Heaven)")
+		if (id == "(ID: Heaven)")
 			return;
 		
-		var filetextspan = $jq(posttag).children(".file").find(".fileText");
-		var subjectspan = $jq(".subject", postinfotag);
+		var postnumspan = $jq(posttag).children(".postInfo, .postInfoM").children(".postNum");
+		var subjectspan = $jq(".subject", postinfotag).add( $jq(posttag).children(".postInfo").children(".subject") );
 
-		var filename = null;
+		var postnum = $jq("a[title='Quote this post']", postnumspan).first().text();
 		var name = null;
 		var tripcode = null;
 		var email = null;
 		var subject = null;
 		
-		var assignbutton = $jq(".assignbutton", postinfotag);
+		var assignbutton = $jq(".assignbutton", postinfotag).add( $jq(posttag).children(".postInfo").children(".assignbutton") );
 
-		if (optionsGetB("Enable Sync")
-			&& filetextspan.length != 0
-			&& !filetextspan.parents("div.postContainer").hasClass("inline")) {
-			var filenamespan = $jq("span[title]", filetextspan);
-			if(filenamespan.length == 0) {
-				filenamespan = $jq("a[href]", filetextspan);
-			}
-			var truncnametag = $jq(".fntrunc", filenamespan);
-			if(truncnametag.length == 0) {
-				filename = filenamespan.text();
-			} else {
-				filename = truncnametag.text();
-			}
-			var info = getOnlineInfo(filename);
-			if(info != null && info[0] != null && info[0] != "" && !usedFilenames[filename]) {
+		if (optionsGetB("Enable Sync")) {
+			var info = getOnlineInfo(postnum);
+			if (info != null && info[0] != null && info[0] != "") {
 				names[id] = info[0];
 				email = info[1];
 				subject = info[2];
-				usedFilenames[filename] = true;
 			}
 		}
 		
-		if (names[id] == null || onlineNames.indexOf(names[id]) == -1)
-		{
-			if(assignbutton.length == 0) {
+		if (names[id] == null || onlineNames.indexOf(names[id]) == -1) {
+			if (assignbutton.length == 0) {
 				assignbutton = $jq("<a/>")
 				.attr("href", "javascript:;")
 				.attr("title", "Assign a name to this poster")
@@ -366,13 +342,11 @@ function setUp()
 				})
 				.insertBefore(subjectspan);
 			}
-		}
-		else
-		{
-			assignbutton.css("display", "none");
+		} else {
+			assignbutton.hide();
 		}
 		
-		if(names[id] != null) {
+		if (names[id] != null) {
 			name = names[id];
 			tripcode = "";
 			
@@ -389,12 +363,12 @@ function setUp()
 			var nametag = $jq(".name", postinfotag);
 			var triptag = $jq(".postertrip", postinfotag);
 
-			if(nametag.first().text() != name)
+			if (nametag.first().text() != name)
 				nametag.text(name);
 
-			if(email != null && email != "") {
+			if (email != null && email != "") {
 				var emailtag = $jq(".useremail", postinfotag);
-				if(emailtag.length == 0) {
+				if (emailtag.length == 0) {
 					emailtag = $jq("<a/>")
 					.addClass("useremail")
 					.insertBefore(nametag);
@@ -409,87 +383,58 @@ function setUp()
 				emailtag.attr("href", "mailto:"+email);
 			}
 
-			if(tripcode != null || triptag.length != 0) {
-				if(triptag.length == 0) {
+			if (tripcode != null || triptag.length != 0) {
+				if (triptag.length == 0) {
 					triptag = $jq("<span/>").addClass("postertrip");
 					nametag.after(triptag);
 					triptag = $jq(".postertrip", postinfotag);
 				}
-				if(triptag.first().text() != tripcode) {
+				if (triptag.first().text() != tripcode) {
 					triptag.text(tripcode);
 				}
 			}
 		}
 	}
 	
-	function getOnlineInfo(filename)
-	{
-		var index = onlineFiles.indexOf(filename);
-		
-		if (index > -1)
-		{
-			return [onlineNames[index], onlineEmails[index], onlineSubjects[index]];
-		}
-		else
-		{
-			return null;
-		}
+	function getOnlineInfo(postnum) {
+		var index = onlinePosts.indexOf(postnum);
+		return index > -1 ? [onlineNames[index], onlineEmails[index], onlineSubjects[index]] : null;
 	}
 	
-	function assignName(id)
-	{
+	function assignName(id) {
 		var name = prompt("What would you like this poster to be named?","");
 		
-		if (name != null && name != "")
-		{
+		if (name != null && name != "")	{
 			names[id] = name;
 			updateElements();
 		}
 	}
 	
-	function optionsSet(name, value)
-	{
+	function optionsSet(name, value) {
 		localStorage.setItem(optionPre + name, value);
 		
-		if (name == "Hide IDs")
-			hideIds();
-		if (name == "Show Assign Button")
-			hidePstrOpts();
+		if (name == "Hide IDs" || name == "Show Assign Button")
+			styles();
 	}
 	
-	function optionsGetB(name)
-	{
+	function optionsGetB(name) {
 		return optionsGet(name) == "true";
 	}
 	
-	function optionsGet(name)
-	{
+	function optionsGet(name) {
 		var value = localStorage.getItem(optionPre + name);
 
 		if (value == null || typeof value == "undefined")
-		{
-			if (typeof optionsDefaults[optionsNames.indexOf(name)] != "undefined")
-			{
-				return optionsDefaults[optionsNames.indexOf(name)];
-			}
-			else
-			{
-				return "";
-			}
-		}
-		else
-		{
-			return value;
-		}
+			return typeof optionsDefaults[optionsNames.indexOf(name)] != "undefined" ? optionsDefaults[optionsNames.indexOf(name)] : "";
+
+		return value;
 	}
 	
-	function storeNames()
-	{
+	function storeNames() {
 		sessionStorage["names"] = JSON.stringify(names);
 	}
 
-	function loadNames()
-	{
+	function loadNames() {
 		if(sessionStorage["names"] != null)
 			names = JSON.parse(sessionStorage["names"]);
 
@@ -498,15 +443,23 @@ function setUp()
 	}
 	
 	loadNames();
-	hideIds();
-	hidePstrOpts();
+	styles();
 	updateElements();
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
-		if(e.target.nodeName=='DIV' && $jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline")) {
-			updatePost($jq(".reply", e.target));
+		if (e.target.nodeName=='DIV') {
+			if ($jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline"))
+				updatePost($jq(".reply", e.target));
+				
+			if (e.target.id == "qr")
+				QRListen();
 		}
 	}, true);
+
+	if (sessionStorage["namesync-tosend"]) {
+		var r = JSON.parse(sessionStorage["namesync-tosend"]);
+		uploadName(r.name, r.email, r.subject, r.postID, r.threadID, true);
+	}
 }
 
-addJQuery(setUp);
+addjQuery(NameSync);
