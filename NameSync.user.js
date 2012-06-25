@@ -281,10 +281,10 @@ function NameSync() {
 
 		var id = $jq(".posteruid", postinfotag).first().text();
 
-		if(id == "(ID: Heaven)")
+		if (id == "(ID: Heaven)")
 			return;
 		
-		var postnumspan = $jq(".postNum.desktop", posttag);
+		var postnumspan = $jq(posttag).children(".file").find(".fileText");
 		var subjectspan = $jq(".subject", postinfotag);
 
 		var postnum = null;
