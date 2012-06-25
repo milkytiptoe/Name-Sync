@@ -7,7 +7,7 @@
 // @contributor   Macil
 // @contributor   ihavenoface
 // @contributor   Finer
-// @include       http*://boards.4chan.org/b/res/*
+// @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
 // @version       2.1.61
@@ -51,6 +51,7 @@ function NameSync() {
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
 	t = t.substring(0, 9);
+	if (t.length < 9) t = "b";
 	
 	var status = 0;
 	
@@ -149,7 +150,8 @@ function NameSync() {
 		
 		if ($jq("#qr").length)
 			QRListen();
-		sync();
+			
+		t == "b" ? setSyncStatus(2, "Disabled") : sync();
 	});
 	
 	function send(e) {
