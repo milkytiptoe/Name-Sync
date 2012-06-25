@@ -55,7 +55,7 @@ function NameSync() {
 	
 	var status = 0;
 	
-	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Loading</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
+	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Waiting</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$jq("#optionsPopUp").click(function() { optionsShow(); });
 	
 	var dstyle = document.createElement('style');
@@ -151,7 +151,7 @@ function NameSync() {
 		if ($jq("#qr").length)
 			QRListen();
 			
-		t == "b" ? setSyncStatus(2, "Disabled") : sync();
+		if (t != "b") sync();
 	});
 	
 	function send(e) {
@@ -238,6 +238,8 @@ function NameSync() {
 	}
 	
 	function setSyncStatus(type, msg) {
+		if (t == "b") return;
+		
 		var colour = "green";
 		
 		switch (type) {
