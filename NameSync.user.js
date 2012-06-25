@@ -214,19 +214,19 @@ function NameSync() {
 		$jq("#qr")
 			.off("QRPostSuccessful.namesync", send)
 			.on("QRPostSuccessful.namesync", send);
-	}
-	
-	if (optionsGetB("Cross-thread Links")) {
-		var commentBox = $jq('#qr textarea[name="com"]');
-		commentBox.off("paste.namesyc").on("paste.namesync", function() {
-			setTimeout(function() {
-				commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
-				$jq(".thread .post", document).each(function() {
-					var id = this.id.substring(1);
-					commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
-				});
-			}, 100);
-		});
+			
+		if (optionsGetB("Cross-thread Links")) {
+			var commentBox = $jq('#qr textarea[name="com"]');
+			commentBox.off("paste.namesyc").on("paste.namesync", function() {
+				setTimeout(function() {
+					commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
+					$jq(".thread .post", document).each(function() {
+						var id = this.id.substring(1);
+						commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
+					});
+				}, 100);
+			});
+		}
 	}
 	
 	function canSync() {

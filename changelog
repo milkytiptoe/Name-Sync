@@ -2,6 +2,7 @@
 - Images no longer required
 - Fixed options overlay in Firefox
 - Fixed insecure content warning on https
+- Fixed Cross-thread Links with Persistent QR disabled
 - (Macil) Fixed OP names
 - (Macil) Added failed send autoretry
 
