@@ -134,7 +134,7 @@ function NameSync() {
 		.assignbutton { display: " + (optionsGetB("Show Assign Button") ? "inline" : "none") + "; }";
 	}
 	
-	$jq(document).ready(function() {
+	function init() {
 		if (!optionsGetB("Has Run")) {
 			optionsShow();
 			optionsSet("Has Run", "true");
@@ -144,7 +144,11 @@ function NameSync() {
 			QRListen();
 			
 		if (t != "b") sync();
-	});
+		
+		loadNames();
+		styles();
+		updateElements();
+	}
 	
 	function send(e) {
 		if (!optionsGetB("Enable Sync")) return;
@@ -436,10 +440,6 @@ function NameSync() {
 			names = {};
 	}
 	
-	loadNames();
-	styles();
-	updateElements();
-	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
 		if (e.target.nodeName=='DIV') {
 			if ($jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline"))
@@ -454,6 +454,8 @@ function NameSync() {
 		var r = JSON.parse(sessionStorage["namesync-tosend"]);
 		uploadName(r.name, r.email, r.subject, r.postID, r.threadID, true);
 	}
+	
+	init();
 }
 
 NameSync();
