@@ -1,7 +1,11 @@
-2.2.63
-- Embed jQuery
+(2.2.62+ requires Mayhem 4chan X 2.33.4+)
 
-2.2.62 (Requires Mayhem 4chan X 2.33.4)
+2.2.63
+- Fixed script start being delayed by loading jQuery
+- Fixed sync being delayed by page loading
+- Changed send error message colour to orange
+
+2.2.62
 - Images no longer required
 - Fixed options overlay in Firefox
 - Fixed insecure content warning on https

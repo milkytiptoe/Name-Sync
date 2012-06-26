@@ -198,7 +198,7 @@ function NameSync() {
 			url: "http://nassign.heliohost.org/s/sp.php",
 			data: d
 		}).fail(function() {
-			setSyncStatus(1, "Offline (Error sending)");
+			setSyncStatus(3, "Offline (Error sending, retrying)");
 			setTimeout(uploadName, 30*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 		}).success(function() {
 			if (isLateOpSend)
@@ -241,6 +241,7 @@ function NameSync() {
 		switch (type) {
 			case 1: colour = "red"; break;
 			case 2: colour = "gray"; break;
+			case 3: colour = "#CD7300"; break;
 		}
 		
 		$jq("#syncStatus").html(msg).css("color", colour);
