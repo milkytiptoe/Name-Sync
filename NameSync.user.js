@@ -229,7 +229,7 @@ function NameSync() {
 		var ic = $jq("#imagecount");
 		if (ic.length && ic.hasClass("warning")) return false;
 		var c = $jq("#count");
-		if (c.length == 0 || c.text() == "404") return false;
+		if (c.length && c.text() == "404") return false;
 		return true;
 	}
 	
