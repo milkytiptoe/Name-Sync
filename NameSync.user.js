@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.2.63
+// @version       2.2.64
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -24,7 +24,7 @@ function NameSync() {
 	var optionsDefaults = ["true", "false", "true", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.2.63";
+	var ver = "2.2.64";
 	
 	var uv = ver.replace(/\./g, "");
 	var ut = Date.now();
@@ -199,7 +199,7 @@ function NameSync() {
 			data: d
 		}).fail(function() {
 			setSyncStatus(3, "Offline (Error sending, retrying)");
-			setTimeout(uploadName, 30*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+			setTimeout(uploadName, 15*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 		}).success(function() {
 			if (isLateOpSend)
 				delete sessionStorage["namesync-tosend"];
@@ -220,6 +220,7 @@ function NameSync() {
 						var id = this.id.substring(1);
 						commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
 					});
+					commentBox[0].dispatchEvent(new Event("input"));
 				}, 100);
 			});
 		}
@@ -260,6 +261,7 @@ function NameSync() {
 				headers: {"X-Requested-With":"Ajax"},
 				dataType: "json",
 				url: 'http://nassign.heliohost.org/s/qp.php?t='+t,
+				cache: false
 			}).fail(function() {
 				setSyncStatus(1, "Offline (Error retrieving)");
 			}).done(function(data) {
@@ -434,10 +436,10 @@ function NameSync() {
 	}
 
 	function loadNames() {
-		if(sessionStorage["names"] != null)
+		if (sessionStorage["names"] != null)
 			names = JSON.parse(sessionStorage["names"]);
 
-		if(names == null)
+		if (names == null)
 			names = {};
 	}
 	

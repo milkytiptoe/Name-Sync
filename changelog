@@ -1,4 +1,7 @@
-(2.2.62+ requires Mayhem 4chan X 2.33.4+)
+2.2.64
+- Fixed Cross-thread Links not posting
+- Decreased timer for failed send retry
+- Fixed sync being stuck Offline
 
 2.2.63
 - Fixed script start being delayed by loading jQuery
