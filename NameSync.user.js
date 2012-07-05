@@ -361,7 +361,7 @@ function NameSync() {
 			}
 		}
 		
-		if(useAssignButton) {
+		if (useAssignButton) {
 			var assignbutton = $jq(".assignbutton", postinfotag).add( $jq(posttag).children(".postInfo").children(".assignbutton") );
 
 			if (!onlineIDs[id]) {
