@@ -1,3 +1,7 @@
+2.3.66
+- (Macil) Added assign button if 4chan X menu is not available
+- (Macil) Fixed sync stacking
+
 2.3.65
 - (Macil) Sync on new post
 - (Macil) Fixed assigning names to Anonymous posters
