@@ -39,6 +39,8 @@ function NameSync() {
 	var onlinePosts = [];
 	var onlineEmails = [];
 	var onlineSubjects = [];
+
+	var onlineIDs = {};
 	
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
@@ -156,7 +158,8 @@ function NameSync() {
 		a.textContent = "Assign name";
 
 		var open = function(post) {
-			return post.el.querySelector(".name").textContent == "Anonymous";
+			var uid = $jq(".posteruid", post.el).first().text();
+			return uid != "(ID: Heaven)" && !onlineIDs[uid];
 		};
 		
 		a.addEventListener('click', function() {
@@ -348,6 +351,7 @@ function NameSync() {
 				names[id] = info[0];
 				email = info[1];
 				subject = info[2];
+				onlineIDs[id] = true;
 			}
 		}
 		
