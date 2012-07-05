@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.2.64
+// @version       2.3.64
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -24,7 +24,7 @@ function NameSync() {
 	var optionsDefaults = ["true", "false", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.2.64";
+	var ver = "2.3.64";
 	
 	var uv = ver.replace(/\./g, "");
 	var ut = Date.now();
@@ -39,7 +39,7 @@ function NameSync() {
 	var onlinePosts = [];
 	var onlineEmails = [];
 	var onlineSubjects = [];
-
+	
 	var onlineIDs = {};
 	
 	var t = document.URL;
@@ -55,7 +55,7 @@ function NameSync() {
 	var dstyle = document.createElement('style');
 	document.body.appendChild(dstyle);
 	var sstyle = document.createElement('style');
-	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+Date.now()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; }";
+	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://www.milkyis.me/bnamesync/bg.png) no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; }";
 	document.body.appendChild(sstyle);
 	
 	function update() {
@@ -63,7 +63,7 @@ function NameSync() {
 		ul.html("Checking...");
 		$jq.ajax({
 			headers: {"X-Requested-With":"Ajax"},
-			url: 'http://nassign.heliohost.org/s/uq.php'
+			url: 'http://www.milkyis.me/bnamesync/uq.php'
 		}).done(function(lv) {
 			optionsSet("latestversion", lv);
 			optionsSet("lastcheck", ut);
@@ -219,7 +219,7 @@ function NameSync() {
 		$jq.ajax({
 			headers: {"X-Requested-With":"Ajax"},
 			type: "POST",
-			url: "http://nassign.heliohost.org/s/sp.php",
+			url: "http://www.milkyis.me/bnamesync/sp.php",
 			data: d
 		}).fail(function() {
 			setSyncStatus(3, "Offline (Error sending, retrying)");
@@ -284,7 +284,7 @@ function NameSync() {
 			$jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
 				dataType: "json",
-				url: 'http://nassign.heliohost.org/s/qp.php?t='+t,
+				url: 'http://www.milkyis.me/bnamesync/qp.php?t='+t,
 				cache: false
 			}).fail(function() {
 				setSyncStatus(1, "Offline (Error retrieving)");
