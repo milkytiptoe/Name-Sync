@@ -191,7 +191,7 @@ function NameSync() {
 			cSubject = $jq('input[name="sub"]', qr).val();
 		}
 			
-		if ($jq.trim(cName) == "" || $jq.trim(cName) == "Anonymous" || cEmail == "sage") return;
+		if ($jq.trim(cName) == "" || cEmail == "sage") return;
 
 		uploadName(cName, cEmail, cSubject, postID, threadID);
 	}
