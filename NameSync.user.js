@@ -41,6 +41,8 @@ function NameSync() {
 	var onlineSubjects = [];
 	
 	var onlineIDs = {};
+
+	var useAssignButton;
 	
 	var t = document.URL;
 	t = t.replace(/^.*\/|\.[^.]*$/g, '');
@@ -57,7 +59,7 @@ function NameSync() {
 	var dstyle = document.createElement('style');
 	document.body.appendChild(dstyle);
 	var sstyle = document.createElement('style');
-	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://www.milkyis.me/bnamesync/bg.png) no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; }";
+	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://www.milkyis.me/bnamesync/bg.png) no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
 	document.body.appendChild(sstyle);
 	
 	function update() {
@@ -320,6 +322,10 @@ function NameSync() {
 	}
 	
 	function updateElements() {
+		useAssignButton = $jq(".menu_button").length == 0;
+		if (!useAssignButton)
+			$jq(".assignbutton").remove();
+
 		$jq(".thread .post", document).each(function() {
 			updatePost(this);
 		});
@@ -345,8 +351,6 @@ function NameSync() {
 		var email = null;
 		var subject = null;
 		
-		var assignbutton = $jq(".assignbutton", postinfotag).add( $jq(posttag).children(".postInfo").children(".assignbutton") );
-
 		if (optionsGetB("Enable Sync")) {
 			var info = getOnlineInfo(postnum);
 			if (info != null && info[0] != null && info[0] != "") {
@@ -354,6 +358,27 @@ function NameSync() {
 				email = info[1];
 				subject = info[2];
 				onlineIDs[id] = true;
+			}
+		}
+		
+		if(useAssignButton) {
+			var assignbutton = $jq(".assignbutton", postinfotag).add( $jq(posttag).children(".postInfo").children(".assignbutton") );
+
+			if (!onlineIDs[id]) {
+				if (assignbutton.length == 0) {
+					assignbutton = $jq("<a/>")
+						.attr("href", "javascript:;")
+						.attr("title", "Assign a name to this poster")
+						.addClass("assignbutton")
+						.text("+")
+						.click(function() {
+							assignName(id);
+							return false;
+						})
+						.insertBefore(subjectspan);
+				}
+			} else {
+				assignbutton.remove();
 			}
 		}
 		
@@ -457,7 +482,7 @@ function NameSync() {
 			if ($jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline")) {
 				updatePost($jq(".reply", e.target));
 				if (!delaySyncHandler) {
-						delaySyncHandler = setTimeout(function() {
+					delaySyncHandler = setTimeout(function() {
 						setTimeout(sync, 4500, true);
 						delaySyncHandler = null;
 					}, 500);
