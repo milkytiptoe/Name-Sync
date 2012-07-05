@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.3.64
+// @version       2.3.65
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -24,7 +24,7 @@ function NameSync() {
 	var optionsDefaults = ["true", "false", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.3.64";
+	var ver = "2.3.65";
 	
 	var uv = ver.replace(/\./g, "");
 	var ut = Date.now();
@@ -225,7 +225,7 @@ function NameSync() {
 			data: d
 		}).fail(function() {
 			setSyncStatus(3, "Offline (Error sending, retrying)");
-			setTimeout(uploadName, 15*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+			setTimeout(uploadName, 5*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 		}).success(function() {
 			if (isLateOpSend)
 				delete sessionStorage["namesync-tosend"];
