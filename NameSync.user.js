@@ -19,9 +19,9 @@
 
 function NameSync() {
 	var optionPre = "NameSync.";
-	var optionsNames = ["Enable Sync", "Hide IDs", "Show Assign Button", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
-	var optionsDescriptions = ["Share names online", "Hide IDs next to names", "Show assign button next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
-	var optionsDefaults = ["true", "false", "true", "false", "true", "true", "false"];
+	var optionsNames = ["Enable Sync", "Hide IDs", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
+	var optionsDescriptions = ["Share names online", "Hide IDs next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
+	var optionsDefaults = ["true", "false", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
 	var ver = "2.2.64";
@@ -53,7 +53,7 @@ function NameSync() {
 	var dstyle = document.createElement('style');
 	document.body.appendChild(dstyle);
 	var sstyle = document.createElement('style');
-	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+Date.now()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; } .assignbutton { font-weight: bold; text-decoration: none; } .inline .post .assignbutton, #qp .assignbutton { display: none; }";
+	sstyle.textContent = "#optionsScreen ul li { margin-bottom: 2px; } #optionsScreen a#closeBtn { float: right; } #optionsScreen input[type='text'] { border: 1px solid #ccc; padding: 2px; width: 30%; margin-right: 2px; } #optionsScreen a { text-decoration: none; } #optionsOverlay { background-color: black; opacity: 0.5; z-index: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; } #optionsScreen h1 { font-size: 1.2em; text-align: left; } #optionsScreen h2 { font-size: 10pt; margin-top: 12px; margin-bottom: 12px; } #optionsScreen * { margin: 0; padding: 0; } #optionsScreen ul { list-style-type: none; } #optionsScreen { color: black; width: 400px; height: 400px; display: none; z-index: 1; background: url(http://nassign.heliohost.org/s/best_small.png?i="+Date.now()+") no-repeat #f0e0d6; background-color: #f0e0d6; background-position: bottom right; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.25); position: absolute; top: 50%; left: 50%; margin-top:-200px; margin-left:-200px; }";
 	document.body.appendChild(sstyle);
 	
 	function update() {
@@ -101,7 +101,7 @@ function NameSync() {
 		
 		for (var i = 0, len = optionsNames.length; i < len; i++) {
 			var checked = optionsGetB(optionsNames[i]) ? 'checked' : '';
-			optionsList.innerHTML += "<li><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</li>";
+			optionsList.innerHTML += "<li><label><input type='checkbox' name='"+optionsNames[i]+"' "+checked+" /> <strong>"+optionsNames[i]+"</strong> "+optionsDescriptions[i]+"</label></li>";
 		}
 		
 		optionsList.innerHTML += "<li><input type='text' id='bName' placeholder='Name' value='"+optionsGet("Name")+"' /> <input type='text' id='bEmail' placeholder='Email' value='"+optionsGet("Email")+"' /> <input type='text' id='bSubject' placeholder='Subject' value='"+optionsGet("Subject")+"' />";
@@ -130,8 +130,7 @@ function NameSync() {
 	}
 	
 	function styles() {
-		dstyle.textContent = ".posteruid { display: " + (optionsGetB("Hide IDs") ? "none" : "inline") + "; }\
-		.assignbutton { display: " + (optionsGetB("Show Assign Button") ? "inline" : "none") + "; }";
+		dstyle.textContent = ".posteruid { display: " + (optionsGetB("Hide IDs") ? "none" : "inline") + "; }";
 	}
 	
 	function init() {
@@ -140,14 +139,36 @@ function NameSync() {
 			optionsSet("Has Run", "true");
 		}
 		
-		if ($jq("#qr").length)
-			QRListen();
+		if ($jq("#qr").length) QRListen();
 			
 		if (t != "b") sync();
 		
 		loadNames();
 		styles();
 		updateElements();
+		assignMenu();
+	}
+	
+	function assignMenu() {
+		var d = document;
+		var a = d.createElement('a');
+		a.href = 'javascript:;';
+		a.textContent = "Assign name";
+
+		var open = function(post) {
+			return post.el.querySelector(".name").textContent == "Anonymous";
+		};
+		
+		a.addEventListener('click', function() {
+			assignName(d.getElementById(d.getElementById('menu').dataset.rootid).querySelector(".posteruid").textContent);
+		});
+
+		d.dispatchEvent(new CustomEvent('AddMenuEntry', {
+			detail: {
+				el: a,
+				open: open
+			}
+		}));
 	}
 	
 	function send(e) {
@@ -170,7 +191,7 @@ function NameSync() {
 			cSubject = $jq('input[name="sub"]', qr).val();
 		}
 			
-		if ($jq.trim(cName) == "" || cEmail == "sage") return;
+		if ($jq.trim(cName) == "" || $jq.trim(cName) == "Anonymous" || cEmail == "sage") return;
 
 		uploadName(cName, cEmail, cSubject, postID, threadID);
 	}
@@ -330,23 +351,6 @@ function NameSync() {
 			}
 		}
 		
-		if (names[id] == null || onlineNames.indexOf(names[id]) == -1) {
-			if (assignbutton.length == 0) {
-				assignbutton = $jq("<a/>")
-				.attr("href", "javascript:;")
-				.attr("title", "Assign a name to this poster")
-				.addClass("assignbutton")
-				.text("+")
-				.click(function() {
-					assignName(id);
-					return false;
-				})
-				.insertBefore(subjectspan);
-			}
-		} else {
-			assignbutton.hide();
-		}
-		
 		if (names[id] != null) {
 			name = names[id];
 			tripcode = "";
@@ -414,8 +418,7 @@ function NameSync() {
 	function optionsSet(name, value) {
 		localStorage.setItem(optionPre + name, value);
 		
-		if (name == "Hide IDs" || name == "Show Assign Button")
-			styles();
+		if (name == "Hide IDs") styles();
 	}
 	
 	function optionsGetB(name) {
