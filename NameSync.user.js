@@ -51,7 +51,7 @@ function NameSync() {
 	
 	var delaySyncHandler = null;
 	
-	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Waiting</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
+	$jq('form[name="delform"]').prepend("<br /><span id='syncStatus' style='color: gray;'>Waiting</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$jq("#optionsPopUp").click(function() { optionsShow(); });
 	
 	var dstyle = document.createElement('style');
