@@ -49,6 +49,8 @@ function NameSync() {
 	
 	var status = 0;
 	
+	var delaySyncHandler = null;
+	
 	$jq('form[name="delform"]').prepend("<span id='syncStatus' style='color: gray;'>Waiting</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$jq("#optionsPopUp").click(function() { optionsShow(); });
 	
@@ -279,7 +281,7 @@ function NameSync() {
 		status = type;
 	}
 	
-	function sync() {
+	function sync(norepeat) {
 		if (optionsGetB("Enable Sync"))	{
 			$jq.ajax({
 				headers: {"X-Requested-With":"Ajax"},
@@ -312,7 +314,7 @@ function NameSync() {
 			setSyncStatus(2, "Disabled");
 		}
 		
-		if (canSync()) {
+		if (!norepeat && canSync()) {
 			setTimeout(function() { sync(); }, 30000);
 		}
 	}
@@ -452,8 +454,15 @@ function NameSync() {
 	
 	document.body.addEventListener('DOMNodeInserted', function(e) {
 		if (e.target.nodeName=='DIV') {
-			if ($jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline"))
+			if ($jq(e.target).hasClass("replyContainer") && !$jq(e.target).hasClass("inline")) {
 				updatePost($jq(".reply", e.target));
+				if (!delaySyncHandler) {
+						delaySyncHandler = setTimeout(function() {
+						setTimeout(sync, 4500, true);
+						delaySyncHandler = null;
+					}, 500);
+				}
+			}
 				
 			if (e.target.id == "qr")
 				QRListen();
