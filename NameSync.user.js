@@ -375,7 +375,7 @@ function NameSync() {
 				if (assignbutton.length == 0) {
 					assignbutton = $jq("<a/>")
 						.attr("href", "javascript:;")
-						.attr("title", "Assign a name to this poster")
+						.attr("title", "Assign name")
 						.addClass("assignbutton")
 						.text("+")
 						.click(function() {
