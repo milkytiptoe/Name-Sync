@@ -1,6 +1,6 @@
 2.3.67
 - Fixed some elements appearing above options overlay
-- Added If-Modified-Since header
+- Added If-Modified-Since header (Chrome only)
 - Redded/renamed Assign Buttons option
 - Assign Buttons option now affects both + and 4chan X menu
 
