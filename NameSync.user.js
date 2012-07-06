@@ -53,8 +53,6 @@ function NameSync() {
 	
 	var delaySyncHandler = null;
 	
-	var lastModified = "";
-	
 	$jq('form[name="delform"]').prepend("<br /><span id='syncStatus' style='color: gray;'>Waiting</span><br /><a id='optionsPopUp' href='javascript:;'' style='text-decoration: none;' title='Open options'>Options</a><br /><br />");
 	$jq("#optionsPopUp").click(function() { optionsShow(); });
 	
@@ -291,18 +289,16 @@ function NameSync() {
 	function sync(norepeat) {
 		if (optionsGetB("Enable Sync"))	{
 			$jq.ajax({
-				headers: {"X-Requested-With":"Ajax", "If-Modified-Since": lastModified},
+				headers: {"X-Requested-With":"Ajax"},
 				dataType: "json",
 				url: 'http://www.milkyis.me/bnamesync/qp.php?t='+t,
-				cache: false
+				ifModified: true
 			}).fail(function() {
 				setSyncStatus(1, "Offline (Error retrieving)");
 			}).done(function(data, status, xhr) {
 				if (data == null || status == "notmodified") {
 					setSyncStatus(0, "Online");
 				} else {
-					lastModified = xhr.getResponseHeader("Last-Modified");
-					
 					onlineNames = [];
 					onlinePosts = [];
 					onlineSubjects = [];
