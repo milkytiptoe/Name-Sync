@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.3.66
+// @version       2.3.67
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -19,12 +19,12 @@
 
 function NameSync() {
 	var optionPre = "NameSync.";
-	var optionsNames = ["Enable Sync", "Hide IDs", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
-	var optionsDescriptions = ["Share names online", "Hide IDs next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
-	var optionsDefaults = ["true", "false", "false", "true", "true", "false"];
+	var optionsNames = ["Enable Sync", "Assign Buttons", "Hide IDs", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
+	var optionsDescriptions = ["Share names online", "Show assign name buttons<br /><i>Appears next to poster names or in 4chan X menu if supported</i>", "Hide IDs next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
+	var optionsDefaults = ["true", "true", "false", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.3.66";
+	var ver = "2.3.67";
 	
 	var uv = ver.replace(/\./g, "");
 	var ut = Date.now();
@@ -138,7 +138,8 @@ function NameSync() {
 	}
 	
 	function styles() {
-		dstyle.textContent = ".posteruid { display: " + (optionsGetB("Hide IDs") ? "none" : "inline") + "; }";
+		dstyle.textContent = ".posteruid { display: " + (optionsGetB("Hide IDs") ? "none" : "inline") + "; }\
+		.assignbutton { display: " + (optionsGetB("Assign Buttons") ? "inline" : "none") + "; }";
 	}
 	
 	function init() {
@@ -158,6 +159,8 @@ function NameSync() {
 	}
 	
 	function assignMenu() {
+		if (!optionsGetB("Assign Buttons")) return;
+		
 		var d = document;
 		var a = d.createElement('a');
 		a.href = 'javascript:;';
@@ -365,7 +368,7 @@ function NameSync() {
 			}
 		}
 		
-		if (useAssignButton) {
+		if (useAssignButton && optionsGetB("Assign Buttons")) {
 			var assignbutton = $jq(".assignbutton", postinfotag).add( $jq(posttag).children(".postInfo").children(".assignbutton") );
 
 			if (!onlineIDs[id]) {
@@ -453,7 +456,7 @@ function NameSync() {
 	function optionsSet(name, value) {
 		localStorage.setItem(optionPre + name, value);
 		
-		if (name == "Hide IDs") styles();
+		if (name == "Hide IDs" || name == "Assign Buttons") styles();
 	}
 	
 	function optionsGetB(name) {

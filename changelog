@@ -1,3 +1,9 @@
+2.3.67
+- Fixed some elements appearing above options overlay
+- Added If-Modified-Since header
+- Redded/renamed Assign Buttons option
+- Assign Buttons option now affects both + and 4chan X menu
+
 2.3.66
 - (Macil) Added assign button if 4chan X menu is not available
 - (Macil) Fixed sync stacking
