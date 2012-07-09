@@ -1,3 +1,1 @@
-For assistance and information on installing, [go to the GitHub page](http://milkytiptoe.github.com/Name-Sync/)
-
-![](http://i.imgur.com/ylcON.png)
+For information on installing, [head to the GitHub page](http://milkytiptoe.github.com/Name-Sync/)
