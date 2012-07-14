@@ -140,12 +140,7 @@ function NameSync() {
 		.assignbutton { display: " + (optionsGetB("Assign Buttons") ? "inline" : "none") + "; }";
 	}
 	
-	function init() {
-		if (!optionsGetB("Has Run")) {
-			optionsShow();
-			optionsSet("Has Run", "true");
-		}
-		
+	function init() {		
 		if ($jq("#qr").length) QRListen();
 			
 		if (t != "b") sync();
