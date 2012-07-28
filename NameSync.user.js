@@ -10,7 +10,7 @@
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.3.68
+// @version       2.3.67
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -24,7 +24,7 @@ function NameSync() {
 	var optionsDefaults = ["true", "true", "false", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
-	var ver = "2.3.68";
+	var ver = "2.3.67";
 	
 	var uv = ver.replace(/\./g, "");
 	var ut = Date.now();
@@ -140,12 +140,7 @@ function NameSync() {
 		.assignbutton { display: " + (optionsGetB("Assign Buttons") ? "inline" : "none") + "; }";
 	}
 	
-	function init() {
-		if (!optionsGetB("Has Run")) {
-			alert("By using this script you understand that the following information is stored on a remote server for one day before being cleared: Your name field (and a tripcode result if a tripcode is contained), your email field, your subject field, a unique identifier based on your IP address, thread number you are replying to, post number of the post you have submitted, timestamp of when the post was made.\n\nIf you do not want this information temporarily stored, uninstall this script.");
-			optionsSet("Has Run", "true");
-		}
-		
+	function init() {		
 		if ($jq("#qr").length) QRListen();
 			
 		if (t != "b") sync();
