@@ -7,6 +7,7 @@
 // @contributor   Macil
 // @contributor   ihavenoface
 // @contributor   Finer
+// @run-at        document-idle
 // @include       http*://boards.4chan.org/b/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
@@ -224,8 +225,8 @@ function NameSync() {
 			url: "http://www.milkyis.me/bnamesync/sp.php",
 			data: d
 		}).fail(function() {
-			setSyncStatus(3, "Offline (Error sending, retrying)");
-			setTimeout(uploadName, 5*1000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+			setSyncStatus(1, "Offline (Error sending, retrying)");
+			setTimeout(uploadName, 5000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 		}).success(function() {
 			if (isLateOpSend)
 				delete sessionStorage["namesync-tosend"];
@@ -236,20 +237,6 @@ function NameSync() {
 		$jq("#qr")
 			.off("QRPostSuccessful.namesync", send)
 			.on("QRPostSuccessful.namesync", send);
-			
-		if (optionsGetB("Cross-thread Links")) {
-			var commentBox = $jq('#qr textarea[name="com"]');
-			commentBox.off("paste.namesyc").on("paste.namesync", function() {
-				setTimeout(function() {
-					commentBox.val(commentBox.val().replace(/>>(\d\d\d\d\d\d\d\d\d)/g, ">>>/b/$1"));
-					$jq(".thread .post", document).each(function() {
-						var id = this.id.substring(1);
-						commentBox.val(commentBox.val().replace(new RegExp(">>>/b/"+id, "g"), ">>"+id));
-					});
-					commentBox[0].dispatchEvent(new Event("input"));
-				}, 100);
-			});
-		}
 	}
 	
 	function canSync() {
@@ -268,7 +255,6 @@ function NameSync() {
 		switch (type) {
 			case 1: colour = "red"; break;
 			case 2: colour = "gray"; break;
-			case 3: colour = "#CD7300"; break;
 		}
 		
 		$jq("#syncStatus").html(msg).css("color", colour);
