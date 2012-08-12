@@ -19,9 +19,9 @@
 
 function NameSync() {
 	var optionPre = "NameSync.";
-	var optionsNames = ["Enable Sync", "Assign Buttons", "Hide IDs", "Cross-thread Links", "Append Errors", "Automatic Updates", "Override Fields"];
-	var optionsDescriptions = ["Share names online", "Show assign name buttons<br /><i>Appears next to poster names or in 4chan X menu if supported</i>", "Hide IDs next to names", "Add >>>/b/ to cross-thread links on paste", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
-	var optionsDefaults = ["true", "true", "false", "false", "true", "true", "false"];
+	var optionsNames = ["Enable Sync", "Assign Buttons", "Hide IDs", "Append Errors", "Automatic Updates", "Override Fields"];
+	var optionsDescriptions = ["Share names online", "Show assign name buttons<br /><i>Appears next to poster names or in 4chan X menu if supported</i>", "Hide IDs next to names", "Show sync errors inside the quick reply box", "Notify about updates automatically", "Share these instead of the quick reply fields"];
+	var optionsDefaults = ["true", "true", "false", "true", "true", "false"];
 		
 	var $jq = jQuery.noConflict();
 	var ver = "2.3.67";
@@ -140,7 +140,7 @@ function NameSync() {
 		.assignbutton { display: " + (optionsGetB("Assign Buttons") ? "inline" : "none") + "; }";
 	}
 	
-	function init() {		
+	function init() {
 		if ($jq("#qr").length) QRListen();
 			
 		if (t != "b") sync();
