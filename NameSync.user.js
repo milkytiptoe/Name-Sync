@@ -1,6 +1,6 @@
 // ==UserScript==
-// @namespace     milky
 // @name          /b/ Name Sync
+// @namespace     milky
 // @description   Shares your name with other posters on /b/. Also allows you to assign names to Anonymous posters.
 // @author        milky
 // @contributor   My Name Here
