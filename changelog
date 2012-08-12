@@ -2,6 +2,7 @@
 - Removed Cross-thread Links option
 - Fixed + button appearing in Firefox when 4chan X menu is available
 - Changed send error message colour back to red
+- Fixed script name in Tampermonkey
 
 2.3.67
 - Fixed some elements appearing above options overlay
