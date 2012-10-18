@@ -1,3 +1,9 @@
+2.3.69
+- Removed + assign buttons
+- Settings apply on save rather than instantly
+- Added support for sharing email or subject fields without a name
+Note: Subjects disappearing will be fixed in the next release of 4chan X
+
 2.3.68
 - Removed Cross-thread Links option
 - Fixed + button appearing in Firefox when 4chan X menu is available
