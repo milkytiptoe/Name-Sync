@@ -438,8 +438,10 @@ var observer = new MutationObserver(function(mutations) {
 			var node = nodes[j];
 			if (/\breplyContainer\b/.test(node.className) && !$j(node).parent().is(".inline, #qp")) {
 				updatePost($j(".reply", node));
-				clearTimeout(delaySyncHandler);
-				delaySyncHandler = setTimeout(sync, 4500, true);
+				if (Set["Enable Sync"]) {
+					clearTimeout(delaySyncHandler);
+					delaySyncHandler = setTimeout(sync, 4500, true);
+				}
 			}
 		}
 	}
