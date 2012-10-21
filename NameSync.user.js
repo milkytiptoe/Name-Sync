@@ -141,8 +141,7 @@ function init() {
 		AutoUpdate.init();
 	if (Set["Enable Sync"]) {
 		$j("<br /><span id='syncStatus'>Idle</span>").prependTo("#delform");
-		if ($j("#qr").length)
-			QRListen();
+		$j(document).on("QRPostSuccessful.namesync", send);
 		if (thread)
 			sync();
 	}
@@ -250,12 +249,6 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		if (isLateOpSend)
 			delete sessionStorage[board+"-namesync-tosend"];
 	});
-}
-
-function QRListen() {
-	$j("#qr")
-		.off("QRPostSuccessful.namesync", send)
-		.on("QRPostSuccessful.namesync", send);
 }
 
 function canSync() {
@@ -437,17 +430,24 @@ function loadNames() {
 		names = {};
 }
 
-document.body.addEventListener('DOMNodeInserted', function(e) {
-	if (e.target.nodeName=='DIV') {
-		if ($j(e.target).hasClass("replyContainer") && !$j(e.target).parent().is(".inline, #qp")) {
-			updatePost($j(".reply", e.target));
-			clearTimeout(delaySyncHandler);
-			delaySyncHandler = setTimeout(sync, 4000, true);
+var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.OMutationObserver;
+var observer = new MutationObserver(function(mutations) {
+	for (var i = 0, len = mutations.length; i < len; i++) {
+		var nodes = mutations[i].addedNodes;
+		for (var j = 0, _len = nodes.length; j < _len; j++) {
+			var node = nodes[j];
+			if (/\breplyContainer\b/.test(node.className) && !$j(node).parent().is(".inline, #qp")) {
+				updatePost($j(".reply", node));
+				clearTimeout(delaySyncHandler);
+				delaySyncHandler = setTimeout(sync, 4500, true);
+			}
 		}
-		if (e.target.id == "qr" && Set["Enable Sync"])
-			QRListen();
 	}
-}, true);
+});
+observer.observe($j(".thread").get(0), {
+	childList: true,
+	subtree: true
+});
 
 if (sessionStorage[board+"-namesync-tosend"]) {
 	var r = JSON.parse(sessionStorage[board+"-namesync-tosend"]);
