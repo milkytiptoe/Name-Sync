@@ -1,8 +1,13 @@
+2.4.70
+- Fixed syncing on new post with sync disabled
+- Added support for /q/ and /soc/
+Note: Pre-menu 4chan X versions are no longer supported for sharing or assigning
+Note: Subjects disappearing will be fixed in the next release of 4chan X
+
 2.3.69
 - Removed + assign buttons
 - Settings apply on save rather than instantly
 - Added support for sharing email or subject fields without a name
-Note: Subjects disappearing will be fixed in the next release of 4chan X
 
 2.3.68
 - Removed Cross-thread Links option
