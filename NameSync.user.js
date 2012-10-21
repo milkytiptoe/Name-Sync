@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          /b/ Name Sync
 // @namespace     milky
-// @description   Shares your name with other posters on /b/. Also allows you to assign names to Anonymous posters.
+// @description   Shares your name with other posters on forced anon boards. Also allows you to assign names to Anonymous posters. Requires 4chan X.
 // @author        milky
 // @contributor   My Name Here
 // @contributor   Macil
@@ -9,6 +9,8 @@
 // @contributor   Finer
 // @run-at        document-idle
 // @include       http*://boards.4chan.org/b/*
+// @include       http*://boards.4chan.org/soc/*
+// @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
 // @version       2.3.69
@@ -32,14 +34,14 @@ var onlineEmails = [];
 var onlineSubjects = [];
 var onlineIDs = {};
 
-var t = document.URL;
-t = t.replace(/^.*\/|\.[^.]*$/g, '');
-t = t.substring(0, 9);
-if (t.length < 9)
-	t = "b";
+var path = location.pathname.slice(1).split("/");
+var board = path[0];
+var thread = null;
+if (path[1] === "res")
+	thread = path[2];
 
 var status = 0;
-
+ 
 var delaySyncHandler = null;
 
 var AutoUpdate = {
@@ -52,8 +54,8 @@ var AutoUpdate = {
 		var updatelink = $j("#updateLink");
 		updatelink.text("Checking...");
 		$j.ajax({
-			headers: {"X-Requested-With":"Ajax"},
-			url: "http://www.milkyis.me/bnamesync/uq.php"
+			headers: {"X-Requested-With":"NameSync"},
+			url: "http://www.milkyis.me/namesync/uq.php"
 		}).done(function(latest) {
 			if (latest.length > 6)
 				return updatelink.text("Error checking for update");
@@ -61,7 +63,7 @@ var AutoUpdate = {
 			Settings.set("lastcheck", Date.now());
 			if (latest > version.replace(/\./g, "")) {
 				updatelink.text("Update available");
-				if (confirm("A new update for /b/ Name Sync is available, install now?"))
+				if (confirm("A new update for Name Sync is available, install now?"))
 					window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
 			} else
 				updatelink.text("No update available");
@@ -138,10 +140,10 @@ function init() {
 	if (Set["Automatic Updates"])
 		AutoUpdate.init();
 	if (Set["Enable Sync"]) {
-		$j("<br /><span id='syncStatus'>Waiting</span>").prependTo("#delform");
+		$j("<br /><span id='syncStatus'>Idle</span>").prependTo("#delform");
 		if ($j("#qr").length)
 			QRListen();
-		if (t != "b")
+		if (thread)
 			sync();
 	}
 	loadNames();
@@ -220,12 +222,12 @@ function send(e) {
 }
 
 function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
-	var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+	var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&b="+board+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
 
 	if (isLateOpSend && !sessionStorage["namesync-tosend"])
 		return;
 
-	if (t == "b") {
+	if (!thread) {
 		isLateOpSend = true;
 		sessionStorage["namesync-tosend"] = JSON.stringify({
 			name: cName,
@@ -237,9 +239,9 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 	}
 
 	$j.ajax({
-		headers: {"X-Requested-With":"Ajax"},
+		headers: {"X-Requested-With":"NameSync"},
 		type: "POST",
-		url: "http://www.milkyis.me/bnamesync/sp.php",
+		url: "http://www.milkyis.me/namesync/sp.php",
 		data: d
 	}).fail(function() {
 		setSyncStatus(1, "Offline (Error sending, retrying)");
@@ -267,7 +269,7 @@ function canSync() {
 }
 
 function setSyncStatus(type, msg) {
-	if (t == "b")
+	if (!thread)
 		return;
 	
 	var colour = "green";
@@ -280,7 +282,7 @@ function setSyncStatus(type, msg) {
 	$j("#syncStatus").html(msg).css("color", colour);
 	
 	if (status != type && Set["Show Errors"]) {
-		$j("div.warning").html("<span style='color: "+colour+" !important;'>Sync is "+msg+"</span>");
+		$j("div.warning").html("<span style='color: "+colour+" !important;'>Sync: "+msg+"</span>");
 		setTimeout(function() {
 			$j("div.warning").html("");
 		}, 5000);
@@ -291,9 +293,9 @@ function setSyncStatus(type, msg) {
 
 function sync(norepeat) {
 	$j.ajax({
-		headers: {"X-Requested-With":"Ajax"},
+		headers: {"X-Requested-With":"NameSync"},
 		dataType: "json",
-		url: 'http://www.milkyis.me/bnamesync/qp.php?t='+t,
+		url: "http://www.milkyis.me/namesync/qp.php?t="+thread+"&b="+board,
 		ifModified: true
 	}).fail(function() {
 		setSyncStatus(1, "Offline (Error retrieving)");
