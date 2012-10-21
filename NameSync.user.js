@@ -224,12 +224,12 @@ function send(e) {
 function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 	var d = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&b="+board+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
 
-	if (isLateOpSend && !sessionStorage["namesync-tosend"])
+	if (isLateOpSend && !sessionStorage[board+"-namesync-tosend"])
 		return;
 
 	if (!thread) {
 		isLateOpSend = true;
-		sessionStorage["namesync-tosend"] = JSON.stringify({
+		sessionStorage[board+"-namesync-tosend"] = JSON.stringify({
 			name: cName,
 			email: cEmail,
 			subject: cSubject,
@@ -248,7 +248,7 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		setTimeout(uploadName, 5000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 	}).done(function() {
 		if (isLateOpSend)
-			delete sessionStorage["namesync-tosend"];
+			delete sessionStorage[board+"-namesync-tosend"];
 	});
 }
 
@@ -426,12 +426,12 @@ function assignName(id) {
 }
 
 function storeNames() {
-	sessionStorage["names"] = JSON.stringify(names);
+	sessionStorage[board+"-names"] = JSON.stringify(names);
 }
 
 function loadNames() {
-	if (sessionStorage["names"] != null)
-		names = JSON.parse(sessionStorage["names"]);
+	if (sessionStorage[board+"-names"] != null)
+		names = JSON.parse(sessionStorage[board+"-names"]);
 
 	if (names == null)
 		names = {};
@@ -449,8 +449,8 @@ document.body.addEventListener('DOMNodeInserted', function(e) {
 	}
 }, true);
 
-if (sessionStorage["namesync-tosend"]) {
-	var r = JSON.parse(sessionStorage["namesync-tosend"]);
+if (sessionStorage[board+"-namesync-tosend"]) {
+	var r = JSON.parse(sessionStorage[board+"-namesync-tosend"]);
 	uploadName(r.name, r.email, r.subject, r.postID, r.threadID, true);
 }
 
