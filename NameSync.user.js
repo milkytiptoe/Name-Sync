@@ -37,7 +37,7 @@ var onlineIDs = {};
 var path = location.pathname.slice(1).split("/");
 var board = path[0];
 var thread = null;
-if (path[1] === "res")
+if (path[1] == "res")
 	thread = path[2];
 
 var status = 0;
@@ -430,7 +430,7 @@ function loadNames() {
 		names = {};
 }
 
-var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.OMutationObserver;
+var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.OMutationObserver || window.MozMutationObserver;
 var observer = new MutationObserver(function(mutations) {
 	for (var i = 0, len = mutations.length; i < len; i++) {
 		var nodes = mutations[i].addedNodes;
