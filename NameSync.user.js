@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.4.70
+// @version       2.4.71
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.4.70";
+var version = "2.4.71";
 
 var Set = {};
 
@@ -430,26 +430,35 @@ function loadNames() {
 		names = {};
 }
 
-var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.OMutationObserver || window.MozMutationObserver;
-var observer = new MutationObserver(function(mutations) {
-	for (var i = 0, len = mutations.length; i < len; i++) {
-		var nodes = mutations[i].addedNodes;
-		for (var j = 0, _len = nodes.length; j < _len; j++) {
-			var node = nodes[j];
-			if (/\breplyContainer\b/.test(node.className) && !$j(node).parent().is(".inline, #qp")) {
-				updatePost($j(".reply", node));
-				if (Set["Enable Sync"]) {
-					clearTimeout(delaySyncHandler);
-					delaySyncHandler = setTimeout(sync, 4500, true);
-				}
-			}
+function checkNewNode(node) {
+	if (node.nodeName == "DIV" && /\breplyContainer\b/.test(node.className) && !$j(node).parent().is(".inline, #qp")) {
+		updatePost($j(".reply", node));
+		if (Set["Enable Sync"]) {
+			clearTimeout(delaySyncHandler);
+			delaySyncHandler = setTimeout(sync, 4500, true);
 		}
 	}
-});
-observer.observe($j(".thread").get(0), {
-	childList: true,
-	subtree: true
-});
+}
+
+var MutationObserver;
+if (MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.OMutationObserver || window.MozMutationObserver) {
+	var observer = new MutationObserver(function(mutations) {
+		for (var i = 0, len = mutations.length; i < len; i++) {
+			var nodes = mutations[i].addedNodes;
+			for (var j = 0, _len = nodes.length; j < _len; j++) {
+				checkNewNode(nodes[j]);
+			}
+		}
+	});
+	observer.observe($j(".thread").get(0), {
+		childList: true,
+		subtree: true
+	});
+} else {
+	$j(".thread").on("DOMNodeInserted.namesync", function(e) {
+		checkNewNode(e.target);
+	});
+}
 
 if (sessionStorage[board+"-namesync-tosend"]) {
 	var r = JSON.parse(sessionStorage[board+"-namesync-tosend"]);

@@ -1,3 +1,6 @@
+2.4.71
+- Fixed names not showing up in Opera Mobile and older versions of Firefox
+
 2.4.70
 - Fixed syncing on new post with sync disabled
 - Added support for /q/ and /soc/
