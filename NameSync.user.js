@@ -214,7 +214,7 @@ function send(e) {
 	cEmail = $j.trim(cEmail);
 	cSubject = $j.trim(cSubject);
 	
-	if ((cName == "" && cEmail == "" && cSubject == "") || cEmail.toLowerCase() == "sage")
+	if ((cName == "" && cEmail == "" && cSubject == "") || /sage/i.test(cEmail))
 		return;
 	
 	uploadName(cName, cEmail, cSubject, postID, threadID);
