@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.4.71
+// @version       2.4.72
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.4.71";
+var version = "2.4.72";
 
 var Set = {};
 
@@ -86,7 +86,7 @@ var Settings = {
 		"Enable Sync": ["Share names online", true],
 		"Assign Buttons": ["Show assign name button in 4chan X menus", true],
 		"Hide IDs": ["Hide IDs next to names", false],
-		"Show Errors": ["Show sync errors inside the quick reply box", true],
+		"Show Status": ["Show sync status changes inside the quick reply box", true],
 		"Automatic Updates": ["Check for updates automatically", true],
 		"Override Fields": ["Share these over the quick reply fields", false]
 	},
@@ -274,7 +274,7 @@ function setSyncStatus(type, msg) {
 	
 	$j("#syncStatus").html(msg).css("color", colour);
 	
-	if (status != type && Set["Show Errors"]) {
+	if (status != type && Set["Show Status"]) {
 		$j("div.warning").html("<span style='color: "+colour+" !important;'>Sync: "+msg+"</span>");
 		setTimeout(function() {
 			$j("div.warning").html("");
@@ -286,13 +286,16 @@ function setSyncStatus(type, msg) {
 
 function sync(norepeat) {
 	$j.ajax({
-		headers: {"X-Requested-With":"NameSync"},
 		dataType: "json",
-		url: "http://www.milkyis.me/namesync/qp.php?t="+thread+"&b="+board,
-		ifModified: true
-	}).fail(function() {
-		setSyncStatus(1, "Offline (Error retrieving)");
-	}).done(function(data, status, xhr) {
+		url: "http://www.milkyis.me/namesync/"+board+"/"+thread+".json",
+		ifModified: true,
+	}).fail(function(xhr) {
+		if (xhr.status == 404 || xhr.status == 0) {
+			setSyncStatus(2, "Waiting");
+		} else {
+			setSyncStatus(1, "Offline (Error retrieving)");
+		}
+	}).done(function(data, status) {
 		if (data == null || status == "notmodified") {
 			setSyncStatus(0, "Online");
 		} else {
@@ -314,7 +317,7 @@ function sync(norepeat) {
 	});
 	
 	if (!norepeat && canSync()) {
-		setTimeout(function() { sync(); }, 30000);
+		setTimeout(sync, 30000);
 	}
 }
 
