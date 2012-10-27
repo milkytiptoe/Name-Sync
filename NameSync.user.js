@@ -86,7 +86,7 @@ var Settings = {
 		"Enable Sync": ["Share names online", true],
 		"Assign Buttons": ["Show assign name button in 4chan X menus", true],
 		"Hide IDs": ["Hide IDs next to names", false],
-		"Show Status": ["Show sync status changes inside the quick reply box", true],
+		"Show Status": ["Show sync status changes inside the quick reply box", false],
 		"Automatic Updates": ["Check for updates automatically", true],
 		"Override Fields": ["Share these over the quick reply fields", false]
 	},
