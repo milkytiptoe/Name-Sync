@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.4.72
+// @version       2.4.73
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.4.72";
+var version = "2.4.73";
 
 var Set = {};
 
@@ -286,17 +286,14 @@ function setSyncStatus(type, msg) {
 
 function sync(norepeat) {
 	$j.ajax({
+		headers: {"X-Requested-With":"NameSync"},
 		dataType: "json",
-		url: "http://www.milkyis.me/namesync/"+board+"/"+thread+".json",
+		url: "http://www.milkyis.me/namesync/qp.php?t="+thread+"&b="+board,
 		ifModified: true,
-	}).fail(function(xhr) {
-		if (xhr.status == 404 || xhr.status == 0) {
-			setSyncStatus(2, "Waiting");
-		} else {
-			setSyncStatus(1, "Offline (Error retrieving, retrying)");
-			clearTimeout(delaySyncHandler);
-			delaySyncHandler = setTimeout(sync, 4500, true);
-		}
+	}).fail(function() {
+		setSyncStatus(1, "Offline (Error retrieving, retrying)");
+		clearTimeout(delaySyncHandler);
+		delaySyncHandler = setTimeout(sync, 4500, true);
 	}).done(function(data, status) {
 		if (data == null || status == "notmodified") {
 			setSyncStatus(0, "Online");
