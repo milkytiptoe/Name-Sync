@@ -1,6 +1,9 @@
 Note: Pre-menu 4chan X versions are no longer supported for sharing or assigning
 Note: Subjects not showing is fixed in the latest 4chan X
 
+2.4.73
+- Added retry to sync fail
+
 2.4.72
 - Fixed nokosage emails being shared
 
