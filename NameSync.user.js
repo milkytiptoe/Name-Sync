@@ -293,7 +293,9 @@ function sync(norepeat) {
 		if (xhr.status == 404 || xhr.status == 0) {
 			setSyncStatus(2, "Waiting");
 		} else {
-			setSyncStatus(1, "Offline (Error retrieving)");
+			setSyncStatus(1, "Offline (Error retrieving, retrying)");
+			clearTimeout(delaySyncHandler);
+			delaySyncHandler = setTimeout(sync, 4500, true);
 		}
 	}).done(function(data, status) {
 		if (data == null || status == "notmodified") {
