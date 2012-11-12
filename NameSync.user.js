@@ -176,8 +176,11 @@ function addAssignButtons() {
 	a.textContent = "Assign name";
 
 	var open = function(post) {
-		var uid = $j(".posteruid", post.el).first().text();
-		return uid != "(ID: Heaven)" && !onlineIDs[uid];
+		var uid  = $j(".posteruid", post.el).first().text();
+		var path = $j("a[title=\"Highlight this post\"]", post.el)[0].pathname;
+		if (path.split("/")[1] === ("b" || "soc" || "q")) {
+			return uid != "(ID: Heaven)" && !onlineIDs[uid];
+		}
 	};
 	
 	a.addEventListener('click', function() {
