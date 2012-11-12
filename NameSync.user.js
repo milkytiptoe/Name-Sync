@@ -41,7 +41,7 @@ if (path[1] == "res")
 	thread = path[2];
 
 var status = 0;
- 
+
 var delaySyncHandler = null;
 
 var AutoUpdate = {
@@ -182,7 +182,7 @@ function addAssignButtons() {
 			return uid != "(ID: Heaven)" && !onlineIDs[uid];
 		}
 	};
-	
+
 	a.addEventListener('click', function() {
 		assignName(d.getElementById(d.getElementById('menu').dataset.rootid).querySelector(".posteruid").textContent);
 	});
@@ -212,14 +212,14 @@ function send(e) {
 		cEmail = $j('input[name="email"]', qr).val();
 		cSubject = $j('input[name="sub"]', qr).val();
 	}
-	
+
 	cName = $j.trim(cName);
 	cEmail = $j.trim(cEmail);
 	cSubject = $j.trim(cSubject);
-	
+
 	if ((cName == "" && cEmail == "" && cSubject == "") || /sage/i.test(cEmail))
 		return;
-	
+
 	uploadName(cName, cEmail, cSubject, postID, threadID);
 }
 
@@ -267,23 +267,23 @@ function canSync() {
 function setSyncStatus(type, msg) {
 	if (!thread)
 		return;
-	
+
 	var colour = "green";
-	
+
 	switch (type) {
 		case 1: colour = "red"; break;
 		case 2: colour = "gray"; break;
 	}
-	
+
 	$j("#syncStatus").html(msg).css("color", colour);
-	
+
 	if (status != type && Set["Show Status"]) {
 		$j("div.warning").html("<span style='color: "+colour+" !important;'>Sync: "+msg+"</span>");
 		setTimeout(function() {
 			$j("div.warning").html("");
 		}, 5000);
 	}
-	
+
 	status = type;
 }
 
@@ -305,7 +305,7 @@ function sync(norepeat) {
 			onlinePosts = [];
 			onlineSubjects = [];
 			onlineEmails = [];
-			
+
 			for (var i = 0, len = data.length; i < len; i++) {
 				onlineNames.push(data[i].n);
 				onlinePosts.push(data[i].p);
@@ -317,7 +317,7 @@ function sync(norepeat) {
 			updateElements();
 		}
 	});
-	
+
 	if (!norepeat && canSync()) {
 		setTimeout(sync, 30000);
 	}
@@ -327,7 +327,7 @@ function updateElements() {
 	$j(".thread .post", document).each(function() {
 		updatePost(this);
 	});
-	
+
 	storeNames();
 }
 
@@ -339,7 +339,7 @@ function updatePost(posttag) {
 
 	if (id == "(ID: Heaven)")
 		return;
-	
+
 	var postnumspan = $j(posttag).children(".postInfo, .postInfoM").children(".postNum");
 	var subjectspan = $j(".subject", postinfotag).add( $j(posttag).children(".postInfo").children(".subject") );
 
@@ -348,7 +348,7 @@ function updatePost(posttag) {
 	var tripcode = null;
 	var email = null;
 	var subject = null;
-	
+
 	if (Set["Enable Sync"]) {
 		var info = getOnlineInfo(postnum);
 		if (info != null && info[0] != null && info[0] != "") {
@@ -358,18 +358,18 @@ function updatePost(posttag) {
 			onlineIDs[id] = true;
 		}
 	}
-	
+
 	if (names[id] != null) {
 		name = names[id];
 		tripcode = "";
-		
+
 		name = name.split("#");
-		
+
 		if (typeof name[1] != "undefined")
 			tripcode = " !" + name[1];
 
 		name = name[0];
-		
+
 		if (subject != null && subject != "" && subjectspan.first().text() != subject)
 			subjectspan.text(subject);
 
@@ -416,7 +416,7 @@ function getOnlineInfo(postnum) {
 
 function assignName(id) {
 	var name = prompt("What would you like this poster to be named?", "");
-	
+
 	if (name != null && name != "")	{
 		names[id] = name;
 		updateElements();
