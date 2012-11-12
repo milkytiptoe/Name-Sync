@@ -178,9 +178,7 @@ function addAssignButtons() {
 	var open = function(post) {
 		var uid  = $j(".posteruid", post.el).first().text();
 		var path = $j("a[title=\"Highlight this post\"]", post.el)[0].pathname;
-		if (path.split("/")[1] === ("b" || "soc" || "q")) {
-			return uid != "(ID: Heaven)" && !onlineIDs[uid];
-		}
+		return uid != "(ID: Heaven)" && !onlineIDs[uid] && path.split("/")[1] === ("b" || "soc" || "q");
 	};
 
 	a.addEventListener('click', function() {
