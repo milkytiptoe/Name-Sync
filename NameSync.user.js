@@ -155,7 +155,7 @@ function addStyles() {
 	var css = "\
 	#settingsOverlay { z-index: 99; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); }\
 	#settingsWrapper * { margin: 0; padding: 0; }\
-	#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(http://www.milkyis.me/bnamesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); }\
+	#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); }\
 	#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
 	#syncStatus { color: gray; }\
 	#openSettings, #settingsWrapper a { text-decoration: none; }\
