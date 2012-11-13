@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.4.73
+// @version       2.4.74
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.4.73";
+var version = "2.4.74";
 
 var Set = {};
 
@@ -292,9 +292,7 @@ function sync(norepeat) {
 		url: "http://www.milkyis.me/namesync/qp.php?t="+thread+"&b="+board,
 		ifModified: true,
 	}).fail(function() {
-		setSyncStatus(1, "Offline (Error retrieving, retrying)");
-		clearTimeout(delaySyncHandler);
-		delaySyncHandler = setTimeout(sync, 4500, true);
+		setSyncStatus(1, "Offline (Error retrieving)");
 	}).done(function(data, status) {
 		if (data == null || status == "notmodified") {
 			setSyncStatus(0, "Online");
