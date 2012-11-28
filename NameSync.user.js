@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.5.75
+// @version       2.5.76
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.5.75";
+var version = "2.5.76";
 
 var Set = {};
 
@@ -104,7 +104,7 @@ var Settings = {
 	open: function() {
 		$j("body").css("overflow", "hidden");
 		$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
-		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Persona</h2><p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a <a href="javascript:location.reload(true);">page reload</a>.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"><input type="button" value="Clear posting history" /></div><div id="settingsMore"><h2>More</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
+		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Persona</h2><p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a <a href="javascript:location.reload(true);">page reload</a>.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"><input type="button" value="Clear posting history" /></div><div id="settingsMore"><h2>More</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
 		for (var set in Settings.settings) {
 			var stored = Settings.get(set);
 			var checked = stored == null ? Settings.settings[set][1] : stored == "true";
@@ -162,9 +162,9 @@ function addStyles() {
 	#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
 	#syncStatus { color: gray; }\
 	#openSettings, #settingsWrapper a { color: blue !important; text-decoration: none; }\
-	#settingsWrapper p, #settingsWrapper h1, #settingsWrapper label, #settingsWrapper h2 { color: black !important; }\
+	#settingsWrapper p, #settingsWrapper label, #settingsWrapper h2 { color: black !important; }\
 	#settingsWrapper p { margin-bottom: 10px; }\
-	#settingsWrapper h1 { font-size: 1.2em; text-align: left; }\
+	#settingsWrapper h1 { font-size: 10pt; margin: 0 !important; color: gray; float: right; }\
 	#settingsWrapper h2 { font-size: 10pt; margin: 8px 0 6px 0 !important; }\
 	#settingsMain h2 { margin-top: 0 !important; }\
 	#settingsWrapper input[type='text'] { border: 1px solid #CCC; width: 31%; padding: 2px; }\

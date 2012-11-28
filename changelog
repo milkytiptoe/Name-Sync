@@ -1,3 +1,7 @@
+2.5.76
+- Readded version to settings
+- Fixed settings being unreadable on dark themes
+
 2.5.75
 - Fixed sage emails not being shared on /q/ and /soc/
 - Added seperate settings to enable or disable sync on each board
