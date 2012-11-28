@@ -118,7 +118,9 @@ var Settings = {
 			this.setAttribute("disabled", "disabled");
 			$j.ajax({
 				headers: {"X-Requested-With":"NameSync"},
-				url: "http://www.milkyis.me/namesync/rm.php"
+				type: "POST",
+				url: "http://www.milkyis.me/namesync/rm.php",
+				data: {}
 			}).done(function(response) {
 				alert(response);
 			}).fail(function() {
