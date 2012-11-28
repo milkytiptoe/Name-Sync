@@ -103,47 +103,35 @@ var Settings = {
 	open: function() {
 		$j("body").css("overflow", "hidden");
 		$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
-		var wrapper = $j("<div />").attr("id", "settingsWrapper").html('\
-		<div id="settingsWrapper">\
-			<div id="settingsContent">\
-				<div id="settingsMain">\
-					<h2>Main</h2>\
-					<p>Settings are applied on your next page reload.</p>\
-				</div>\
-				<div id="settingsPersona">\
-					<h2>Persona</h2>\
-					<p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a page reload.</p>\
-					<input type="text" name="Name" placeholder="Name">\
-					<input type="text" name="Email" placeholder="Email">\
-					<input type="text" name="Subject" placeholder="Subject">\
-					<input type="button" value="Clear posting history" />\
-				</div>\
-				<div id="settingsPosters">\
-					<h2>Posters</h2>\
-					<p>Manage posters from the current thread.</p>\
-				</div>\
-			</div>\
-			<div id="settingsMore">\
-				<h2>More</h2>\
-				<a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br />\
-				<a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br />\
-				<a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br />\
-				<a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br />\
-			</div>\
-		</div>').appendTo("body");
+		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h2>Main</h2><p>Settings are applied on your next page reload.</p></div><div id="settingsPersona"><h2>Persona</h2><p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a page reload.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"><input type="button" value="Clear posting history" /></div><div id="settingsPosters"><h2>Posters</h2><p>Manage posters from the current thread.</p></div></div><div id="settingsMore"><h2>More</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
 		for (var set in Settings.settings) {
 			var stored = Settings.get(set);
 			var checked = stored == null ? Settings.settings[set][1] : stored == "true";
 			$j("<label><input type='checkbox' name='" + set + "'" + (checked ? "checked" : "") + " /> " + Settings.settings[set][0] + "</label>").appendTo("#settingsMain");
 		}
+		$j("<label />").html("<a id='updateLink' href='javascript:;'>Check for update</a>").on("click", AutoUpdate.update).appendTo("#settingsMore");
+		$j("#settingsPersona input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; });
+		$j("#settingsPersona input[type='button']").on("click", function() {
+			if (!confirm("This will remove any history stored online by you. Continue?"))
+				return;
+			this.setAttribute("disabled", "disabled");
+			$j.ajax({
+				headers: {"X-Requested-With":"NameSync"},
+				url: "http://www.milkyis.me/namesync/rm.php"
+			}).done(function(response) {
+				alert(response);
+			}).fail(function() {
+				alert("Error removing history");
+			});
+		});
 	},
 	close: function() {
-		$j("#settingsWrapper input[type='checkbox']").each(function() {	Settings.set(this.name, this.checked); });
-		$j("#settingsWrapper input[type='text']").each(function() {	Settings.set(this.name, this.value); });
+		$j("#settingsWrapper input[type='checkbox']").each(function() { Settings.set(this.name, this.checked); });
+		$j("#settingsPersona input[type='text']").each(function() { Settings.set(this.name, this.value); });
 		$j("body").css("overflow", "auto");
 		$j("#settingsOverlay").remove();
 		$j("#settingsWrapper").remove();
-	}	
+	}
 };
 
 function init() {
