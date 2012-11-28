@@ -1,5 +1,9 @@
-Note: Pre-menu 4chan X versions are no longer supported for sharing or assigning
-Note: Subjects not showing is fixed in the latest 4chan X
+2.5.75
+- Fixed sage emails not being shared on /q/ and /soc/
+- Added seperate settings to enable or disable sync on each board
+- Added button to clear posting history to settings
+- Added sync retry setting
+- 'Assign name' button in 4chan X menus renamed to 'Change name' and now allows you to rename sync posters
 
 2.4.74
 - (ihavenoface) Hide assign buttons in cross-board inline replies from unsupported boards
