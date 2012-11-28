@@ -33,6 +33,7 @@ var onlinePosts = [];
 var onlineEmails = [];
 var onlineSubjects = [];
 var onlineIDs = {};
+var blockedIDs = {};
 
 var path = location.pathname.slice(1).split("/");
 var board = path[0];
@@ -87,7 +88,7 @@ var Settings = {
 		"/b/": ["Enable sync on /b/", true],
 		"/soc/": ["Enable sync on /soc/", true],
 		"/q/": ["Enable sync on /q/", true],
-		"Assign Buttons": ["Show assign name button in 4chan X menus", true],
+		"Assign Buttons": ["Show change name button in 4chan X menus", true],
 		"Hide IDs": ["Hide IDs next to names", false],
 		"Show Status": ["Show sync status changes inside the quick reply box", false],
 		"Automatic Updates": ["Check for updates automatically", true],
@@ -103,7 +104,7 @@ var Settings = {
 	open: function() {
 		$j("body").css("overflow", "hidden");
 		$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
-		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h2>Main</h2><p>Settings are applied on your next page reload.</p></div><div id="settingsPersona"><h2>Persona</h2><p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a page reload.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"><input type="button" value="Clear posting history" /></div><div id="settingsPosters"><h2>Posters</h2><p>Manage posters from the current thread.</p></div></div><div id="settingsMore"><h2>More</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
+		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h2>Main</h2><p>Settings are applied on your next page reload.</p></div><div id="settingsPersona"><h2>Persona</h2><p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a page reload.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"><input type="button" value="Clear posting history" /></div><div id="settingsMore"><h2>More</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
 		for (var set in Settings.settings) {
 			var stored = Settings.get(set);
 			var checked = stored == null ? Settings.settings[set][1] : stored == "true";
@@ -175,12 +176,12 @@ function addAssignButtons() {
 	var d = document;
 	var a = d.createElement('a');
 	a.href = 'javascript:;';
-	a.textContent = "Assign name";
+	a.textContent = "Change name";
 
 	var open = function(post) {
 		var uid  = $j(".posteruid", post.el).first().text();
 		var path = $j("a[title=\"Highlight this post\"]", post.el)[0].pathname;
-		return uid != "(ID: Heaven)" && !onlineIDs[uid] && path.split("/")[1] === ("b" || "soc" || "q");
+		return uid != "(ID: Heaven)" && path.split("/")[1] === ("b" || "soc" || "q");
 	};
 
 	a.addEventListener('click', function() {
@@ -353,7 +354,7 @@ function updatePost(posttag) {
 
 	if (Set["/" + board + "/"]) {
 		var info = getOnlineInfo(postnum);
-		if (info != null && info[0] != null && info[0] != "") {
+		if (!blockedIDs[id] && info != null && info[0] != null && info[0] != "") {
 			names[id] = info[0];
 			email = info[1];
 			subject = info[2];
@@ -417,7 +418,14 @@ function getOnlineInfo(postnum) {
 }
 
 function assignName(id) {
-	var name = prompt("What would you like this poster to be named?", "");
+	if (onlineIDs[id]) {
+		if (confirm("This poster is named by Name Sync. Continue?")) {
+			blockedIDs[id] = true;
+		} else {
+			return;
+		}
+	}
+	var name = prompt("What would you like this poster to be named?", "Anonymous");
 
 	if (name != null && name != "")	{
 		names[id] = name;
