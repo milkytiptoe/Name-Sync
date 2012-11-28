@@ -161,7 +161,8 @@ function addStyles() {
 	#settingsWrapper { overflow-y: scroll; padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); }\
 	#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
 	#syncStatus { color: gray; }\
-	#openSettings, #settingsWrapper a { text-decoration: none; }\
+	#openSettings, #settingsWrapper a { color: blue !important; text-decoration: none; }\
+	#settingsWrapper p, #settingsWrapper h1, #settingsWrapper label, #settingsWrapper h2 { color: black !important; }\
 	#settingsWrapper p { margin-bottom: 10px; }\
 	#settingsWrapper h1 { font-size: 1.2em; text-align: left; }\
 	#settingsWrapper h2 { font-size: 10pt; margin: 8px 0 6px 0 !important; }\
