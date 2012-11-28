@@ -111,7 +111,7 @@ var Settings = {
 				</div>\
 				<div id="settingsPersona">\
 					<h2>Persona</h2>\
-					<p>Manage your shared fields and history. These are applied instantly.</p>\
+					<p>These are applied instantly.</p>\
 					<label><input type="checkbox" name="Override Fields" /> Share these fields instead of the 4chan X quick reply fields</label>\
 					<input type="text" name="Name" placeholder="Name">\
 					<input type="text" name="Email" placeholder="Email">\
@@ -147,7 +147,7 @@ function init() {
 	addStyles();
 	if (Set["Automatic Updates"])
 		AutoUpdate.init();
-	if (Set["Enable Sync"]) {
+	if (Set["/" + board + "/"]) {
 		$j("<br /><span id='syncStatus'>Idle</span>").prependTo("#delform");
 		$j(document).on("QRPostSuccessful.namesync", send);
 		if (thread)
@@ -172,7 +172,7 @@ function addStyles() {
 	#settingsWrapper h2 { font-size: 10pt; margin: 8px 0 6px 0 !important; }\
 	#settingsMain h2 { margin-top: 0 !important; }\
 	#settingsWrapper input[type='text'] { border: 1px solid #CCC; width: 31%; padding: 2px; }\
-	#settingsWrapper input[type='button'] { width: 124px; }\
+	#settingsWrapper input[type='button'] { width: 130px; height: 26px; }\
 	";
 	if (Set["Hide IDs"])
 		css += ".posteruid { display: none; }";
@@ -254,8 +254,12 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		url: "http://www.milkyis.me/namesync/sp.php",
 		data: d
 	}).fail(function() {
-		setSyncStatus(1, "Offline (Error sending, retrying)");
-		setTimeout(uploadName, 5000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+		if (Set["Sync Retry"]) {
+			setSyncStatus(1, "Offline (Error sending, retrying)");
+			setTimeout(uploadName, 5000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+		} else {
+			setSyncStatus(1, "Offline");
+		}
 	}).done(function() {
 		if (isLateOpSend)
 			delete sessionStorage[board+"-namesync-tosend"];
@@ -355,7 +359,7 @@ function updatePost(posttag) {
 	var email = null;
 	var subject = null;
 
-	if (Set["Enable Sync"]) {
+	if (Set["/" + board + "/"]) {
 		var info = getOnlineInfo(postnum);
 		if (info != null && info[0] != null && info[0] != "") {
 			names[id] = info[0];
@@ -444,7 +448,7 @@ function loadNames() {
 function checkNewNode(node) {
 	if (node.nodeName == "DIV" && /\breplyContainer\b/.test(node.className) && !$j(node).parent().is(".inline, #qp")) {
 		updatePost($j(".reply", node));
-		if (Set["Enable Sync"]) {
+		if (Set["/" + board + "/"]) {
 			clearTimeout(delaySyncHandler);
 			delaySyncHandler = setTimeout(sync, 4500, true);
 		}
