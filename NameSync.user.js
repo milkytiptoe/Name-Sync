@@ -91,7 +91,8 @@ var Settings = {
 		"Hide IDs": ["Hide IDs next to names", false],
 		"Show Status": ["Show sync status changes inside the quick reply box", false],
 		"Automatic Updates": ["Check for updates automatically", true],
-		"Sync Retry": ["Retry sharing name if sharing fails", false]
+		"Sync Retry": ["Retry sharing name if sharing fails", false],
+		"Override Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
 	},
 	get: function(name) {
 		return localStorage.getItem(namespace + name);
@@ -111,8 +112,7 @@ var Settings = {
 				</div>\
 				<div id="settingsPersona">\
 					<h2>Persona</h2>\
-					<p>These are applied instantly.</p>\
-					<label><input type="checkbox" name="Override Fields" /> Share these fields instead of the 4chan X quick reply fields</label>\
+					<p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a page reload.</p>\
 					<input type="text" name="Name" placeholder="Name">\
 					<input type="text" name="Email" placeholder="Email">\
 					<input type="text" name="Subject" placeholder="Subject">\
@@ -125,12 +125,16 @@ var Settings = {
 			</div>\
 			<div id="settingsMore">\
 				<h2>More</h2>\
-				<a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">/b/ Name Sync</a><br />\
+				<a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br />\
 				<a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br />\
+				<a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br />\
+				<a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br />\
 			</div>\
 		</div>').appendTo("body");
 		for (var set in Settings.settings) {
-			$j("<label><input type='checkbox' name='" + set + "'" + (Set[set] ? "checked" : "") + " /> " + Settings.settings[set][0] + "</label>").appendTo("#settingsMain");
+			var stored = Settings.get(set);
+			var checked = stored == null ? Settings.settings[set][1] : stored == "true";
+			$j("<label><input type='checkbox' name='" + set + "'" + (checked ? "checked" : "") + " /> " + Settings.settings[set][0] + "</label>").appendTo("#settingsMain");
 		}
 	},
 	close: function() {
