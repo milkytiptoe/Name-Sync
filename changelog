@@ -1,3 +1,6 @@
+2.5.77
+- Fixes for non-Chrome browsers
+
 2.5.76
 - Readded version to settings
 - Fixed settings being unreadable on dark themes

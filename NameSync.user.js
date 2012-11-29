@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.5.76
+// @version       2.5.77
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.5.76";
+var version = "2.5.77";
 
 var Set = {};
 
