@@ -248,7 +248,11 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		headers: {"X-Requested-With":"NameSync"},
 		type: "POST",
 		url: "http://www.milkyis.me/namesync/sp.php",
-		data: d
+		data: d,
+		xhrFields: {
+			withCredentials: true
+		},
+		crossDomain: true
 	}).fail(function() {
 		if (Set["Sync Retry"]) {
 			setSyncStatus(1, "Offline (Error sending, retrying)");
@@ -301,6 +305,10 @@ function sync(norepeat) {
 		dataType: "json",
 		url: "http://www.milkyis.me/namesync/qp.php?t="+thread+"&b="+board,
 		ifModified: true,
+		xhrFields: {
+			withCredentials: true
+		},
+		crossDomain: true
 	}).fail(function() {
 		setSyncStatus(1, "Offline (Error retrieving)");
 	}).done(function(data, status) {
