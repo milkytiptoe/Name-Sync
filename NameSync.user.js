@@ -92,7 +92,7 @@ var Settings = {
 		"Hide IDs": ["Hide IDs next to names", false],
 		"Show Status": ["Show sync status changes inside the quick reply box", false],
 		"Automatic Updates": ["Check for updates automatically", true],
-		"Sync Retry": ["Retry sharing name if sharing fails", false],
+		"Sync Retry": ["Retry sharing name if sharing fails", true],
 		"Override Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
 	},
 	get: function(name) {
