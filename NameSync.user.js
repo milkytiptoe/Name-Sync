@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.5.77
+// @version       2.5.78
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.5.77";
+var version = "2.5.78";
 
 var Set = {};
 
@@ -92,7 +92,6 @@ var Settings = {
 		"Hide IDs": ["Hide IDs next to names", false],
 		"Show Status": ["Show sync status changes inside the quick reply box", false],
 		"Automatic Updates": ["Check for updates automatically", true],
-		"Sync Retry": ["Retry sharing name if sharing fails", true],
 		"Override Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
 	},
 	get: function(name) {
@@ -254,12 +253,8 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		},
 		crossDomain: true
 	}).fail(function() {
-		if (Set["Sync Retry"]) {
-			setSyncStatus(1, "Offline (Error sending, retrying)");
-			setTimeout(uploadName, 5000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
-		} else {
-			setSyncStatus(1, "Offline");
-		}
+		setSyncStatus(1, "Offline (Error sending, retrying)");
+		setTimeout(uploadName, 7500, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 	}).done(function() {
 		if (isLateOpSend)
 			delete sessionStorage[board+"-namesync-tosend"];
