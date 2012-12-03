@@ -103,14 +103,14 @@ var Settings = {
 	open: function() {
 		$j("body").css("overflow", "hidden");
 		$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
-		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Persona</h2><p>These are updated instantly but will only be shared if the \'share persona fields\' setting above is checked. Changing that setting requires a <a href="javascript:location.reload(true);">page reload</a>.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"><input type="button" value="Clear posting history" /></div><div id="settingsMore"><h2>More</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
+		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Persona</h2><p>These fields are updated instantly. They will only be shared if the \'share persona fields\' setting is enabled.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"><input type="button" value="Clear posting history" /></div><div id="settingsMore"><h2>More</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
 		for (var set in Settings.settings) {
 			var stored = Settings.get(set);
 			var checked = stored == null ? Settings.settings[set][1] : stored == "true";
 			$j("<label><input type='checkbox' name='" + set + "'" + (checked ? "checked" : "") + " /> " + Settings.settings[set][0] + "</label>").appendTo("#settingsMain");
 		}
 		$j("<label />").html("<a id='updateLink' href='javascript:;'>Check for update</a>").on("click", AutoUpdate.update).appendTo("#settingsMore");
-		$j("#settingsPersona input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; });
+		$j("#settingsPersona input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; }).on("input", function() { Settings.set(this.name, this.value); });
 		$j("#settingsPersona input[type='button']").on("click", function() {
 			if (!confirm("This will remove any history stored online by you. Continue?"))
 				return;
@@ -129,7 +129,6 @@ var Settings = {
 	},
 	close: function() {
 		$j("#settingsWrapper input[type='checkbox']").each(function() { Settings.set(this.name, this.checked); });
-		$j("#settingsPersona input[type='text']").each(function() { Settings.set(this.name, this.value); });
 		$j("body").css("overflow", "auto");
 		$j("#settingsOverlay").remove();
 		$j("#settingsWrapper").remove();
@@ -157,7 +156,7 @@ function addStyles() {
 	var css = "\
 	#settingsOverlay { z-index: 99; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); }\
 	#settingsWrapper * { margin: 0; padding: 0; }\
-	#settingsWrapper { overflow-y: scroll; padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); }\
+	#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); }\
 	#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
 	#syncStatus { color: gray; }\
 	#openSettings, #settingsWrapper a { color: blue !important; text-decoration: none; }\
