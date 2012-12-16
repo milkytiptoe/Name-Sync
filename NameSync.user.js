@@ -110,6 +110,7 @@ var Settings = {
 			$j("<label><input type='checkbox' name='" + set + "'" + (checked ? "checked" : "") + " /> " + Settings.settings[set][0] + "</label>").appendTo("#settingsMain");
 		}
 		$j("<label />").html("<a id='updateLink' href='javascript:;'>Check for update</a>").on("click", AutoUpdate.update).appendTo("#settingsMore");
+		$j("#settingsWrapper input[type='checkbox']").on("change", function() { Settings.set(this.name, this.checked); });
 		$j("#settingsPersona input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; }).on("input", function() { Settings.set(this.name, this.value); });
 		$j("#settingsPersona input[type='button']").on("click", function() {
 			if (!confirm("This will remove any history stored online by you. Continue?"))
@@ -128,7 +129,6 @@ var Settings = {
 		});
 	},
 	close: function() {
-		$j("#settingsWrapper input[type='checkbox']").each(function() { Settings.set(this.name, this.checked); });
 		$j("body").css("overflow", "auto");
 		$j("#settingsOverlay").remove();
 		$j("#settingsWrapper").remove();
