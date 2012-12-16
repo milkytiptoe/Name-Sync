@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.5.78
+// @version       2.5.79
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.5.78";
+var version = "2.5.79";
 
 var Set = {};
 
@@ -180,13 +180,11 @@ function addAssignButtons() {
 	a.textContent = "Change name";
 
 	var open = function(post) {
-		var uid  = $j(".posteruid", post.el).first().text();
-		var path = $j("a[title=\"Highlight this post\"]", post.el)[0].pathname;
-		return uid != "(ID: Heaven)" && path.split("/")[1] === ("b" || "soc" || "q");
+		return !/Heaven|^##/.test($j(".hand", post.el).first().text());
 	};
 
 	a.addEventListener('click', function() {
-		assignName(d.getElementById(d.getElementById('menu').dataset.rootid).querySelector(".posteruid").textContent);
+		assignName(d.getElementById(d.getElementById('menu').dataset.rootid).querySelector(".hand").textContent);
 	});
 
 	d.dispatchEvent(new CustomEvent('AddMenuEntry', {
@@ -343,9 +341,9 @@ function updatePost(posttag) {
 	var postinfotag = $j(posttag).children(".postInfo").children(".userInfo, .nameBlock")
 			.add( $j(posttag).children(".postInfoM").children(".userInfo, .nameBlock") );
 
-	var id = $j(".posteruid", postinfotag).first().text();
+	var id = $j(".hand", postinfotag).first().text();
 
-	if (id == "(ID: Heaven)")
+	if (/Heaven|^##/.test(id))
 		return;
 
 	var postnumspan = $j(posttag).children(".postInfo, .postInfoM").children(".postNum");
@@ -423,7 +421,7 @@ function getOnlineInfo(postnum) {
 }
 
 function assignName(id) {
-	if (onlineIDs[id]) {
+	if (onlineIDs[id] && !blockedIDs[id]) {
 		if (confirm("This poster is named by Name Sync. Continue?")) {
 			blockedIDs[id] = true;
 		} else {
