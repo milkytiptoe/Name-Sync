@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.5.79
+// @version       2.6.80
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.5.79";
+var version = "2.6.80";
 
 var Set = {};
 
@@ -37,11 +37,16 @@ var blockedIDs = {};
 
 var path = location.pathname.slice(1).split("/");
 var board = path[0];
-var thread = null;
-if (path[1] == "res")
-	thread = path[2];
-
-var status = 0;
+var threads = [];
+if (path[1] == "catalog")
+	return;
+if (path[1] == "res") {
+	threads.push(path[2]);
+} else {
+	$j(".thread").each(function() {
+		threads.push(this.id.slice(1));
+	});
+}
 
 var delaySyncHandler = null;
 
@@ -90,7 +95,7 @@ var Settings = {
 		"/q/": ["Enable sync on /q/", true],
 		"Assign Buttons": ["Show change name button in 4chan X menus", true],
 		"Hide IDs": ["Hide IDs next to names", false],
-		"Show Status": ["Show sync status changes inside the quick reply box", false],
+		"Show Status": ["Log sync errors in your error console", false],
 		"Automatic Updates": ["Check for updates automatically", true],
 		"Override Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
 	},
@@ -143,8 +148,7 @@ function init() {
 	if (Set["/" + board + "/"]) {
 		$j("<br /><span id='syncStatus'>Idle</span>").prependTo("#delform");
 		$j(document).on("QRPostSuccessful.namesync", send);
-		if (thread)
-			sync();
+		sync();
 	}
 	loadNames();
 	updateElements();
@@ -156,14 +160,14 @@ function addStyles() {
 	var css = "\
 	#settingsOverlay { z-index: 99; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); }\
 	#settingsWrapper * { margin: 0; padding: 0; }\
-	#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); }\
+	#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); overflow-y: scroll; }\
 	#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
 	#syncStatus { color: gray; }\
 	#openSettings, #settingsWrapper a { color: blue !important; text-decoration: none; }\
 	#settingsWrapper p, #settingsWrapper label, #settingsWrapper h2 { color: black !important; }\
 	#settingsWrapper p { margin-bottom: 10px; }\
 	#settingsWrapper h1 { font-size: 10pt; margin: 0 !important; color: gray; float: right; }\
-	#settingsWrapper h2 { font-size: 10pt; margin: 8px 0 6px 0 !important; }\
+	#settingsWrapper h2 { font-size: 10pt; margin: 8px 0 6px 0 !important; text-align: left !important; }\
 	#settingsMain h2 { margin-top: 0 !important; }\
 	#settingsWrapper input[type='text'] { border: 1px solid #CCC; width: 31%; padding: 2px; }\
 	#settingsWrapper input[type='button'] { width: 130px; height: 26px; }\
@@ -229,7 +233,7 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 	if (isLateOpSend && !sessionStorage[board+"-namesync-tosend"])
 		return;
 
-	if (!thread) {
+	if (threads.length > 1) {
 		isLateOpSend = true;
 		sessionStorage[board+"-namesync-tosend"] = JSON.stringify({
 			name: cName,
@@ -238,27 +242,29 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 			postID: postID,
 			threadID: threadID,
 		});
+	} else {
+		$j.ajax({
+			headers: {"X-Requested-With":"NameSync"},
+			type: "POST",
+			url: "http://www.milkyis.me/namesync/sp.php",
+			data: d,
+			xhrFields: {
+				withCredentials: true
+			},
+			crossDomain: true
+		}).fail(function() {
+			log(1, "Error sharing name, retrying");
+			setTimeout(uploadName, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+		}).done(function() {
+			if (isLateOpSend)
+				delete sessionStorage[board+"-namesync-tosend"];
+		});
 	}
-
-	$j.ajax({
-		headers: {"X-Requested-With":"NameSync"},
-		type: "POST",
-		url: "http://www.milkyis.me/namesync/sp.php",
-		data: d,
-		xhrFields: {
-			withCredentials: true
-		},
-		crossDomain: true
-	}).fail(function() {
-		setSyncStatus(1, "Offline (Error sending, retrying)");
-		setTimeout(uploadName, 7500, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
-	}).done(function() {
-		if (isLateOpSend)
-			delete sessionStorage[board+"-namesync-tosend"];
-	});
 }
 
 function canSync() {
+	if (threads.length > 1)
+		return false;
 	var ic = $j("#imagecount");
 	if (ic.length && ic.hasClass("warning"))
 		return false;
@@ -268,10 +274,7 @@ function canSync() {
 	return true;
 }
 
-function setSyncStatus(type, msg) {
-	if (!thread)
-		return;
-
+function log(type, msg) {
 	var colour = "green";
 
 	switch (type) {
@@ -280,32 +283,27 @@ function setSyncStatus(type, msg) {
 	}
 
 	$j("#syncStatus").html(msg).css("color", colour);
-
-	if (status != type && Set["Show Status"]) {
-		$j("div.warning").html("<span style='color: "+colour+" !important;'>Sync: "+msg+"</span>");
-		setTimeout(function() {
-			$j("div.warning").html("");
-		}, 5000);
+	
+	if (Set["Show Status"] && type != 0) {
+		console.log("Sync: " + msg);
 	}
-
-	status = type;
 }
 
 function sync(norepeat) {
 	$j.ajax({
 		headers: {"X-Requested-With":"NameSync"},
 		dataType: "json",
-		url: "http://www.milkyis.me/namesync/qp.php?t="+thread+"&b="+board,
+		url: "http://www.milkyis.me/namesync/qp.php?t="+threads+"&b="+board,
 		ifModified: true,
 		xhrFields: {
 			withCredentials: true
 		},
 		crossDomain: true
 	}).fail(function() {
-		setSyncStatus(1, "Offline (Error retrieving)");
+		log(1, "Error retrieving names");
 	}).done(function(data, status) {
 		if (data == null || status == "notmodified") {
-			setSyncStatus(0, "Online");
+			log(0, "Online");
 		} else {
 			onlineNames = [];
 			onlinePosts = [];
@@ -319,7 +317,7 @@ function sync(norepeat) {
 				onlineSubjects.push(data[i].s);
 			}
 
-			setSyncStatus(0, "Online");
+			log(0, "Online");
 			updateElements();
 		}
 	});
@@ -367,12 +365,10 @@ function updatePost(posttag) {
 
 	if (names[id] != null) {
 		name = names[id];
-		tripcode = "";
-
 		name = name.split("#");
 
-		if (typeof name[1] != "undefined")
-			tripcode = " !" + name[1];
+		if (name[1])
+			tripcode = "!" + name[1];
 
 		name = name[0];
 
@@ -388,24 +384,20 @@ function updatePost(posttag) {
 		if (email != null && email != "") {
 			var emailtag = $j(".useremail", postinfotag);
 			if (emailtag.length == 0) {
-				emailtag = $j("<a/>")
-				.addClass("useremail")
-				.insertBefore(nametag);
-
+				emailtag = $j("<a/>").addClass("useremail").insertBefore(nametag);
 				nametag.first().appendTo(emailtag);
 				nametag.slice(1).remove();
 				nametag = $j(".name", postinfotag);
-
 				triptag.remove();
 				triptag = $j(".postertrip", postinfotag);
 			}
 			emailtag.attr("href", "mailto:"+email);
 		}
 
-		if (tripcode != null || triptag.length != 0) {
+		if (tripcode) {
 			if (triptag.length == 0) {
 				triptag = $j("<span/>").addClass("postertrip");
-				nametag.after(triptag);
+				nametag.after(triptag).after(" ");
 				triptag = $j(".postertrip", postinfotag);
 			}
 			if (triptag.first().text() != tripcode) {
