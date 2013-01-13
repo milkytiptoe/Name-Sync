@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.6.80
+// @version       2.6.81
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.6.80";
+var version = "2.6.81";
 
 var Set = {};
 
@@ -221,7 +221,7 @@ function send(e) {
 	cEmail = $j.trim(cEmail);
 	cSubject = $j.trim(cSubject);
 
-	if ((cName == "" && cEmail == "" && cSubject == "") || (/sage/i.test(cEmail) && board == "b"))
+	if (cName == "" && cEmail == "" && cSubject == "")
 		return;
 
 	uploadName(cName, cEmail, cSubject, postID, threadID);
@@ -341,7 +341,7 @@ function updatePost(posttag) {
 
 	var id = $j(".hand", postinfotag).first().text();
 
-	if (/Heaven|^##/.test(id))
+	if (/^##/.test(id))
 		return;
 
 	var postnumspan = $j(posttag).children(".postInfo, .postInfoM").children(".postNum");
@@ -356,15 +356,20 @@ function updatePost(posttag) {
 	if (Set["/" + board + "/"]) {
 		var info = getOnlineInfo(postnum);
 		if (!blockedIDs[id] && info != null && info[0] != null && info[0] != "") {
-			names[id] = info[0];
+			if (!/Heaven/.test(id)) {
+				onlineIDs[id] = true;
+				names[id] = info[0];
+			}
+			name = info[0];
 			email = info[1];
 			subject = info[2];
-			onlineIDs[id] = true;
 		}
 	}
-
-	if (names[id] != null) {
+	
+	if (!name && names[id])
 		name = names[id];
+	
+	if (name) {
 		name = name.split("#");
 
 		if (name[1])
@@ -445,7 +450,7 @@ function checkNewNode(node) {
 		updatePost($j(".reply", node));
 		if (Set["/" + board + "/"]) {
 			clearTimeout(delaySyncHandler);
-			delaySyncHandler = setTimeout(sync, 4500, true);
+			delaySyncHandler = setTimeout(sync, 2500, true);
 		}
 	}
 }
