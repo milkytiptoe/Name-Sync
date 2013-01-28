@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.6.82
+// @version       2.6.83
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.6.82";
+var version = "2.6.83";
 
 var Set = {};
 
@@ -405,9 +405,11 @@ function updatePost(posttag) {
 				nametag.after(triptag).after(" ");
 				triptag = $j(".postertrip", postinfotag);
 			}
-			if (triptag.first().text() != tripcode) {
+			if (triptag.first().text() != tripcode)
 				triptag.text(tripcode);
-			}
+		} else {
+			if (triptag.length)
+				triptag.remove();
 		}
 	}
 }
