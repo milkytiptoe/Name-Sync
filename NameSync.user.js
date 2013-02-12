@@ -145,7 +145,7 @@ Sync = {
 		
 	},
 	can: function() {
-		
+		return g.threads.length == 1 && !$j("#imagecount").hasClass("warning") && $j("#count").text() != "404";
 	}
 };
 
