@@ -40,9 +40,10 @@ Main = {
 			g.threads.push(this.id.slice(1));
 		});
 		Settings.init();
-		if (Set["Change name link"])
+		Names.init();
+		if (Set["Change name Link"])
 			Menus.init();
-		if (Set["Sync on " + g.board])
+		if (Set["Sync on /" + g.board + "/"])
 			Sync.init();
 		if (Set["Automatic Updates"])
 				Updater.init();
@@ -55,8 +56,7 @@ Menus = {
 		this.add("4chan Name Sync Settings", "header", Settings.open);
 		this.add("Change name", "post", function() {
 			Names.change(Menus.uid);
-		},
-		function(post) {
+		}, function(post) {
 			Menus.uid = post.info.uniqueID;
 			return !/^##/.test(Menus.uid);
 		});
@@ -76,11 +76,54 @@ Menus = {
 };
 
 Names = {
+	names: {},
 	init: function() {
-		
+		this.load();
+		if (g.threads.length == 1)
+			return;
+		var MutationObserver;
+		if (MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.OMutationObserver || window.MozMutationObserver) {
+			var observer = new MutationObserver(function(mutations) {
+				for (var i = 0, len = mutations.length; i < len; i++) {
+					var nodes = mutations[i].addedNodes;
+					for (var j = 0, _len = nodes.length; j < _len; j++) {
+						Names.checkNode(nodes[j]);
+					}
+				}
+			});
+			observer.observe($j(".thread").get(0), {
+				childList: true,
+				subtree: true
+			});
+		} else {
+			$j(".thread").on("DOMNodeInserted", function(e) {
+				Names.checkNode(e.target);
+			});
+		}
 	},
 	change: function(id) {
-		alert(id);
+		
+	},
+	load: function() {
+		this.names = sessionStorage[g.board+"-names"] || {};
+	},
+	store: function() {
+		sessionStorage[g.board+"-names"] = JSON.stringify(this.names);
+	},
+	checkNode: function(node) {
+		if (node.nodeName == "DIV" && $j(node).hasClass("replyContainer") && !$j(node).parent().is(".inline, #qp")) {
+			this.updatePost($j(".reply", node));
+			if (Set["Sync on /" + board + "/"]) {
+				clearTimeout(Sync.delay);
+				Sync.delay = setTimeout(Sync.sync, 2500, true);
+			}
+		}
+	},
+	updateAllPosts: function() {
+	
+	},
+	updatePost: function() {
+	
 	}
 };
 
@@ -95,7 +138,14 @@ Session = {
 
 Settings = {
 	main: {
-		"Change name link": ["Show change name link in 4chan X menus", true]
+		"Sync on /b/": ["Enable sync on /b/", true],
+		"Sync on /q/": ["Enable sync on /q/", true],
+		"Sync on /soc/": ["Enable sync on /soc/", true],
+		"Hide IDs": ["Hide Unique IDs next to names", false],
+		"Change name Link": ["Show change name link in 4chan X menus", true],
+		"Log Sync Status": ["Log sync errors in your error console", false],
+		"Automatic Updates": ["Check for updates automatically", true],
+		"Override Fields": ["Share override fields instead of the 4chan X quick reply fields", false]
 	},
 	init: function() {
 		for (setting in Settings.main) {
@@ -115,8 +165,13 @@ Settings = {
 };
 
 Sync = {
+	delay: null,
 	init: function() {
 		$j(document).on("QRPostSuccessful", Sync.requestSend);		
+		if (sessionStorage[g.board+"-namesync-tosend"]) {
+			var r = JSON.parse(sessionStorage[g.board+"-namesync-tosend"]);
+			this.send(r.name, r.email, r.subject, r.postID, r.threadID, true);
+		}
 		this.sync();
 	},
 	sync: function() {
@@ -139,33 +194,58 @@ Sync = {
 		cName = $j.trim(cName);
 		cEmail = $j.trim(cEmail);
 		cSubject = $j.trim(cSubject);
-		if (cName != "" && cEmail != "" && cSubject != "")
-			this.send(cName, cEmail, cSubject, postID, threadID);
+		if (!(cName == "" && cEmail == "" && cSubject == "")) {
+			Sync.send(cName, cEmail, cSubject, postID, threadID);
+		}
 	},
 	send: function(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
-		
+		if (isLateOpSend && !sessionStorage[g.board+"-namesync-tosend"])
+			return;
+		if (g.threads.length > 1) {
+			isLateOpSend = true;
+			sessionStorage[g.board+"-namesync-tosend"] = JSON.stringify({
+				name: cName,
+				email: cEmail,
+				subject: cSubject,
+				postID: postID,
+				threadID: threadID,
+			});
+		} else {
+			var data = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&b="+g.board+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+			Sync.ajax("POST", "sp", data, function() {
+				Sync.log(1, "Error sending name, retrying");
+				setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+			}, function() {
+				if (isLateOpSend)
+					delete sessionStorage[g.board+"-namesync-tosend"];
+			});
+		}
 	},
 	can: function() {
 		return g.threads.length == 1 && !$j("#imagecount").hasClass("warning") && $j("#count").text() != "404";
 	},
 	ajax: function(type, file, data, fail, done) {
 		$j.ajax({
-			headers: {"X-Requested-With":"NameSync3"},
+			headers: {"X-Requested-With":"NameSync"},
 			type: type,
-			url: "//www.milkyis.me/namesync/" + file + ".php",
+			url: "https://www.milkyis.me/namesync/" + file + ".php",
 			data: data,
 			xhrFields: {
 				withCredentials: true
 			},
 			crossDomain: true
 		}).fail(fail).done(done);
+	},
+	log: function(message) {
+		if (Set["Log Sync Status"])
+			console.log("Sync: " + message);
 	}
 };
 
 Updater = {
 	init: function() {
 		var last = Settings.get("lastcheck");
-		if (last == null || Date.now() > last+86400000)
+		if (!last || Date.now() > last+86400000)
 			this.update();
 	},
 	update: function() {
