@@ -44,6 +44,8 @@ Main = {
 			Menus.init();
 		if (Set["Sync on " + g.board])
 			Sync.init();
+		if (Set["Automatic Updates"])
+				Updater.init();
 	}
 };
 
@@ -137,21 +139,34 @@ Sync = {
 		cName = $j.trim(cName);
 		cEmail = $j.trim(cEmail);
 		cSubject = $j.trim(cSubject);
-		if (cName != "" && cEmail != "" && cSubject != "") {
+		if (cName != "" && cEmail != "" && cSubject != "")
 			this.send(cName, cEmail, cSubject, postID, threadID);
-		}
 	},
 	send: function(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		
 	},
 	can: function() {
 		return g.threads.length == 1 && !$j("#imagecount").hasClass("warning") && $j("#count").text() != "404";
+	},
+	ajax: function(type, file, data, fail, done) {
+		$j.ajax({
+			headers: {"X-Requested-With":"NameSync3"},
+			type: type,
+			url: "//www.milkyis.me/namesync/" + file + ".php",
+			data: data,
+			xhrFields: {
+				withCredentials: true
+			},
+			crossDomain: true
+		}).fail(fail).done(done);
 	}
 };
 
 Updater = {
 	init: function() {
-		
+		var last = Settings.get("lastcheck");
+		if (last == null || Date.now() > last+86400000)
+			this.update();
 	},
 	update: function() {
 		
