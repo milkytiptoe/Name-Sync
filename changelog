@@ -2,6 +2,8 @@ v3 (4chan X v3 required)
 - Moved settings link in to header bar dropdown
 - Sync status is no longer shown above threads
 - Assign buttons in 4chan X menus are always enabled
+- All connections go through https
+- Fixed install warning on chrome about running on all domains
 
 2.6.83
 - Fixed tripcodes showing on new posts when removed from name field
