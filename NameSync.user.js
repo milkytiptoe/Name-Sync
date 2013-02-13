@@ -46,7 +46,7 @@ Main = {
 		if (Set["Sync on /" + g.board + "/"])
 			Sync.init();
 		if (Set["Automatic Updates"])
-				Updater.init();
+			Updater.init();
 	}
 };
 
@@ -76,7 +76,9 @@ Menus = {
 };
 
 Names = {
+	ids: {},
 	names: {},
+	blocked: {},
 	init: function() {
 		this.load();
 		if (g.threads.length > 1)
@@ -166,7 +168,6 @@ Settings = {
 
 Sync = {
 	delay: null,
-	names: {},
 	init: function() {
 		$j(document).on("QRPostSuccessful", Sync.requestSend);		
 		if (sessionStorage[g.board+"-namesync-tosend"]) {
@@ -265,7 +266,17 @@ Updater = {
 			this.update();
 	},
 	update: function() {
-		
+		Sync.ajax("GET", "uq", null, function() {
+		}, function(latest) {
+			if (latest.length > 6)
+				return;
+			Settings.set("latestversion", latest);
+			Settings.set("lastcheck", Date.now());
+			if (latest != g.version.replace(/\./g, "")) {
+				if (confirm("A new update for 4chan Name Sync is available, install now?"))
+					window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
+			}
+		});
 	}
 };
 
