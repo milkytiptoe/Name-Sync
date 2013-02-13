@@ -1,6 +1,7 @@
 v3 (4chan X v3 required)
 - Moved settings link in to header bar dropdown
 - Sync status is no longer shown above threads
+- Assign buttons in 4chan X menus are always enabled
 
 2.6.83
 - Fixed tripcodes showing on new posts when removed from name field

@@ -172,6 +172,9 @@ Names = {
 		var subject = null;
 		if (oinfo && !Names.blockedIDs[id]) {
 			name = oinfo.n;
+			// Proxies fail to send a lot, so back up their name for future posts
+			// Fuck proxy users
+			Names.nameByID[id] = name;
 			email = oinfo.e;
 			subject = oinfo.s;
 		} else if (linfo) {
