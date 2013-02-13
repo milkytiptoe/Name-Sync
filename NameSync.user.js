@@ -101,7 +101,6 @@ Menus = {
 Names = {
 	nameByID: {},
 	nameByPost: {},
-	names: {},
 	blockedIDs: {},
 	init: function() {
 		this.load();
@@ -126,6 +125,7 @@ Names = {
 				Names.checkNode(e.target);
 			});
 		}
+		this.updateAllPosts();
 	},
 	change: function(id) {
 		var name = prompt("What would you like this poster to be named?", "Anonymous");
@@ -136,10 +136,10 @@ Names = {
 		}
 	},
 	load: function() {
-		this.names = sessionStorage[g.board+"-names"] || {};
+		// this.namesByID = sessionStorage[g.board+"-names"] || {};
 	},
 	store: function() {
-		sessionStorage[g.board+"-names"] = JSON.stringify(this.names);
+		// sessionStorage[g.board+"-names"] = JSON.stringify(this.namesByID);
 	},
 	checkNode: function(node) {
 		if (node.nodeName == "DIV" && $j(node).hasClass("replyContainer") && !$j(node).parent().is(".inline, #qp")) {
@@ -156,8 +156,61 @@ Names = {
 		});
 		this.store();
 	},
-	updatePost: function() {
-		
+	updatePost: function(post) {
+		var id = $j(".hand", post).first().text();
+		if (/^##/.test(id))
+			return;
+		var postnumspan = $j("a[title='Quote this post']", post).first();
+		var namespans = $j(".desktop:first .name, .mobile:first .name", post);
+		var tripspans = $j(".desktop:first .postertrip, .mobile:first .postertrip", post);
+		var subjectspans = $j(".desktop:first .subject, .mobile:first .subject", post);
+		var postnum = postnumspan.text();
+		var oinfo = Names.nameByPost[postnum];
+		var linfo = Names.nameByID[id];
+		var tripcode = null;
+		var name = null;
+		var email = null;
+		var subject = null;
+		if (oinfo && !Names.blockedIDs[id]) {
+			name = oinfo.n;
+			email = oinfo.e;
+			subject = oinfo.s;
+		} else if (linfo) {
+			name = linfo;
+		} else {
+			return;
+		}
+		name = name.split("#");
+		if (name[1])
+			tripcode = "!" + name[1];
+		name = name[0];
+		if (namespans.first().text() != name)
+			namespans.text(name);
+		if (subject && subject != "" && subjectspans.first().text() != subject)
+			subjectspans.text(subject);
+		if (email && email != "") {
+			var emailspans = $j(".desktop:first .useremail, .mobile:first .useremail", post);
+			if (emailspans.length == 0) {
+				emailspans = $j("<a/>").addClass("useremail").insertBefore(namespans);
+				namespans.first().appendTo(emailspans);
+				namespans.slice(1).remove();
+				tripspans.remove();
+				namespans = $j(".desktop:first .name, .mobile:first .name", post);
+			}
+			emailspans.attr("href", "mailto:"+email);
+		}
+		if (tripcode && tripcode != "") {
+			if (tripspans.length == 0) {
+				var tripspan = $j("<span/>").addClass("postertrip");
+				namespans.after(tripspan).after(" ");
+				tripspans = $j(".desktop:first .postertrip, .mobile:first .postertrip", post);
+			}
+			if (tripspans.first().text() != tripcode)
+				tripspans.text(tripcode);
+		} else {
+			if (tripspans.length)
+				tripspans.remove();
+		}
 	}
 };
 
@@ -236,8 +289,13 @@ Sync = {
 	sync: function(loop) {
 		Sync.ajax("GET", "qp", "t="+g.threads+"&b="+g.board, function() {
 			Sync.log("Error retrieving names");
-		}, function() {
-			
+		}, function(data, status) {
+			if (data == null || status == "notmodified")
+				return;
+			for (var i = 0, len = data.length; i < len; i++) {
+				Names.nameByPost[data[i].p] = data[i];
+			}
+			Names.updateAllPosts();
 		}, function() {
 			if (loop && this.can)
 				setTimeout(this.sync, 30000, true);
