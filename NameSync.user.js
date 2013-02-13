@@ -64,8 +64,7 @@ Main = {
 		Settings.init();
 		Names.init();
 		CSS.init();
-		if (Set["Change name Link"])
-			Menus.init();
+		Menus.init();
 		if (Set["Sync on /" + g.board + "/"])
 			Sync.init();
 		if (Set["Automatic Updates"])
@@ -229,10 +228,9 @@ Settings = {
 		"Sync on /q/": ["Enable sync on /q/", true],
 		"Sync on /soc/": ["Enable sync on /soc/", true],
 		"Hide IDs": ["Hide Unique IDs next to names", false],
-		"Change name Link": ["Show change name link in 4chan X menus", true],
 		"Log Sync Status": ["Log sync errors in your error console", false],
 		"Automatic Updates": ["Check for updates automatically", true],
-		"Override Fields": ["Share override fields instead of the 4chan X quick reply fields", false]
+		"Persona Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
 	},
 	init: function() {
 		for (setting in Settings.main) {
@@ -243,7 +241,7 @@ Settings = {
 	open: function() {
 		$j("body").css("overflow", "hidden");
 		$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
-		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + g.version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Override Fields</h2><p>Override Fields are applied instantly. They will only be shared if the \'share override fields\' setting is enabled.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></div><div id="settingsAdvanced"><h2>Advanced</h2></div><div id="settingsMore"><h2>Links</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X v3</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
+		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + g.version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Persona</h2><p>Persona Fields are applied instantly. They will only be shared if the \'share persona fields\' setting is enabled.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></div><div id="settingsAdvanced"><h2>Advanced</h2></div><div id="settingsMore"><h2>Links</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X v3</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
 		for (var setting in Settings.main) {
 			var stored = Settings.get(setting);
 			var checked = stored == null ? Settings.main[setting][1] : stored == "true";
