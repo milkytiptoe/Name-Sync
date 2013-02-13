@@ -99,9 +99,10 @@ Menus = {
 };
 
 Names = {
-	ids: {},
+	nameByID: {},
+	nameByPost: {},
 	names: {},
-	blocked: {},
+	blockedIDs: {},
 	init: function() {
 		this.load();
 		if (g.threads.length > 1)
@@ -127,7 +128,12 @@ Names = {
 		}
 	},
 	change: function(id) {
-		
+		var name = prompt("What would you like this poster to be named?", "Anonymous");
+		if (name && name != "")	{
+			this.nameByID[id] = name;
+			this.blockedIDs[id] = true;
+			this.updateAllPosts();
+		}
 	},
 	load: function() {
 		this.names = sessionStorage[g.board+"-names"] || {};
@@ -145,10 +151,13 @@ Names = {
 		}
 	},
 	updateAllPosts: function() {
-	
+		$j(".thread .post", document).each(function() {
+			Names.updatePost(this);
+		});
+		this.store();
 	},
 	updatePost: function() {
-	
+		
 	}
 };
 
