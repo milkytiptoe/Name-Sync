@@ -79,7 +79,7 @@ Names = {
 	names: {},
 	init: function() {
 		this.load();
-		if (g.threads.length == 1)
+		if (g.threads.length > 1)
 			return;
 		var MutationObserver;
 		if (MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.OMutationObserver || window.MozMutationObserver) {
@@ -113,9 +113,9 @@ Names = {
 	checkNode: function(node) {
 		if (node.nodeName == "DIV" && $j(node).hasClass("replyContainer") && !$j(node).parent().is(".inline, #qp")) {
 			this.updatePost($j(".reply", node));
-			if (Set["Sync on /" + board + "/"]) {
+			if (Set["Sync on /" + g.board + "/"]) {
 				clearTimeout(Sync.delay);
-				Sync.delay = setTimeout(Sync.sync, 2500, true);
+				Sync.delay = setTimeout(Sync.sync, 2500);
 			}
 		}
 	},
@@ -166,15 +166,24 @@ Settings = {
 
 Sync = {
 	delay: null,
+	names: {},
 	init: function() {
 		$j(document).on("QRPostSuccessful", Sync.requestSend);		
 		if (sessionStorage[g.board+"-namesync-tosend"]) {
 			var r = JSON.parse(sessionStorage[g.board+"-namesync-tosend"]);
 			this.send(r.name, r.email, r.subject, r.postID, r.threadID, true);
 		}
-		this.sync();
+		this.sync(true);
 	},
-	sync: function() {
+	sync: function(loop) {
+		Sync.ajax("GET", "qp", "t="+g.threads+"&b="+g.board, function() {
+			Sync.log("Error retrieving names");
+		}, function() {
+			
+		}, function() {
+			if (loop && this.can)
+				setTimeout(this.sync, 30000, true);
+		});
 		
 	},
 	requestSend: function(e) {
@@ -194,9 +203,8 @@ Sync = {
 		cName = $j.trim(cName);
 		cEmail = $j.trim(cEmail);
 		cSubject = $j.trim(cSubject);
-		if (!(cName == "" && cEmail == "" && cSubject == "")) {
+		if (!(cName == "" && cEmail == "" && cSubject == ""))
 			Sync.send(cName, cEmail, cSubject, postID, threadID);
-		}
 	},
 	send: function(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		if (isLateOpSend && !sessionStorage[g.board+"-namesync-tosend"])
@@ -213,7 +221,7 @@ Sync = {
 		} else {
 			var data = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&b="+g.board+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
 			Sync.ajax("POST", "sp", data, function() {
-				Sync.log(1, "Error sending name, retrying");
+				Sync.log("Error sending name, retrying");
 				setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 			}, function() {
 				if (isLateOpSend)
@@ -224,17 +232,25 @@ Sync = {
 	can: function() {
 		return g.threads.length == 1 && !$j("#imagecount").hasClass("warning") && $j("#count").text() != "404";
 	},
-	ajax: function(type, file, data, fail, done) {
+	ajax: function(type, file, data, fail, done, always) {
+		var dType = "html";
+		var ifmodified = false;
+		if (file == "qp") {
+			dType = "json";
+			ifmodified = true;
+		}
 		$j.ajax({
 			headers: {"X-Requested-With":"NameSync"},
+			dataType: dType,
 			type: type,
-			url: "https://www.milkyis.me/namesync/" + file + ".php",
+			url: "https://www.milkyis.me/namesync/3/" + file + ".php",
+			ifModified: ifmodified,
 			data: data,
 			xhrFields: {
 				withCredentials: true
 			},
 			crossDomain: true
-		}).fail(fail).done(done);
+		}).fail(fail).done(done).always(always);
 	},
 	log: function(message) {
 		if (Set["Log Sync Status"])
