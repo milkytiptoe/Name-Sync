@@ -241,6 +241,7 @@
 			}
 		},
 		open: function() {
+			document.dispatchEvent(new CustomEvent('CloseMenu'));
 			$j("body").css("overflow", "hidden");
 			$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
 			$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + g.version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Persona</h2><p>Persona Fields are applied instantly. They will only be shared if the \'share persona fields\' setting is enabled.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></div><div id="settingsAdvanced"><h2>Advanced</h2></div><div id="settingsMore"><h2>Links</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X v3</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
