@@ -1,4 +1,4 @@
-v3 (4chan X v3 required)
+v3.0.0 (4chan X v3 required)
 - Moved settings link in to header bar dropdown
 - Sync status is no longer shown above threads
 - Assign buttons in 4chan X menus are always enabled

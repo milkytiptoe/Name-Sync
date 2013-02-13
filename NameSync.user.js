@@ -8,6 +8,7 @@
 // @match         *://boards.4chan.org/b/*
 // @match         *://boards.4chan.org/q/*
 // @match         *://boards.4chan.org/soc/*
+// @match         https://www.milkyis.me/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @downloadURL   https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
