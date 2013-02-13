@@ -135,10 +135,11 @@ Names = {
 		}
 	},
 	load: function() {
-		// this.namesByID = sessionStorage[g.board+"-names"] || {};
+		var stored = sessionStorage[g.board+"-names"];
+		this.nameByID = stored ? JSON.parse(stored) : {};
 	},
 	store: function() {
-		// sessionStorage[g.board+"-names"] = JSON.stringify(this.namesByID);
+		sessionStorage[g.board+"-names"] = JSON.stringify(this.nameByID);
 	},
 	checkNode: function(node) {
 		if (node.nodeName == "DIV" && $j(node).hasClass("replyContainer") && !$j(node).parent().is(".inline, #qp")) {
