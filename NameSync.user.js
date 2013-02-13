@@ -198,6 +198,7 @@ Names = {
 				namespans.first().appendTo(emailspans);
 				namespans.slice(1).remove();
 				tripspans.remove();
+				tripspans = $j(".desktop:first .postertrip, .mobile:first .postertrip", post);
 				namespans = $j(".desktop:first .name, .mobile:first .name", post);
 			}
 			emailspans.attr("href", "mailto:"+email);
