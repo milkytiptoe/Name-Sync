@@ -39,12 +39,12 @@ CSS = {
 		#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
 		#settingsWrapper a { color: blue !important; text-decoration: none; }\
 		#settingsWrapper p, #settingsWrapper label, #settingsWrapper h2 { color: black !important; }\
-		#settingsWrapper p, #settingsWrapper input[type='button'] { margin-bottom: 10px; }\
+		#settingsWrapper p { margin-bottom: 10px; }\
 		#settingsWrapper h1 { font-size: 10pt; margin: 0 !important; color: gray; float: right; }\
 		#settingsWrapper h2 { font-size: 10pt; margin: 8px 0 6px 0 !important; text-align: left !important; }\
 		#settingsMain h2 { margin-top: 0 !important; }\
 		#settingsWrapper input[type='text'] { border: 1px solid #CCC; width: 31%; padding: 2px; }\
-		#settingsWrapper input[type='button'] { width: 130px; height: 26px; }\
+		#settingsAdvanced input[type='button'] { width: 130px; height: 26px; }\
 		";
 		if (Set["Hide IDs"])
 			css += ".posteruid { display: none; }";
@@ -181,17 +181,17 @@ Settings = {
 	open: function() {
 		$j("body").css("overflow", "hidden");
 		$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
-		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + g.version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Override Fields</h2><p>Override Fields are applied instantly. They will only be shared if the \'share override fields\' setting is enabled.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></div><div id="settingsMore"><h2>More</h2><input type="button" value="Clear sync history" /><br /><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X v3</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
+		$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + g.version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Override Fields</h2><p>Override Fields are applied instantly. They will only be shared if the \'share override fields\' setting is enabled.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></div><div id="settingsAdvanced"><h2>Advanced</h2></div><div id="settingsMore"><h2>Links</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X v3</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
 		for (var setting in Settings.main) {
 			var stored = Settings.get(setting);
 			var checked = stored == null ? Settings.main[setting][1] : stored == "true";
 			$j("<label><input type='checkbox' name='" + setting + "'" + (checked ? "checked" : "") + " /> " + Settings.main[setting][0] + "</label>").appendTo("#settingsMain");
 		}
-		$j("<label />").html("<a id='updateLink' href='javascript:;'>Check for update</a>").on("click", Updater.update).appendTo("#settingsMore");
 		$j("#settingsWrapper input[type='checkbox']").on("change", function() { Settings.set(this.name, this.checked); });
 		$j("#settingsPersona input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; }).on("input", function() { Settings.set(this.name, this.value); });
-		$j("#settingsPersona input[type='button']").on("click", function() {
-			if (!confirm("This will remove any history stored online by you. Continue?"))
+		$j("<input type='button' id='updateButton' />").val("Check for update").on("click", Updater.update).appendTo("#settingsAdvanced");
+		$j("<input type='button' />").val("Clear sync history").on("click", function() {
+			if (!confirm("This will remove 4chan Name Sync name history stored online by you. Continue?"))
 				return;
 			this.setAttribute("disabled", "disabled");
 			Sync.ajax("POST", "rm", null, function() {
@@ -199,7 +199,7 @@ Settings = {
 			}, function(response) {
 				alert(response);
 			});
-		});
+		}).appendTo("#settingsAdvanced");
 	},
 	close: function() {
 		$j("body").css("overflow", "auto");
@@ -314,15 +314,21 @@ Updater = {
 			this.update();
 	},
 	update: function() {
+		var updateButton = $j("#updateButton");
+		updateButton.val("Checking...");
 		Sync.ajax("GET", "uq", null, function() {
+			updateButton.val("Error checking");
 		}, function(latest) {
 			if (latest.length > 6)
 				return;
 			Settings.set("latestversion", latest);
 			Settings.set("lastcheck", Date.now());
 			if (latest != g.version.replace(/\./g, "")) {
+				updateButton.val("Update available!");
 				if (confirm("A new update for 4chan Name Sync is available, install now?"))
 					window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
+			} else {
+				updateButton.val("Up to date");
 			}
 		});
 	}
