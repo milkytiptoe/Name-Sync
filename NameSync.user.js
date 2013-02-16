@@ -137,7 +137,7 @@
 				return Sync.disabled = true;
 			var nodes = e.originalEvent.detail.newPosts;
 			for (var i = 0, len = nodes.length; i < len; i++) {
-				Names.updatePost($j(".reply", nodes[i].nodes.root));
+				Names.updatePost(nodes[i].nodes.post);
 				if (Set["Sync on /" + g.board + "/"]) {
 					clearTimeout(Sync.delay);
 					Sync.delay = setTimeout(Sync.sync, 2500);
