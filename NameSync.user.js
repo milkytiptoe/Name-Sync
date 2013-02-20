@@ -3,7 +3,7 @@
 // @version       3.0.0
 // @namespace     milky
 // @description   Shares names with other posters on 4chan's forced anon boards. Requires 4chan X v3.
-// @author        Milk
+// @author        milkytipoe
 // @run-at        document-idle
 // @match         *://boards.4chan.org/b/*
 // @match         *://boards.4chan.org/q/*
@@ -41,18 +41,10 @@
 	CSS = {
 		init: function() {
 			var css = "\
-			#settingsOverlay { z-index: 99; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); }\
-			#settingsWrapper * { margin: 0; padding: 0; }\
-			#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); overflow-y: scroll; }\
-			#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
-			#settingsWrapper a { color: blue !important; text-decoration: none; }\
-			#settingsWrapper p, #settingsWrapper label, #settingsWrapper h2 { color: black !important; }\
-			#settingsWrapper p { margin-bottom: 10px; }\
-			#settingsWrapper h1 { font-size: 10pt; margin: 0 !important; color: gray; float: right; }\
-			#settingsWrapper h2 { font-size: 10pt; margin: 8px 0 6px 0 !important; text-align: left !important; }\
-			#settingsMain h2 { margin-top: 0 !important; }\
-			#settingsWrapper input[type='text'] { border: 1px solid #CCC; width: 31%; padding: 2px; }\
-			#settingsAdvanced input[type='button'] { width: 130px; height: 26px; }\
+			.section-name-sync input[type='text'] { border: 1px solid #CCC; width: 148px; padding: 2px; }\
+			.section-name-sync input[type='button'] { width: 130px; height: 26px; }\
+			.section-name-sync ul { list-style: none; margin: 0; padding: 8px; }\
+			.section-name-sync label { text-decoration: underline; }\
 			";
 			if (Set["Hide IDs"])
 				css += ".posteruid { display: none; }";
@@ -83,23 +75,18 @@
 	Menus = {
 		uid: null,
 		init: function() {
-			this.add("4chan Name Sync Settings", "header", Settings.open);
-			this.add("Change name", "post", function() {
+			var a = $j("<a href='javascript:;'>Change name</a>").get(0);
+			a.addEventListener('click', function() {
 				Names.change(Menus.uid);
-			}, function(post) {
-				Menus.uid = post.info.uniqueID;
-				return !/^##|Heaven/.test(Menus.uid);
 			});
-		},
-		add: function(text, type, click, open) {
-			var d = document;
-			var a = $j("<a href='javascript:;'>" + text + "</a>").get(0);
-			a.addEventListener('click', click);
-			d.dispatchEvent(new CustomEvent('AddMenuEntry', {
+			document.dispatchEvent(new CustomEvent("AddMenuEntry", {
 				detail: {
-					type: type,
+					type: "post",
 					el: a,
-					open: open
+					open: function(post) {
+						Menus.uid = post.info.uniqueID;
+						return !/^##|Heaven/.test(Menus.uid);
+					}
 				}
 			}));
 		}
@@ -217,7 +204,6 @@
 			"Sync on /q/": ["Enable sync on /q/", true],
 			"Sync on /soc/": ["Enable sync on /soc/", true],
 			"Hide IDs": ["Hide Unique IDs next to names", false],
-			"Log Sync Status": ["Log sync errors in your error console", false],
 			"Automatic Updates": ["Check for updates automatically", true],
 			"Persona Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
 		},
@@ -226,35 +212,25 @@
 				var stored = Settings.get(setting);
 				Set[setting] = stored == null ? Settings.main[setting][1] : stored == "true";
 			}
+			document.dispatchEvent(new CustomEvent("AddSettingsSection", {
+				detail: {
+					title: "Name Sync",
+					open: Settings.open
+				}
+			}));
 		},
-		open: function() {
-			document.dispatchEvent(new CustomEvent('CloseMenu'));
-			$j("body").css("overflow", "hidden");
-			$j("<div />").attr("id", "settingsOverlay").on("click", Settings.close).appendTo("body");
-			$j("<div />").attr("id", "settingsWrapper").html('<div id="settingsContent"><div id="settingsMain"><h1>' + g.version + '</h1><h2>Main</h2><p>Settings are applied on your next <a href="javascript:location.reload(true);">page reload</a>.</p></div><div id="settingsPersona"><h2>Persona</h2><p>Persona Fields are applied instantly. They will only be shared if the \'share persona fields\' setting is enabled.</p><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></div><div id="settingsAdvanced"><h2>Advanced</h2></div><div id="settingsMore"><h2>Links</h2><a href="http://milkytiptoe.github.com/Name-Sync/" target="_blank">Web page</a><br /><a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog" target="_blank">Changelog</a><br /><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Get 4chan X v3</a><br /><a href="http://desktopthread.com/tripcode.php" target="_blank">Test tripcodes</a><br /></div>').appendTo("body");
+		open: function(section, g) {
+			var ul = $j("<ul>Main</ul>").appendTo(section);
 			for (var setting in Settings.main) {
 				var stored = Settings.get(setting);
 				var checked = stored == null ? Settings.main[setting][1] : stored == "true";
-				$j("<label><input type='checkbox' name='" + setting + "'" + (checked ? "checked" : "") + " /> " + Settings.main[setting][0] + "</label>").appendTo("#settingsMain");
+				$j("<li><label><input type='checkbox' name='" + setting + "'" + (checked ? "checked" : "") + " />" + setting + "</label><span class='description'>: " + Settings.main[setting][0] + "</span></li>").appendTo(ul);
 			}
-			$j("#settingsWrapper input[type='checkbox']").on("change", function() { Settings.set(this.name, this.checked); });
-			$j("#settingsPersona input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; }).on("input", function() { Settings.set(this.name, this.value); });
-			$j("<input type='button' id='updateButton' />").val("Check for update").on("click", Updater.update).appendTo("#settingsAdvanced");
-			$j("<input type='button' />").val("Clear sync history").on("click", function() {
-				if (!confirm("This will remove 4chan Name Sync name history stored online by you. Continue?"))
-					return;
-				this.setAttribute("disabled", "disabled");
-				Sync.ajax("POST", "rm", null, function() {
-					alert("Error removing history");
-				}, function(response) {
-					alert(response);
-				});
-			}).appendTo("#settingsAdvanced");
-		},
-		close: function() {
-			$j("body").css("overflow", "auto");
-			$j("#settingsOverlay").remove();
-			$j("#settingsWrapper").remove();
+			$j('<ul>Persona<li><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></li></ul><ul>Advanced<li><input type="button" value="Check for update" /> <input type="button" value="Clear sync history" /></li></ul>').appendTo(section);
+			$j(".section-name-sync input[type='checkbox']").on("change", function() { Settings.set(this.name, this.checked); });
+			$j(".section-name-sync input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; }).on("input", function() { Settings.set(this.name, this.value); });
+			$j(".section-name-sync input[type='button'][value='Check for update']").on("click", Updater.update);
+			$j(".section-name-sync input[type='button'][value='Clear sync history']").on("click", Sync.clear);
 		},
 		get: function(name) {
 			return localStorage.getItem(g.namespace + name);
@@ -357,9 +333,14 @@
 				crossDomain: true
 			}).fail(fail).done(done).always(always);
 		},
-		log: function(message) {
-			if (Set["Log Sync Status"])
-				console.log("Sync Error (" + Date.now() + "): " + message);
+		clear: function() {
+			if (confirm("This will remove 4chan Name Sync name history stored online by you. Continue?")) {
+				Sync.ajax("POST", "rm", null, function() {
+					alert("Error removing history");
+				}, function(response) {
+					alert(response);
+				});
+			}
 		}
 	};
 
