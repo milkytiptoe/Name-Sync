@@ -1,6 +1,6 @@
 v3.0.0 (4chan X v3 required)
-- Moved settings link in to header bar dropdown
-- Sync status is no longer shown above threads
+- Moved settings in to the 4chan X settings
+- Sync status is no longer shown above threads or logged in the console
 - Assign buttons in 4chan X menus are always enabled
 - All connections go through https
 - Fixed install warning on chrome about running on all domains
