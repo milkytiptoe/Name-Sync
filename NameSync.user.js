@@ -30,7 +30,9 @@
 	Set = {};
 	
 	$j = jQuery.noConflict();
-
+	
+	var d = document;
+	
 	g = {
 		namespace: "NameSync.",
 		version: "3.0.0",
@@ -75,18 +77,26 @@
 	Menus = {
 		uid: null,
 		init: function() {
-			var a = $j("<a href='javascript:;'>Change name</a>").get(0);
-			a.addEventListener('click', function() {
-				Names.change(Menus.uid);
+			this.add("4chan Name Sync Settings", "header", function() {
+				d.dispatchEvent(new CustomEvent("OpenSettings", {
+					detail: "Name Sync"
+				}));
 			});
-			document.dispatchEvent(new CustomEvent("AddMenuEntry", {
+			this.add("Change name", "post", function() {
+				Names.change(Menus.uid);
+			}, function(post) {
+				Menus.uid = post.info.uniqueID;
+				return !/^##|Heaven/.test(Menus.uid);
+			});
+		},
+		add: function(text, type, click, open) {
+			var a = $j("<a href='javascript:;'>" + text + "</a>").get(0);
+			a.addEventListener('click', click);
+			d.dispatchEvent(new CustomEvent('AddMenuEntry', {
 				detail: {
-					type: "post",
+					type: type,
 					el: a,
-					open: function(post) {
-						Menus.uid = post.info.uniqueID;
-						return !/^##|Heaven/.test(Menus.uid);
-					}
+					open: open
 				}
 			}));
 		}
@@ -212,7 +222,7 @@
 				var stored = Settings.get(setting);
 				Set[setting] = stored == null ? Settings.main[setting][1] : stored == "true";
 			}
-			document.dispatchEvent(new CustomEvent("AddSettingsSection", {
+			d.dispatchEvent(new CustomEvent("AddSettingsSection", {
 				detail: {
 					title: "Name Sync",
 					open: Settings.open
