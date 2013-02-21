@@ -237,7 +237,7 @@
 				$j("<li><label><input type='checkbox' name='" + setting + "'" + (checked ? "checked" : "") + " />" + setting + "</label><span class='description'>: " + Settings.main[setting][0] + "</span></li>").appendTo(ul);
 			}
 			$j('<ul>Persona<li><input type="text" name="Name" placeholder="Name"><input type="text" name="Email" placeholder="Email"><input type="text" name="Subject" placeholder="Subject"></li></ul><ul>Advanced<li><input type="button" value="Check for update" /> <input type="button" value="Clear sync history" /></li></ul>').appendTo(section);
-			$j(".section-name-sync input[type='checkbox']").on("change", function() { Settings.set(this.name, this.checked); });
+			$j(section).find("input[type='checkbox']").on("change", function() { Settings.set(this.name, this.checked); });
 			$j(section).find("input[type='text']").each(function() { this.value = Settings.get(this.name) || ""; }).on("input", function() { Settings.set(this.name, this.value); });
 			$j(section).find("input[type='button'][value='Check for update']").on("click", Updater.update);
 			$j(section).find("input[type='button'][value='Clear sync history']").on("click", Sync.clear);
