@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name          4chan Name Sync
+// @name          4chan X Name Sync
 // @version       3.0.0
 // @namespace     milky
 // @description   Shares names with other posters on 4chan's forced anon boards. Requires 4chan X v3.
