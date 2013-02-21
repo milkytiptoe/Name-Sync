@@ -262,9 +262,7 @@
 			this.sync(true);
 		},
 		sync: function(loop) {
-			Sync.ajax("GET", "qp", "t="+g.threads+"&b="+g.board, function() {
-				Sync.log("Error retrieving names");
-			}, function(data, status) {
+			Sync.ajax("GET", "qp", "t="+g.threads+"&b="+g.board, null, function(data, status) {
 				if (data == null || status == "notmodified")
 					return;
 				for (var i = 0, len = data.length; i < len; i++) {
@@ -312,7 +310,6 @@
 			} else {
 				var data = "p="+postID+"&n="+encodeURIComponent(cName)+"&t="+threadID+"&b="+g.board+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
 				Sync.ajax("POST", "sp", data, function() {
-					Sync.log("Error sending name, retrying");
 					setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 				}, function() {
 					if (isLateOpSend)
