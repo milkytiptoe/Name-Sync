@@ -255,11 +255,11 @@
 		disabled: false,
 		init: function() {
 			$j(d).on("QRPostSuccessful", Sync.requestSend);		
+			this.sync(true);
 			if (sessionStorage[g.board+"-namesync-tosend"]) {
 				var r = JSON.parse(sessionStorage[g.board+"-namesync-tosend"]);
 				this.send(r.name, r.email, r.subject, r.postID, r.threadID, true);
 			}
-			this.sync(true);
 		},
 		sync: function(loop) {
 			Sync.ajax("GET", "qp", "t="+g.threads+"&b="+g.board, null, function(data, status) {
@@ -312,8 +312,10 @@
 				Sync.ajax("POST", "sp", data, function() {
 					setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
 				}, function() {
-					if (isLateOpSend)
+					if (isLateOpSend) {
 						delete sessionStorage[g.board+"-namesync-tosend"];
+						Sync.sync();
+					}
 				});
 			}
 		},
