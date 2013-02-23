@@ -164,19 +164,22 @@
 			var subject = null;
 			if (oinfo && !Names.blockedIDs[id]) {
 				name = oinfo.n;
-				if (!/Heaven/.test(id))
-					Names.nameByID[id] = name;
+				tripcode = oinfo.t;
+				if (!/Heaven/.test(id)) {
+					Names.nameByID[id] = {
+						n: name,
+						t: tripcode
+					};
+				}
 				email = oinfo.e;
 				subject = oinfo.s;
+				
 			} else if (linfo) {
-				name = linfo;
+				name = linfo.n;
+				tripcode = linfo.t;
 			} else {
 				return;
 			}
-			name = name.split("#");
-			if (name[1])
-				tripcode = "!" + name[1];
-			name = name[0];
 			if (namespans.first().text() != name)
 				namespans.text(name);
 			if (subject && subject != "" && subjectspans.first().text() != subject)
@@ -330,10 +333,10 @@
 				ifmodified = true;
 			}
 			$j.ajax({
-				headers: {"X-Requested-With":"NameSync"},
+				headers: {"X-Requested-With":"NameSync3"},
 				dataType: dType,
 				type: type,
-				url: "https://www.milkyis.me/namesync/3/" + file + ".php",
+				url: "https://www.milkyis.me/namesync/" + file + ".php",
 				ifModified: ifmodified,
 				data: data,
 				xhrFields: {
