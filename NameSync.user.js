@@ -117,7 +117,10 @@
 		change: function(id) {
 			var name = prompt("What would you like this poster to be named?", "Anonymous");
 			if (name && name != "")	{
-				this.nameByID[id] = name;
+				this.nameByID[id] = {
+					n: name,
+					t: ""
+				};
 				this.blockedIDs[id] = true;
 				this.updateAllPosts();
 			}
