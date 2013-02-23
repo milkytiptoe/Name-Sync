@@ -47,6 +47,7 @@
 			.section-name-sync input[type='button'] { width: 130px; height: 26px; }\
 			.section-name-sync ul { list-style: none; margin: 0; padding: 8px; }\
 			.section-name-sync label { text-decoration: underline; }\
+			.section-name-sync { background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; }\
 			";
 			if (Set["Hide IDs"])
 				css += ".posteruid { display: none; }";
