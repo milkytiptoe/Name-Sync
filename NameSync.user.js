@@ -283,7 +283,6 @@
 			
 		},
 		requestSend: function(e) {
-			alert("send");
 			var postID = e.originalEvent.detail.postID;
 			var threadID = e.originalEvent.detail.threadID;
 			var cName, cEmail, cSubject;
