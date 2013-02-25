@@ -261,7 +261,7 @@
 		delay: null,
 		disabled: false,
 		init: function() {
-			$j(d).on("QRPostSuccessful", Sync.requestSend);		
+			$j(d).on("QRPostSuccessful", Sync.requestSend);	
 			this.sync(true);
 			if (sessionStorage[g.board+"-namesync-tosend"]) {
 				var r = JSON.parse(sessionStorage[g.board+"-namesync-tosend"]);
@@ -283,10 +283,11 @@
 			
 		},
 		requestSend: function(e) {
+			alert("send");
 			var postID = e.originalEvent.detail.postID;
 			var threadID = e.originalEvent.detail.threadID;
 			var cName, cEmail, cSubject;
-			if (Set["Override Fields"]) {
+			if (Set["Persona Fields"]) {
 				cName = Settings.get("Name");
 				cEmail = Settings.get("Email");
 				cSubject = Settings.get("Subject");
