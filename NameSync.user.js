@@ -369,7 +369,7 @@
 		update: function() {
 			var updateButton = $j("#updateButton");
 			updateButton.val("Checking...");
-			Sync.ajax("GET", "uq", null, function() {
+			Sync.ajax("GET", "u3", null, function() {
 				updateButton.val("Error checking");
 			}, function(latest) {
 				if (latest.length > 6)
