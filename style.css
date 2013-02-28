@@ -4,10 +4,10 @@
 	padding: 0;	
 }
 body {
-	background-color: black;
 	color: white;
 	font-family: "Segoe UI Semilight", Arial, Helvetica, Verdana;
 	font-size: 1em;
+	background: black;
 }
 a {
 	color: white;
@@ -29,7 +29,7 @@ h2 {
 }
 #wrapper {
 	margin: auto;
-	width: 960px;
+	width: 650px;
 }
 #header {
 	margin: 12px 0 12px 0;
