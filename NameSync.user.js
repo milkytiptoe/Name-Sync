@@ -367,7 +367,7 @@
 				this.update();
 		},
 		update: function() {
-			var updateButton = $j("#updateButton");
+			var updateButton = $j(".section-name-sync").find("input[type='button'][value='Check for update']");
 			updateButton.val("Checking...");
 			Sync.ajax("GET", "u3", null, function() {
 				updateButton.val("Error checking");
