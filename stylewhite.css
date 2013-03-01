@@ -1,0 +1,59 @@
+@charset "utf-8";
+* {
+	margin: 0;
+	padding: 0;	
+}
+body {
+	color: black;
+	font-family: "Segoe UI Semilight", Arial, Helvetica, Verdana;
+	font-size: 1em;
+	background: white;
+}
+a {
+	color: black;
+	text-decoration: underline;	
+}
+h1 {
+	font-size: 1.4em;
+	font-weight: normal;
+}
+h2 {
+	font-size: 1em;
+	font-weight: normal;
+}
+.content-block {
+	min-height: 48px;
+	clear: both;
+	padding-left: 60px;
+	margin: 6px 0 12px 0;
+}
+#wrapper {
+	margin: auto;
+	width: 650px;
+}
+#header {
+	margin: 12px 0 12px 0;
+}
+#footer {
+	text-align: right;	
+	font-style: italic;
+}
+.features {
+	background: url(featuresblack.png) left top no-repeat;
+}
+.requirements {
+	background: url(requirementsblack.png) left top no-repeat;
+}
+.install {
+	background: url(installblack.png) left top no-repeat;
+}
+.support {
+	background: url(supportblack.png) left top no-repeat;
+}
+ul {
+	margin-left: 12px;
+	list-style: none;
+}
+li {
+		
+}

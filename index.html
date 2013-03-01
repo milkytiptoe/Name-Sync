@@ -4,7 +4,15 @@
 	<meta name="description" content="Shares your name with other posters on 4chan's forced anon boards /b/, /q/ and /soc/">
 	<meta http-equiv="content-type" content="text/html;charset=utf-8">
     <title>4chan X Name Sync</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" id="stylesheet" />
+	<script type="text/javascript">
+		function changeStyle() {
+			if (/style\.css/.test(document.getElementById("stylesheet").href))
+				document.getElementById("stylesheet").href = "stylewhite.css";
+			else
+				document.getElementById("stylesheet").href = "style.css";
+		}
+	</script>
 </head>
     <body>
     	<div id="wrapper">
@@ -47,7 +55,7 @@
 				    </ul>
 				</div>
             </div>
-            <div id="footer">Developed by milkytiptoe</div>
+            <div id="footer"><a href="#" onclick="javascript:changeStyle();">Swap themes</a> | Developed by milkytiptoe</div>
         </div>
     </body>
 </html>
