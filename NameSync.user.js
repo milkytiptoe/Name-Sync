@@ -148,7 +148,7 @@
 				return Sync.disabled = true;
 			if (Set["Sync on /" + g.board + "/"]) {
 				clearTimeout(Sync.delay);
-				Sync.delay = setTimeout(Sync.sync, 2500);
+				Sync.delay = setTimeout(Sync.sync, 2000);
 			}
 		},
 		updateAllPosts: function() {
