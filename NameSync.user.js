@@ -109,6 +109,14 @@
 		blockedIDs: {},
 		init: function() {
 			this.load();
+			d.dispatchEvent(new CustomEvent("AddCallback", {
+				detail: {
+					type: "Post",
+					callback: {
+						cb: Names.cb
+					}
+				}
+			}));
 			if (g.threads.length > 1)
 				return;
 			$j(d).on("ThreadUpdate", this.checkThreadUpdate);
@@ -132,17 +140,15 @@
 		store: function() {
 			sessionStorage[g.board+"-names"] = JSON.stringify(this.nameByID);
 		},
+		cb: function() {
+			Names.updatePost(this.nodes.post);
+		},
 		checkThreadUpdate: function(e) {
-			var dead = e.originalEvent.detail[404];
-			if (dead)
+			if (e.originalEvent.detail[404])
 				return Sync.disabled = true;
-			var nodes = e.originalEvent.detail.newPosts;
-			for (var i = 0, len = nodes.length; i < len; i++) {
-				Names.updatePost(nodes[i].nodes.post);
-				if (Set["Sync on /" + g.board + "/"]) {
-					clearTimeout(Sync.delay);
-					Sync.delay = setTimeout(Sync.sync, 2500);
-				}
+			if (Set["Sync on /" + g.board + "/"]) {
+				clearTimeout(Sync.delay);
+				Sync.delay = setTimeout(Sync.sync, 2500);
 			}
 		},
 		updateAllPosts: function() {
