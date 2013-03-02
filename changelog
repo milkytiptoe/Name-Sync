@@ -4,6 +4,7 @@ v3.0.0 (4chan X v3 required)
 - Assign buttons in 4chan X menus are always enabled
 - All connections go through https
 - Fixed install warning on chrome about running on all domains
+- Fixed names on quote previews on board indexes
 
 2.6.83
 - Fixed tripcodes showing on new posts when removed from name field
