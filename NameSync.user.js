@@ -3,12 +3,15 @@
 // @version       3.0.0
 // @namespace     milky
 // @description   Shares names with other posters on 4chan's forced anon boards. Requires 4chan X v3.
-// @author        milkytipoe
+// @author        milkytiptoe
 // @run-at        document-idle
 // @match         *://boards.4chan.org/b/*
 // @match         *://boards.4chan.org/q/*
 // @match         *://boards.4chan.org/soc/*
 // @match         https://www.milkyis.me/*
+// @include       *://boards.4chan.org/b/*
+// @include       *://boards.4chan.org/q/*
+// @include       *://boards.4chan.org/soc/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @downloadURL   https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
@@ -54,7 +57,7 @@
 			$j("<style />").text(css).appendTo("body");
 		}
 	};
-
+	
 	Main = {
 		init: function() {
 			var path = location.pathname.slice(1).split("/");
