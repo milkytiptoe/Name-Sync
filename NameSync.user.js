@@ -16,7 +16,34 @@
 // ==/UserScript==
 
 (function() {
+  var CSS, Main, Menus, Names, Settings, Sync, Updater;
 
+  CSS = {
+    init: function() {}
+  };
 
+  Main = {
+    init: function() {}
+  };
+
+  Menus = {
+    init: function() {}
+  };
+
+  Names = {
+    init: function() {}
+  };
+
+  Settings = {
+    init: function() {}
+  };
+
+  Sync = {
+    init: function() {}
+  };
+
+  Updater = {
+    init: function() {}
+  };
 
 }).call(this);
