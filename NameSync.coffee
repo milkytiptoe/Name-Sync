@@ -1,10 +1,10 @@
 Set = {}
 d = document
 g =
-  namespace: "NameSync.",
-  version: "4.0.0",
-  threads: [],
-  board: null
+  namespace: "NameSync."
+  version:   "4.0.0"
+  threads:   []
+  board:     null
 
 CSS =
   init: ->

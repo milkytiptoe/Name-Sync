@@ -26,9 +26,9 @@
 
   g = {
     namespace: "NameSync.",
-    version: "4.0.0",
-    threads: [],
-    board: null
+    version:   "4.0.0",
+    threads:   [],
+    board:     null
   };
 
   CSS = {
