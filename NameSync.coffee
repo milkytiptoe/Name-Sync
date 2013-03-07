@@ -8,16 +8,16 @@ g =
 
 CSS =
   init: ->
-  
+
 Main =
   init: ->
-  
+
 Menus =
   init: ->
-  
+
 Names =
   init: ->
-  
+
 Settings =
   main:
     "Sync on /b/":       ["Enable sync on /b/", true]
