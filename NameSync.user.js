@@ -18,7 +18,18 @@
 // Contributers: https://github.com/milkytiptoe/Name-Sync/graphs/contributors
 
 (function() {
-  var CSS, Main, Menus, Names, Settings, Sync, Updater;
+  var CSS, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
+
+  Set = {};
+
+  d = document;
+
+  g = {
+    namespace: "NameSync.",
+    version: "3.0.0",
+    threads: [],
+    board: null
+  };
 
   CSS = {
     init: function() {}
@@ -47,5 +58,7 @@
   Updater = {
     init: function() {}
   };
+
+  Main.init();
 
 }).call(this);

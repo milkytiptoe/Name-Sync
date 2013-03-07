@@ -1,3 +1,11 @@
+Set = {}
+d = document
+g =
+  namespace: "NameSync.",
+  version: "3.0.0",
+  threads: [],
+  board: null
+
 CSS =
   init: ->
   
@@ -19,3 +27,4 @@ Sync =
 Updater =
   init: ->
 
+Main.init()
