@@ -8,7 +8,7 @@ g =
 
 CSS =
   init: ->
-    css =  """
+    css = """
 .section-name-sync input[type='text'] {
   border: 1px solid #CCC;
   width: 148px;
