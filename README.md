@@ -1,1 +1,0 @@
-Branch designated for rewriting Name Sync in CoffeeScript without jQuery.
