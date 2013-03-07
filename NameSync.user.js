@@ -31,12 +31,7 @@
     board: null
   };
 
-  CSS = {
-    init: function() {
-      var css;
-      return css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n.section-name-sync {\n  background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;\n}";
-    }
-  };
+  CSS = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n.section-name-sync {\n  background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;\n}";
 
   Main = {
     init: function() {}

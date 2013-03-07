@@ -6,9 +6,7 @@ g =
   threads:   []
   board:     null
 
-CSS =
-  init: ->
-    css =  """
+CSS = """
 .section-name-sync input[type='text'] {
   border: 1px solid #CCC;
   width: 148px;
