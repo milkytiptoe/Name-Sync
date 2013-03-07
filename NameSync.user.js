@@ -26,7 +26,7 @@
 
   g = {
     namespace: "NameSync.",
-    version: "3.0.0",
+    version: "4.0.0",
     threads: [],
     board: null
   };
