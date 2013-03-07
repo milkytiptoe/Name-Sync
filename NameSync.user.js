@@ -25,8 +25,8 @@
   d = document;
 
   g = {
-    namespace: "NameSync.",
-    version: "4.0.0",
+    NAMESPACE: "NameSync.",
+    VERSION: "4.0.0",
     threads: [],
     board: null
   };
@@ -61,8 +61,12 @@
     },
     init: function() {},
     open: function() {},
-    get: function() {},
-    set: function() {}
+    get: function(name) {
+      return localStorage.getItem("" + g.NAMESPACE + name);
+    },
+    set: function(name, value) {
+      return localStorage.setItem("" + g.NAMESPACE + name, value);
+    }
   };
 
   Sync = {

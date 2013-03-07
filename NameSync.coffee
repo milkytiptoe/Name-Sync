@@ -1,8 +1,8 @@
 Set = {}
 d = document
 g =
-  namespace: "NameSync."
-  version:   "4.0.0"
+  NAMESPACE: "NameSync."
+  VERSION:   "4.0.0"
   threads:   []
   board:     null
 
@@ -50,8 +50,10 @@ Settings =
     "Persona Fields":    ["Share persona fields instead of the 4chan X quick reply fields", false]
   init: ->
   open: ->
-  get: ->
-  set: ->
+  get: (name) ->
+    localStorage.getItem "#{g.NAMESPACE}#{name}"
+  set: (name, value) ->
+    localStorage.setItem "#{g.NAMESPACE}#{name}", value
 
 Sync =
   init: ->
