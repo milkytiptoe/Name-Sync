@@ -50,10 +50,17 @@ h2 {
 .support {
 	background: url(supportblack.png) left top no-repeat;
 }
+.info {
+	background: url(infoblack.png) left top no-repeat;
+}
+.contact {
+	background: url(contactblack.png) left top no-repeat;
+}
 ul {
 	margin-left: 12px;
 	list-style: none;
 }
-li {
-		
+li ul {
+	padding-left: 8px;
+	list-style: disc;
 }
