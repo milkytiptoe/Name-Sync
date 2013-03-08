@@ -6,8 +6,6 @@ g =
   threads:   []
   board:     null
 
-# 4chan X API-based snippets
-# https://github.com/ihavenoface/4chan-x
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
 
