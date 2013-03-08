@@ -36,6 +36,12 @@ CSS =
             background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;
           }
           """
+    if Set["Hide IDs"]
+      css += """
+          .posteruid {
+            display: none;
+          }
+          """
 
 Main =
   init: ->
