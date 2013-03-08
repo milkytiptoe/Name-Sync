@@ -100,7 +100,7 @@ Menus =
           detail: 'Name Sync'
     @add 'Change name',
       'post', ->
-         Names.change Menus.uid,
+        Names.change Menus.uid,
       (post) ->
         Menus.uid = post.info.uniqueID
         !/Heaven/.test Menus.uid
