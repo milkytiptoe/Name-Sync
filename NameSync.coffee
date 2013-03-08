@@ -81,6 +81,10 @@ Main =
 Menus =
   uid: null
   init: ->
+    # Bug: Doesn't work, also opens X settings on page load for some reason, might be related to two sections bug in Settings.init
+    # this.add "4chan X Name Sync Settings", "header", $.event "OpenSettings",
+      # detail: "Name Sync"
+    # Works despite above not
     this.add "Change name", "post",
       ->
         Names.change Menus.uid
@@ -113,6 +117,7 @@ Settings =
   init: ->
     for setting, val of Settings.main
       Set[setting] = if stored = Settings.get(val) is null then val[1] else stored is "true"
+    # Bug: Creates two sections in X settings for unknown reason
     $.event "AddSettingsSection",
       detail:
         title: "Name Sync"
