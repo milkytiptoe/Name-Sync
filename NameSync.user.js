@@ -92,7 +92,6 @@
         g.threads.push(thread.id.slice(1));
       }
       Settings.init();
-      Settings.init();
       Names.init();
       CSS.init();
       Menus.init();
@@ -108,6 +107,11 @@
   Menus = {
     uid: null,
     init: function() {
+      this.add("4chan X Name Sync Settings", "header", function() {
+        return $.event("OpenSettings", {
+          detail: "Name Sync"
+        });
+      });
       return this.add("Change name", "post", function() {
         return Names.change(Menus.uid);
       }, function(post) {
