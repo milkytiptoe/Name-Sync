@@ -34,9 +34,10 @@ $.extend $,
     el.removeEventListener type, handler, false
   ajax: (file, type, data, headers, callbacks) ->
     r = new XMLHttpRequest()
-    url = "https://www.milkyis.me/namesync/#{file}.php"
+    url = "https://www.milkyis.me/namesync/#{file}.php" 
     url += "?#{data}" if type is "GET"
     r.open type, url, true
+    r.setRequestHeader "X-Requested-With", "NameSync3"
     for key, val of headers
       r.setRequestHeader key, val
     $.extend r, callbacks
@@ -175,12 +176,14 @@ Settings =
     localStorage.setItem "#{g.NAMESPACE}#{name}", value
 
 Sync =
+  lastModified: '0'
   disabled: false
   init: ->
     this.sync true
   sync: (repeat) ->
-    $.ajax "qp", "GET", "t=#{g.threads}&b=#{g.board}", {},
+    $.ajax "qp", "GET", "t=#{g.threads}&b=#{g.board}", {"If-Modified-Since": Sync.lastModified},
       onloadend: ->
+        
 Updater =
   init: ->
     if last = Settings.get("lastcheck") is null or Date.now() > last + 86400000

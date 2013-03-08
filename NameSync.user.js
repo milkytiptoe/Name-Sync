@@ -80,6 +80,7 @@
         url += "?" + data;
       }
       r.open(type, url, true);
+      r.setRequestHeader("X-Requested-With", "NameSync3");
       for (key in headers) {
         val = headers[key];
         r.setRequestHeader(key, val);
@@ -249,15 +250,16 @@
   };
 
   Sync = {
+    lastModified: '0',
     disabled: false,
     init: function() {
       return this.sync(true);
     },
     sync: function(repeat) {
-      return $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {}, {
-        onloadend: function() {
-          return alert("aaa");
-        }
+      return $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {
+        "If-Modified-Since": Sync.lastModified
+      }, {
+        onloadend: function() {}
       });
     }
   };
