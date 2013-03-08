@@ -63,8 +63,7 @@ Settings =
       detail: 
         title: "Name Sync"
         open: Settings.open
-  open: ->
-    alert "Settings opened"
+  open: (section, g) ->
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->
@@ -75,6 +74,7 @@ Sync =
 
 Updater =
   init: ->
+    this.update() if last = Settings.get("lastcheck") is null or Date.now() > last + 86400000
   update: ->
 
 Main.init()

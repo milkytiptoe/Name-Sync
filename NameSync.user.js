@@ -81,9 +81,7 @@
         }
       }));
     },
-    open: function() {
-      return alert("Settings opened");
-    },
+    open: function(section, g) {},
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);
     },
@@ -97,7 +95,12 @@
   };
 
   Updater = {
-    init: function() {},
+    init: function() {
+      var last;
+      if (last = Settings.get("lastcheck") === null || Date.now() > last + 86400000) {
+        return this.update();
+      }
+    },
     update: function() {}
   };
 
