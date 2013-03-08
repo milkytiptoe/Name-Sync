@@ -54,10 +54,17 @@
   };
 
   $.extend($, {
+    el: function(type) {
+      return d.createElement(type);
+    },
     event: function(type, detail) {
-      return d.dispatchEvent(new CustomEvent(type, {
-        detail: detail
-      }));
+      return d.dispatchEvent(new CustomEvent(type, detail));
+    },
+    on: function(el, type, handler) {
+      return el.addEventListener(type, handler, false);
+    },
+    off: function(el, type, handler) {
+      return el.removeEventListener(type, handler, false);
     }
   });
 
@@ -99,11 +106,34 @@
   };
 
   Menus = {
-    init: function() {}
+    uid: null,
+    init: function() {
+      return this.add("Change name", "post", function() {
+        return Names.change(Menus.uid);
+      }, function(post) {
+        Menus.uid = post.info.uniqueID;
+        return !/Heaven/.test(Menus.uid);
+      });
+    },
+    add: function(text, type, click, open) {
+      var a;
+      a = $.el("a");
+      a.href = "javascript:;";
+      a.textContent = text;
+      $.on(a, "click", click);
+      return $.event("AddMenuEntry", {
+        detail: {
+          type: type,
+          el: a,
+          open: open
+        }
+      });
+    }
   };
 
   Names = {
-    init: function() {}
+    init: function() {},
+    change: function(uid) {}
   };
 
   Settings = {
@@ -123,8 +153,10 @@
         Set[setting] = (stored = Settings.get(val) === null) ? val[1] : stored === "true";
       }
       return $.event("AddSettingsSection", {
-        title: "Name Sync",
-        open: Settings.open
+        detail: {
+          title: "Name Sync",
+          open: Settings.open
+        }
       });
     },
     open: function(section, g) {},

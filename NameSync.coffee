@@ -6,7 +6,7 @@ g =
   threads:   []
   board:     null
 
-# 4chan X API snippets
+# 4chan X API-based snippets
 # https://github.com/ihavenoface/4chan-x
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
@@ -20,10 +20,17 @@ $.extend = (object, properties) ->
   return
 
 $.extend $,
+  # Create element
+  el: (type) ->
+    d.createElement(type)
+  # Fire event to 4chan X
   event: (type, detail) ->
-    d.dispatchEvent new CustomEvent type, detail:
-      detail
-
+    d.dispatchEvent new CustomEvent type, detail
+  on: (el, type, handler) ->
+    el.addEventListener type, handler, false
+  off: (el, type, handler) ->
+    el.removeEventListener type, handler, false
+    
 CSS =
   init: ->
     css = """
@@ -72,10 +79,28 @@ Main =
       Updater.init()
 
 Menus =
+  uid: null
   init: ->
-  
+    this.add "Change name", "post",
+      ->
+        Names.change Menus.uid
+      (post) ->
+        Menus.uid = post.info.uniqueID
+        return not /Heaven/.test Menus.uid
+  add: (text, type, click, open) ->
+      a = $.el "a"
+      a.href = "javascript:;"
+      a.textContent = text
+      $.on a, "click", click
+      $.event "AddMenuEntry",
+        detail:
+          type: type
+          el: a
+          open: open
+
 Names =
   init: ->
+  change: (uid) ->
 
 Settings =
   main:
@@ -89,8 +114,9 @@ Settings =
     for setting, val of Settings.main
       Set[setting] = if stored = Settings.get(val) is null then val[1] else stored is "true"
     $.event "AddSettingsSection",
-      title: "Name Sync"
-      open: Settings.open
+      detail:
+        title: "Name Sync"
+        open: Settings.open
   open: (section, g) ->
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
