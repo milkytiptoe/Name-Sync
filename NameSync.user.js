@@ -31,7 +31,13 @@
     board: null
   };
 
-  $ = {};
+  $ = {
+    event: function(type, detail) {
+      return d.dispatchEvent(new CustomEvent(type, {
+        detail: detail
+      }));
+    }
+  };
 
   CSS = {
     init: function() {
@@ -74,12 +80,10 @@
         val = _ref[setting];
         Set[setting] = (stored = Settings.get(val) === null) ? val[1] : stored === "true";
       }
-      return d.dispatchEvent(new CustomEvent("AddSettingsSection", {
-        detail: {
-          title: "Name Sync",
-          open: Settings.open
-        }
-      }));
+      return $.event("AddSettingsSection", {
+        title: "Name Sync",
+        open: Settings.open
+      });
     },
     open: function(section, g) {},
     get: function(name) {

@@ -6,8 +6,11 @@ g =
   threads:   []
   board:     null
 
-# api
-$ = {}
+# api placeholder functions
+$ = 
+  event: (type, detail) ->
+     d.dispatchEvent new CustomEvent type, detail:
+      detail
   
 CSS =
   init: ->
@@ -59,10 +62,9 @@ Settings =
   init: ->
     for setting, val of Settings.main
       Set[setting] = if stored = Settings.get(val) is null then val[1] else stored is "true"
-    d.dispatchEvent new CustomEvent "AddSettingsSection",
-      detail: 
-        title: "Name Sync"
-        open: Settings.open
+    $.event "AddSettingsSection",
+      title: "Name Sync"
+      open: Settings.open
   open: (section, g) ->
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
