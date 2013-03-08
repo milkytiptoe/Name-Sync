@@ -76,11 +76,11 @@
       var key, r, url, val;
       r = new XMLHttpRequest();
       url = "https://www.milkyis.me/namesync/" + file + ".php";
-      if (type === "GET") {
+      if (type === 'GET') {
         url += "?" + data;
       }
       r.open(type, url, true);
-      r.setRequestHeader("X-Requested-With", "NameSync3");
+      r.setRequestHeader('X-Requested-With', 'NameSync3');
       for (key in headers) {
         val = headers[key];
         r.setRequestHeader(key, val);
@@ -96,7 +96,7 @@
     init: function() {
       var css;
       css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n.section-name-sync {\n  background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;\n}";
-      if (Set["Hide IDs"]) {
+      if (Set['Hide IDs']) {
         return css += ".posteruid {\n  display: none;\n}";
       }
     }
@@ -105,12 +105,12 @@
   Main = {
     init: function() {
       var path, thread, _i, _len, _ref;
-      path = location.pathname.slice(1).split("/");
-      if (path[1] === "catalog") {
+      path = location.pathname.slice(1).split('/');
+      if (path[1] === 'catalog') {
         return;
       }
       g.board = path[0];
-      _ref = $$(".thread");
+      _ref = $$('.thread');
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         thread = _ref[_i];
         g.threads.push(thread.id.slice(1));
@@ -122,7 +122,7 @@
       if (Set["Sync on /" + g.board + "/"]) {
         Sync.init();
       }
-      if (Set["Automatic Updates"]) {
+      if (Set['Automatic Updates']) {
         return Updater.init();
       }
     }
@@ -131,26 +131,25 @@
   Menus = {
     uid: null,
     init: function() {
-      this.add("4chan X Name Sync Settings", "header", function() {
-        return $.event("OpenSettings", {
-          detail: "Name Sync"
+      this.add('4chan X Name Sync Settings', 'header', function() {
+        return $.event('OpenSettings', {
+          detail: 'Name Sync'
         });
       });
-      this.add("Change name", "post", function() {
+      return this.add('Change name', 'post', function() {
         return Names.change(Menus.uid);
-      });
-      return function(post) {
+      }, function(post) {
         Menus.uid = post.info.uniqueID;
         return !/Heaven/.test(Menus.uid);
-      };
+      });
     },
     add: function(text, type, click, open) {
       var a;
-      a = $.el("a");
-      a.href = "javascript:;";
+      a = $.el('a');
+      a.href = 'javascript:;';
       a.textContent = text;
-      $.on(a, "click", click);
-      return $.event("AddMenuEntry", {
+      $.on(a, 'click', click);
+      return $.event('AddMenuEntry', {
         detail: {
           type: type,
           el: a,
@@ -166,9 +165,9 @@
     blockedIDs: {},
     init: function() {
       this.load();
-      $.event("AddCallback", {
+      $.event('AddCallback', {
         detail: {
-          type: "Post",
+          type: 'Post',
           callback: {
             cb: Names.cb
           }
@@ -177,18 +176,18 @@
       if (g.threads.length > 1) {
         return;
       }
-      return $.on(d, "ThreadUpdate", this.checkThreadUpdate);
+      return $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
     },
     cb: function() {
       return Names.updatePost(this.nodes.post);
     },
     change: function(uid) {
       var name;
-      name = prompt("What would you like this poster to be named?", "Anonymous");
-      if (name && trim(name !== "")) {
+      name = prompt('What would you like this poster to be named?', 'Anonymous');
+      if (name && trim(name) !== '') {
         this.nameByID[id] = {
           n: name,
-          t: ""
+          t: ''
         };
         this.blockedIDs[id] = true;
         return this.updateAllPosts();
@@ -220,23 +219,23 @@
 
   Settings = {
     main: {
-      "Sync on /b/": ["Enable sync on /b/", true],
-      "Sync on /q/": ["Enable sync on /q/", true],
-      "Sync on /soc/": ["Enable sync on /soc/", true],
-      "Hide IDs": ["Hide Unique IDs next to names", false],
-      "Automatic Updates": ["Check for updates automatically", true],
-      "Persona Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
+      'Sync on /b/': ['Enable sync on /b/', true],
+      'Sync on /q/': ['Enable sync on /q/', true],
+      'Sync on /soc/': ['Enable sync on /soc/', true],
+      'Hide IDs': ['Hide Unique IDs next to names', false],
+      'Automatic Updates': ['Check for updates automatically', true],
+      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false]
     },
     init: function() {
       var setting, stored, val, _ref;
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
-        Set[setting] = (stored = Settings.get(val) === null) ? val[1] : stored === "true";
+        Set[setting] = (stored = Settings.get(val === null)) ? val[1] : stored === 'true';
       }
-      return $.event("AddSettingsSection", {
+      return $.event('AddSettingsSection', {
         detail: {
-          title: "Name Sync",
+          title: 'Name Sync',
           open: Settings.open
         }
       });
@@ -268,7 +267,7 @@
   Updater = {
     init: function() {
       var last;
-      if (last = Settings.get("lastcheck") === null || Date.now() > last + 86400000) {
+      if (last = Settings.get('lastcheck') === null || Date.now() > last + 86400000) {
         return this.update();
       }
     },
