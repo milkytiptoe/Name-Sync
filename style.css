@@ -64,3 +64,6 @@ li ul {
 	padding-left: 8px;
 	list-style: disc;
 }
+li img {
+  vertical-align: middle;
+}
