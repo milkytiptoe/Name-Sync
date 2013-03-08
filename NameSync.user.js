@@ -18,7 +18,7 @@
 // Contributers: https://github.com/milkytiptoe/Name-Sync/graphs/contributors
 
 (function() {
-  var CSS, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
+  var $, CSS, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
 
   Set = {};
 
@@ -31,6 +31,8 @@
     board: null
   };
 
+  $ = {};
+
   CSS = {
     init: function() {
       var css;
@@ -39,7 +41,13 @@
   };
 
   Main = {
-    init: function() {}
+    init: function() {
+      Settings.init();
+      Settings.init();
+      Names.init();
+      CSS.init();
+      return Menus.init();
+    }
   };
 
   Menus = {
@@ -59,8 +67,23 @@
       "Automatic Updates": ["Check for updates automatically", true],
       "Persona Fields": ["Share persona fields instead of the 4chan X quick reply fields", false]
     },
-    init: function() {},
-    open: function() {},
+    init: function() {
+      var setting, stored, val, _ref;
+      _ref = Settings.main;
+      for (setting in _ref) {
+        val = _ref[setting];
+        Set[setting] = (stored = Settings.get(val) === null) ? val[1] : stored === "true";
+      }
+      return d.dispatchEvent(new CustomEvent("AddSettingsSection", {
+        detail: {
+          title: "Name Sync",
+          open: Settings.open
+        }
+      }));
+    },
+    open: function() {
+      return alert("Settings opened");
+    },
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);
     },

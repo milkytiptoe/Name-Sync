@@ -6,6 +6,9 @@ g =
   threads:   []
   board:     null
 
+# api
+$ = {}
+  
 CSS =
   init: ->
     css = """
@@ -33,10 +36,15 @@ CSS =
 
 Main =
   init: ->
+    Settings.init()
+    Settings.init()
+    Names.init()
+    CSS.init()
+    Menus.init()
 
 Menus =
   init: ->
-
+  
 Names =
   init: ->
 
@@ -49,7 +57,14 @@ Settings =
     "Automatic Updates": ["Check for updates automatically", true]
     "Persona Fields":    ["Share persona fields instead of the 4chan X quick reply fields", false]
   init: ->
+    for setting, val of Settings.main
+      Set[setting] = if stored = Settings.get(val) is null then val[1] else stored is "true"
+    d.dispatchEvent new CustomEvent "AddSettingsSection",
+      detail: 
+        title: "Name Sync"
+        open: Settings.open
   open: ->
+    alert "Settings opened"
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->
