@@ -139,8 +139,61 @@
   };
 
   Names = {
-    init: function() {},
-    change: function(uid) {}
+    nameByID: {},
+    nameByPost: {},
+    blockedIDs: {},
+    init: function() {
+      this.load();
+      $.event("AddCallback", {
+        detail: {
+          type: "Post",
+          callback: {
+            cb: Names.cb
+          }
+        }
+      });
+      if (g.threads.length > 1) {
+        return;
+      }
+      return $.on(d, "ThreadUpdate", this.checkThreadUpdate);
+    },
+    cb: function() {
+      return Names.updatePost(this.nodes.post);
+    },
+    change: function(uid) {
+      var name;
+      name = prompt("What would you like this poster to be named?", "Anonymous");
+      if (name && trim(name !== "")) {
+        this.nameByID[id] = {
+          n: name,
+          t: ""
+        };
+        this.blockedIDs[id] = true;
+        return this.updateAllPosts();
+      }
+    },
+    checkThreadUpdate: function(e) {
+      if (e.originalEvent.detail[404]) {
+        return Sync.disabled = true;
+      }
+      if (Set["Sync on /" + g.board + "/"]) {
+        clearTimeout(Sync.delay);
+        return Sync.delay = setTimeout(Sync.sync, 2000);
+      }
+    },
+    load: function() {
+      var stored;
+      this.nameByID = (stored = sessionStorage["" + g.board + "-names"] === null) ? {} : JSON.parse(stored);
+      return this.blockedIDs = (stored = sessionStorage["" + g.board + "-names-blocked"] === null) ? {} : JSON.parse(stored);
+    },
+    store: function() {
+      sessionStorage["" + g.board + "-names"] = JSON.stringify(this.nameByID);
+      return sessionStorage["" + g.board + "-blocked"] = JSON.stringify(this.blockedIDs);
+    },
+    updateAllPosts: function() {
+      return this.store();
+    },
+    updatePost: function(post) {}
   };
 
   Settings = {
@@ -176,6 +229,7 @@
   };
 
   Sync = {
+    disabled: false,
     init: function() {}
   };
 

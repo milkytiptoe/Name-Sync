@@ -102,8 +102,42 @@ Menus =
           open: open
 
 Names =
+  nameByID: {}
+  nameByPost: {}
+  blockedIDs: {}
   init: ->
+    this.load()
+    $.event "AddCallback",
+      detail:
+        type: "Post"
+        callback:
+          cb: Names.cb
+    return if g.threads.length > 1
+    $.on d, "ThreadUpdate", this.checkThreadUpdate
+  cb: ->
+    Names.updatePost this.nodes.post;
   change: (uid) ->
+    name = prompt "What would you like this poster to be named?", "Anonymous"
+    if name and trim name != ""
+      this.nameByID[id] =
+        n: name,
+        t: ""
+      this.blockedIDs[id] = true;
+      this.updateAllPosts()
+  checkThreadUpdate: (e) ->
+    return Sync.disabled = true if e.originalEvent.detail[404]
+    if Set["Sync on /#{g.board}/"]
+      clearTimeout Sync.delay;
+      Sync.delay = setTimeout Sync.sync, 2000;
+  load: ->
+    this.nameByID = if stored = sessionStorage["#{g.board}-names"] is null then {} else JSON.parse stored
+    this.blockedIDs = if stored = sessionStorage["#{g.board}-names-blocked"] is null then {} else JSON.parse stored
+  store: ->
+    sessionStorage["#{g.board}-names"] = JSON.stringify this.nameByID;
+    sessionStorage["#{g.board}-blocked"] = JSON.stringify this.blockedIDs;
+  updateAllPosts: ->
+    this.store()
+  updatePost: (post) ->
 
 Settings =
   main:
@@ -127,6 +161,7 @@ Settings =
     localStorage.setItem "#{g.NAMESPACE}#{name}", value
 
 Sync =
+  disabled: false
   init: ->
 
 Updater =
