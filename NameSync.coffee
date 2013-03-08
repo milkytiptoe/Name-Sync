@@ -32,7 +32,17 @@ $.extend $,
     el.addEventListener type, handler, false
   off: (el, type, handler) ->
     el.removeEventListener type, handler, false
-  ajax: (url, callbacks, opts = {}) ->
+  ajax: (file, type, data, headers, callbacks) ->
+    r = new XMLHttpRequest()
+    url = "https://www.milkyis.me/namesync/#{file}.php"
+    url += "?#{data}" if type is "GET"
+    r.open type, url, true
+    for key, val of headers
+      r.setRequestHeader key, val
+    $.extend r, callbacks
+    r.withCredentials = true
+    r.send data
+    r
     
 CSS =
   init: ->
@@ -167,7 +177,10 @@ Settings =
 Sync =
   disabled: false
   init: ->
-
+    this.sync true
+  sync: (repeat) ->
+    $.ajax "qp", "GET", "t=#{g.threads}&b=#{g.board}", {},
+      onloadend: ->
 Updater =
   init: ->
     if last = Settings.get("lastcheck") is null or Date.now() > last + 86400000

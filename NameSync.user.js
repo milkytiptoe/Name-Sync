@@ -72,10 +72,22 @@
     off: function(el, type, handler) {
       return el.removeEventListener(type, handler, false);
     },
-    ajax: function(url, callbacks, opts) {
-      if (opts == null) {
-        opts = {};
+    ajax: function(file, type, data, headers, callbacks) {
+      var key, r, url, val;
+      r = new XMLHttpRequest();
+      url = "https://www.milkyis.me/namesync/" + file + ".php";
+      if (type === "GET") {
+        url += "?" + data;
       }
+      r.open(type, url, true);
+      for (key in headers) {
+        val = headers[key];
+        r.setRequestHeader(key, val);
+      }
+      $.extend(r, callbacks);
+      r.withCredentials = true;
+      r.send(data);
+      return r;
     }
   });
 
@@ -238,7 +250,16 @@
 
   Sync = {
     disabled: false,
-    init: function() {}
+    init: function() {
+      return this.sync(true);
+    },
+    sync: function(repeat) {
+      return $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {}, {
+        onloadend: function() {
+          return alert("aaa");
+        }
+      });
+    }
   };
 
   Updater = {
