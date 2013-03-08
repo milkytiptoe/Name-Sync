@@ -170,7 +170,8 @@ Sync =
 
 Updater =
   init: ->
-    this.update() if last = Settings.get("lastcheck") is null or Date.now() > last + 86400000
+    if last = Settings.get("lastcheck") is null or Date.now() > last + 86400000
+      this.update() 
   update: ->
 
 Main.init()
