@@ -136,12 +136,13 @@
           detail: "Name Sync"
         });
       });
-      return this.add("Change name", "post", function() {
+      this.add("Change name", "post", function() {
         return Names.change(Menus.uid);
-      }, function(post) {
+      });
+      return function(post) {
         Menus.uid = post.info.uniqueID;
         return !/Heaven/.test(Menus.uid);
-      });
+      };
     },
     add: function(text, type, click, open) {
       var a;
@@ -194,7 +195,7 @@
       }
     },
     checkThreadUpdate: function(e) {
-      if (e.originalEvent.detail[404]) {
+      if (e.detail[404]) {
         return Sync.disabled = true;
       }
       if (Set["Sync on /" + g.board + "/"]) {

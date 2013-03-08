@@ -34,7 +34,7 @@ $.extend $,
     el.removeEventListener type, handler, false
   ajax: (file, type, data, headers, callbacks) ->
     r = new XMLHttpRequest()
-    url = "https://www.milkyis.me/namesync/#{file}.php" 
+    url = "https://www.milkyis.me/namesync/#{file}.php"
     url += "?#{data}" if type is "GET"
     r.open type, url, true
     r.setRequestHeader "X-Requested-With", "NameSync3"
@@ -44,41 +44,41 @@ $.extend $,
     r.withCredentials = true
     r.send data
     r
-    
+
 CSS =
   init: ->
     css = """
-          .section-name-sync input[type='text'] {
-            border: 1px solid #CCC;
-            width: 148px;
-            padding: 2px;
-          }
-          .section-name-sync input[type='button'] {
-            width: 130px;
-            height: 26px;
-          }
-          .section-name-sync ul {
-            list-style: none;
-            margin: 0;
-            padding: 8px;
-          }
-          .section-name-sync label {
-            text-decoration: underline;
-          }
-          .section-name-sync {
-            background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;
-          }
-          """
+    .section-name-sync input[type='text'] {
+      border: 1px solid #CCC;
+      width: 148px;
+      padding: 2px;
+    }
+    .section-name-sync input[type='button'] {
+      width: 130px;
+      height: 26px;
+    }
+    .section-name-sync ul {
+      list-style: none;
+      margin: 0;
+      padding: 8px;
+    }
+    .section-name-sync label {
+      text-decoration: underline;
+    }
+    .section-name-sync {
+      background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;
+    }
+    """
     if Set["Hide IDs"]
       css += """
-          .posteruid {
-            display: none;
-          }
-          """
+    .posteruid {
+      display: none;
+    }
+    """
 
 Main =
   init: ->
-    path = location.pathname.slice(1).split("/")
+    path = location.pathname.slice(1).split "/"
     return if path[1] is "catalog"
     g.board = path[0]
     g.threads.push thread.id[1..] for thread in $$ ".thread"
@@ -86,20 +86,18 @@ Main =
     Names.init()
     CSS.init()
     Menus.init()
-    if (Set["Sync on /#{g.board}/"])
+    if Set["Sync on /#{g.board}/"]
       Sync.init()
-    if (Set["Automatic Updates"])
+    if Set["Automatic Updates"]
       Updater.init()
 
 Menus =
   uid: null
   init: ->
-    this.add "4chan X Name Sync Settings", "header",
-      ->
-        $.event "OpenSettings",
-          detail: "Name Sync"
-    this.add "Change name", "post",
-      ->
+    this.add "4chan X Name Sync Settings", "header", ->
+      $.event "OpenSettings",
+        detail: "Name Sync"
+    this.add "Change name", "post", ->
         Names.change Menus.uid
       (post) ->
         Menus.uid = post.info.uniqueID
@@ -116,7 +114,7 @@ Menus =
           open: open
 
 Names =
-  nameByID: {}
+  nameByID:   {}
   nameByPost: {}
   blockedIDs: {}
   init: ->
@@ -129,26 +127,34 @@ Names =
     return if g.threads.length > 1
     $.on d, "ThreadUpdate", this.checkThreadUpdate
   cb: ->
-    Names.updatePost this.nodes.post;
+    Names.updatePost this.nodes.post
   change: (uid) ->
     name = prompt "What would you like this poster to be named?", "Anonymous"
     if name and trim name != ""
       this.nameByID[id] =
         n: name,
         t: ""
-      this.blockedIDs[id] = true;
+      this.blockedIDs[id] = true
       this.updateAllPosts()
   checkThreadUpdate: (e) ->
-    return Sync.disabled = true if e.originalEvent.detail[404]
+    return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]
-      clearTimeout Sync.delay;
-      Sync.delay = setTimeout Sync.sync, 2000;
+      clearTimeout Sync.delay
+      Sync.delay = setTimeout Sync.sync, 2000
   load: ->
-    this.nameByID = if stored = sessionStorage["#{g.board}-names"] is null then {} else JSON.parse stored
-    this.blockedIDs = if stored = sessionStorage["#{g.board}-names-blocked"] is null then {} else JSON.parse stored
+    this.nameByID =
+      if stored = sessionStorage["#{g.board}-names"] is null
+        {}
+      else
+        JSON.parse stored
+    this.blockedIDs =
+      if stored = sessionStorage["#{g.board}-names-blocked"] is null
+        {}
+      else
+        JSON.parse stored
   store: ->
-    sessionStorage["#{g.board}-names"] = JSON.stringify this.nameByID;
-    sessionStorage["#{g.board}-blocked"] = JSON.stringify this.blockedIDs;
+    sessionStorage["#{g.board}-names"]   = JSON.stringify this.nameByID
+    sessionStorage["#{g.board}-blocked"] = JSON.stringify this.blockedIDs
   updateAllPosts: ->
     this.store()
   updatePost: (post) ->
@@ -169,7 +175,7 @@ Settings =
         title: "Name Sync"
         open: Settings.open
   open: (section, g) ->
-    
+
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->
@@ -181,13 +187,16 @@ Sync =
   init: ->
     this.sync true
   sync: (repeat) ->
-    $.ajax "qp", "GET", "t=#{g.threads}&b=#{g.board}", {"If-Modified-Since": Sync.lastModified},
-      onloadend: ->
-        
+    $.ajax "qp",
+      "GET"
+      "t=#{g.threads}&b=#{g.board}"
+      "If-Modified-Since": Sync.lastModified,
+        onloadend: ->
+
 Updater =
   init: ->
     if last = Settings.get("lastcheck") is null or Date.now() > last + 86400000
-      this.update() 
+      this.update()
   update: ->
 
 Main.init()
