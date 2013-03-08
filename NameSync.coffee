@@ -22,7 +22,9 @@ $.extend = (object, properties) ->
 $.extend $,
   # Create element
   el: (type) ->
-    d.createElement(type)
+    d.createElement type
+  tn: (text) ->
+    d.createTextNode text
   # Fire event to 4chan X
   event: (type, detail) ->
     d.dispatchEvent new CustomEvent type, detail
@@ -30,6 +32,7 @@ $.extend $,
     el.addEventListener type, handler, false
   off: (el, type, handler) ->
     el.removeEventListener type, handler, false
+  ajax: (url, callbacks, opts = {}) ->
     
 CSS =
   init: ->
@@ -155,6 +158,7 @@ Settings =
         title: "Name Sync"
         open: Settings.open
   open: (section, g) ->
+    
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->

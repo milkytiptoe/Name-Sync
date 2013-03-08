@@ -60,6 +60,9 @@
     el: function(type) {
       return d.createElement(type);
     },
+    tn: function(text) {
+      return d.createTextNode(text);
+    },
     event: function(type, detail) {
       return d.dispatchEvent(new CustomEvent(type, detail));
     },
@@ -68,6 +71,11 @@
     },
     off: function(el, type, handler) {
       return el.removeEventListener(type, handler, false);
+    },
+    ajax: function(url, callbacks, opts) {
+      if (opts == null) {
+        opts = {};
+      }
     }
   });
 
