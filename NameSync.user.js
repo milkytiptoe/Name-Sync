@@ -18,7 +18,7 @@
 // Contributers: https://github.com/milkytiptoe/Name-Sync/graphs/contributors
 
 (function() {
-  var $, CSS, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
+  var $, $$, CSS, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
 
   Set = {};
 
@@ -31,13 +31,35 @@
     board: null
   };
 
-  $ = {
+  $$ = function(selector, root) {
+    if (root == null) {
+      root = d.body;
+    }
+    return root.querySelectorAll(selector);
+  };
+
+  $ = function(selector, root) {
+    if (root == null) {
+      root = d.body;
+    }
+    return root.querySelector(selector);
+  };
+
+  $.extend = function(object, properties) {
+    var key, val;
+    for (key in properties) {
+      val = properties[key];
+      object[key] = val;
+    }
+  };
+
+  $.extend($, {
     event: function(type, detail) {
       return d.dispatchEvent(new CustomEvent(type, {
         detail: detail
       }));
     }
-  };
+  });
 
   CSS = {
     init: function() {
@@ -51,11 +73,28 @@
 
   Main = {
     init: function() {
+      var path, thread, _i, _len, _ref;
+      path = location.pathname.slice(1).split("/");
+      if (path[1] === "catalog") {
+        return;
+      }
+      g.board = path[0];
+      _ref = $$(".thread");
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        thread = _ref[_i];
+        g.threads.push(thread.id.slice(1));
+      }
       Settings.init();
       Settings.init();
       Names.init();
       CSS.init();
-      return Menus.init();
+      Menus.init();
+      if (Set["Sync on /" + g.board + "/"]) {
+        Sync.init();
+      }
+      if (Set["Automatic Updates"]) {
+        return Updater.init();
+      }
     }
   };
 

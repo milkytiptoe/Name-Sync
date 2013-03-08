@@ -6,12 +6,24 @@ g =
   threads:   []
   board:     null
 
-# api placeholder functions
-$ = 
+# 4chan X API snippets
+# https://github.com/ihavenoface/4chan-x
+$$ = (selector, root = d.body) ->
+  root.querySelectorAll selector
+
+$ = (selector, root = d.body) ->
+  root.querySelector selector
+
+$.extend = (object, properties) ->
+  for key, val of properties
+    object[key] = val
+  return
+
+$.extend $,
   event: (type, detail) ->
-     d.dispatchEvent new CustomEvent type, detail:
+    d.dispatchEvent new CustomEvent type, detail:
       detail
-  
+
 CSS =
   init: ->
     css = """
@@ -45,11 +57,19 @@ CSS =
 
 Main =
   init: ->
+    path = location.pathname.slice(1).split("/")
+    return if path[1] is "catalog"
+    g.board = path[0]
+    g.threads.push thread.id[1..] for thread in $$ ".thread"
     Settings.init()
     Settings.init()
     Names.init()
     CSS.init()
     Menus.init()
+    if (Set["Sync on /#{g.board}/"])
+      Sync.init()
+    if (Set["Automatic Updates"])
+      Updater.init()
 
 Menus =
   init: ->
