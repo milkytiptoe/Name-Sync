@@ -245,8 +245,10 @@
     },
     load: function() {
       var stored;
-      this.nameByID = (stored = sessionStorage["" + g.board + "-names"] === null) ? {} : JSON.parse(stored);
-      return this.blockedIDs = (stored = sessionStorage["" + g.board + "-names-blocked"] === null) ? {} : JSON.parse(stored);
+      stored = sessionStorage["" + g.board + "-names"];
+      this.nameByID = stored ? JSON.parse(stored) : {};
+      stored = sessionStorage["" + g.board + "-blocked"];
+      return this.blockedIDs = stored ? JSON.parse(stored) : {};
     },
     store: function() {
       sessionStorage["" + g.board + "-names"] = JSON.stringify(this.nameByID);

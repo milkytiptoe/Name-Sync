@@ -167,18 +167,11 @@ Names =
       clearTimeout Sync.delay
       Sync.delay = setTimeout Sync.sync, 2000
   load: ->
-    @nameByID =
-      if stored = sessionStorage["#{g.board}-names"] is null
-        {}
-      else
-        JSON.parse stored
-    @blockedIDs =
-      if stored = sessionStorage["#{g.board}-names-blocked"] is null
-        {}
-      else
-        JSON.parse stored
+    stored = sessionStorage["#{g.board}-names"]
+    @nameByID = if stored then JSON.parse(stored) else {}
+    stored = sessionStorage["#{g.board}-blocked"]
+    @blockedIDs = if stored then JSON.parse(stored) else {}
   store: ->
-    # bug: stores these as 'false'
     sessionStorage["#{g.board}-names"]   = JSON.stringify @nameByID
     sessionStorage["#{g.board}-blocked"] = JSON.stringify @blockedIDs
   updateAllPosts: ->
@@ -203,7 +196,6 @@ Names =
         Names.nameByID[id] =
           n: name
           t: tripcode
-        # what the fuck, Names.nameById[id] is UNDEFINED after just defining it
       email =   oinfo.e
       subject = oinfo.s
     else if linfo
