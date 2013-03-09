@@ -242,6 +242,7 @@ Sync =
         postID: postID
         threadID: threadID
     else
+      # bug: data sends as formdata but server rejects, need to find how jquery does it
       $.ajax 'sp',
         'POST',
         $.data
