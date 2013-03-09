@@ -178,7 +178,7 @@ Names =
   updatePost: (post) ->
     # todo: 60 lines of jshit here
     # work with just desktop dom for now i guess
-    id =             $(".hand", post).textContent
+    id =             $('.hand', post).textContent
     return if /^##/.test id
     postnumspan =    $ 'a[title="Quote this post"]', post
     namespan =       $ '.desktop .name', post
@@ -190,7 +190,21 @@ Names =
     postnum =        postnumspan.textContent
     oinfo =          Names.nameByPost[postnum]
     linfo =          Names.nameByID[id]
-
+    if oinfo and not Names.blockedIDs[id]
+      name =     oinfo.n
+      tripcode = oinfo.t
+      if !/Heaven/.test id
+        Names.nameByID[id] =
+          n: name
+          t: tripcode
+      email =   oinfo.e
+      subject = oinfo.s
+    else if linfo
+      name =     linfo.n
+      tripcode = linfo.t
+    else return
+    console.log post
+    
 Settings =
   main:
     'Sync on /b/':       ['Enable sync on /b/', true]

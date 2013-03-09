@@ -247,8 +247,8 @@
       return this.store();
     },
     updatePost: function(post) {
-      var id, linfo, mobnamespan, mobsubjectspan, mobtripspan, namespan, oinfo, postnum, postnumspan, subjectspan, tripspan;
-      id = $(".hand", post).textContent;
+      var email, id, linfo, mobnamespan, mobsubjectspan, mobtripspan, name, namespan, oinfo, postnum, postnumspan, subject, subjectspan, tripcode, tripspan;
+      id = $('.hand', post).textContent;
       if (/^##/.test(id)) {
         return;
       }
@@ -261,7 +261,25 @@
       mobsubjectspan = $('.mobile .subject', post);
       postnum = postnumspan.textContent;
       oinfo = Names.nameByPost[postnum];
-      return linfo = Names.nameByID[id];
+      linfo = Names.nameByID[id];
+      if (oinfo && !Names.blockedIDs[id]) {
+        name = oinfo.n;
+        tripcode = oinfo.t;
+        if (!/Heaven/.test(id)) {
+          Names.nameByID[id] = {
+            n: name,
+            t: tripcode
+          };
+        }
+        email = oinfo.e;
+        subject = oinfo.s;
+      } else if (linfo) {
+        name = linfo.n;
+        tripcode = linfo.t;
+      } else {
+        return;
+      }
+      return console.log(post);
     }
   };
 
