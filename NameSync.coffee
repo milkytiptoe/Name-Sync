@@ -203,6 +203,7 @@ Settings =
 Sync =
   lastModified: '0'
   disabled:     false
+  delay:        null
   init: ->
     $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true

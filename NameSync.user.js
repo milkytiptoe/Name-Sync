@@ -279,6 +279,7 @@
   Sync = {
     lastModified: '0',
     disabled: false,
+    delay: null,
     init: function() {
       var r;
       $.on(d, 'QRPostSuccessful', Sync.requestSend);
