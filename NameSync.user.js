@@ -222,7 +222,7 @@
     cb: function() {
       return Names.updatePost(this.nodes.post);
     },
-    change: function(uid) {
+    change: function(id) {
       var name;
       name = prompt('What would you like this poster to be named?', 'Anonymous');
       if (name && (name = name.trim() !== '')) {

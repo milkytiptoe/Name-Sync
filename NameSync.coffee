@@ -152,9 +152,8 @@ Names =
     $.on d, 'ThreadUpdate', @checkThreadUpdate
     @updateAllPosts()
   cb: ->
-    # bug: doesnt work
     Names.updatePost @nodes.post
-  change: (uid) ->
+  change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
     if name and name = name.trim() isnt ''
       @nameByID[id] =
@@ -204,6 +203,7 @@ Names =
         Names.nameByID[id] =
           n: name
           t: tripcode
+        # what the fuck, Names.nameById[id] is UNDEFINED after just defining it
       email =   oinfo.e
       subject = oinfo.s
     else if linfo
