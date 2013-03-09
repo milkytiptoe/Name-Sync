@@ -1,6 +1,7 @@
 v4.0.0 (4chan X v3 required)
-- Renamed sync posters will load their new names on refresh
-- Added 'Do Not Track' setting
+- Renamed sync posters will load their changed names on refresh
+- Added 'Do Not Track' setting to request archives to not record your posts
+- Improvement to script start time
 
 v3.0.0 (4chan X v3 required)
 - Moved settings in to the 4chan X settings
