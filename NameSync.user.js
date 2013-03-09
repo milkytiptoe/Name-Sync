@@ -190,7 +190,7 @@
     change: function(uid) {
       var name;
       name = prompt('What would you like this poster to be named?', 'Anonymous');
-      if (name && trim(name) !== '') {
+      if (name && (name = name.trim() !== '')) {
         this.nameByID[id] = {
           n: name,
           t: ''
@@ -259,7 +259,13 @@
     lastModified: '0',
     disabled: false,
     init: function() {
-      return this.sync(true);
+      var r;
+      $.on(d, 'QRPostSuccessful', Sync.requestSend);
+      this.sync(true);
+      if (sessionStorage["" + g.board + "-namesync-tosend"]) {
+        r = JSON.parse(sessionStorage["" + g.board + "-namesync-tosend"]);
+        return this.send(r.name, r.email, r.subject, r.postID, r.threadID, true);
+      }
     },
     canSync: function() {
       return !this.disabled && g.threads.length === 1 && !/warning/.test($.id(imagecount).className);
@@ -284,7 +290,46 @@
       if (repeat && this.canSync === true) {
         return setTimeout(this.sync, 30000, true);
       }
-    }
+    },
+    requestSend: function(e) {
+      var cEmail, cName, cSubject, postID, qr, threadID;
+      postID = e.detail.postID;
+      threadID = e.detail.threadID;
+      if (Set['Persona Fields']) {
+        cName = Settings.get('Name');
+        cEmail = Settings.get('Email');
+        cSubject = Settings.get('Subject');
+      } else {
+        qr = $.id('qr');
+        cName = $('input[name=name]', qr).value;
+        cEmail = $('input[name=email]', qr).value;
+        cSubject = $('input[name=sub]', qr).value;
+      }
+      cName = cName.trim();
+      cEmail = cEmail.trim();
+      cSubject = cSubject.trim();
+      if (!(cName === '' && cEmail === '' && cSubject === '')) {
+        return Sync.send(cName, cEmail, cSubject, postID, threadID);
+      }
+    },
+    send: function(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
+      if (isLateOpSend && !sessionStorage["" + g.board + "-namesync-tosend"]) {
+        return;
+      }
+      if (g.threads.length > 1) {
+        isLateOpSend = true;
+        return sessionStorage[g.board + "-namesync-tosend"] = JSON.stringify({
+          name: cName,
+          email: cEmail,
+          subject: cSubject,
+          postID: postID,
+          threadID: threadID
+        });
+      } else {
+
+      }
+    },
+    clear: function() {}
   };
 
   Updater = {

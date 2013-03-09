@@ -135,7 +135,7 @@ Names =
     Names.updatePost @nodes.post
   change: (uid) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
-    if name and trim(name) isnt ''
+    if name and name = name.trim() isnt ''
       @nameByID[id] =
         n: name,
         t: ''
@@ -191,7 +191,11 @@ Sync =
   lastModified: '0'
   disabled:     false
   init: ->
+    $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true
+    if sessionStorage["#{g.board}-namesync-tosend"]
+      r = JSON.parse(sessionStorage["#{g.board}-namesync-tosend"])
+      @send r.name, r.email, r.subject, r.postID, r.threadID, true
   canSync: ->
     !@disabled and g.threads.length is 1 and !/warning/.test $.id(imagecount).className
   sync: (repeat) ->
@@ -207,6 +211,37 @@ Sync =
             Names.updateAllPosts()
     if repeat and @canSync is true
       setTimeout @sync, 30000, true
+  requestSend: (e) ->
+    postID   = e.detail.postID
+    threadID = e.detail.threadID
+    if Set['Persona Fields']
+      cName = Settings.get 'Name'
+      cEmail = Settings.get 'Email'
+      cSubject = Settings.get 'Subject'
+    else
+      qr = $.id 'qr'
+      cName = $('input[name=name]', qr).value
+      cEmail = $('input[name=email]', qr).value
+      cSubject = $('input[name=sub]', qr).value
+    cName = cName.trim()
+    cEmail = cEmail.trim()
+    cSubject = cSubject.trim()
+    if not (cName is '' and cEmail is '' and cSubject is '')
+      Sync.send cName, cEmail, cSubject, postID, threadID
+  send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
+    return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
+    if g.threads.length > 1
+      isLateOpSend = true
+      sessionStorage[g.board+"-namesync-tosend"] = JSON.stringify
+        name: cName
+        email: cEmail
+        subject: cSubject
+        postID: postID
+        threadID: threadID
+    else
+      # sp ajax goes here
+  clear: ->
+    
 
 Updater =
   init: ->
