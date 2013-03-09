@@ -89,6 +89,9 @@
       if (file === 'qp') {
         r.setRequestHeader('If-Modified-Since', Sync.lastModified);
       }
+      if (type === 'POST') {
+        r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      }
       $.extend(r, callbacks);
       r.withCredentials = true;
       r.send(data);

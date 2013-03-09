@@ -42,6 +42,8 @@ $.extend $,
     r.open type, url, true
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
     r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
+    # bug: cuts form data... or something. no fuckin idea.
+    r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' if type is 'POST'
     $.extend r, callbacks
     r.withCredentials = true
     r.send data
@@ -243,6 +245,7 @@ Sync =
         threadID: threadID
     else
       # bug: data sends as formdata but server rejects, need to find how jquery does it
+      # old data: d = "p=#{postID}&t=#{threadID}&b=#{g.board}&n="+encodeURIComponent(cName)+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
       $.ajax 'sp',
         'POST',
         $.data
