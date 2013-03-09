@@ -246,7 +246,23 @@
       }
       return this.store();
     },
-    updatePost: function(post) {}
+    updatePost: function(post) {
+      var id, linfo, mobnamespan, mobsubjectspan, mobtripspan, namespan, oinfo, postnum, postnumspan, subjectspan, tripspan;
+      id = $(".hand", post).textContent;
+      if (/^##/.test(id)) {
+        return;
+      }
+      postnumspan = $('a[title="Quote this post"]', post);
+      namespan = $('.desktop .name', post);
+      mobnamespan = $('.mobile .name', post);
+      tripspan = $('.desktop .postertrip', post);
+      mobtripspan = $('.mobile .postertrip', post);
+      subjectspan = $('.desktop .subject', post);
+      mobsubjectspan = $('.mobile .subject', post);
+      postnum = postnumspan.textContent;
+      oinfo = Names.nameByPost[postnum];
+      return linfo = Names.nameByID[id];
+    }
   };
 
   Settings = {

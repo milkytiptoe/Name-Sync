@@ -176,7 +176,20 @@ Names =
     @updatePost post for post in $$ '.thread .post'
     @store()
   updatePost: (post) ->
-    # 60 lines of jshit here
+    # todo: 60 lines of jshit here
+    # work with just desktop dom for now i guess
+    id = $(".hand", post).textContent
+    return if /^##/.test id
+    postnumspan =    $ 'a[title="Quote this post"]', post
+    namespan =       $ '.desktop .name', post
+    mobnamespan =    $ '.mobile .name', post
+    tripspan =       $ '.desktop .postertrip', post
+    mobtripspan =    $ '.mobile .postertrip', post
+    subjectspan =    $ '.desktop .subject', post
+    mobsubjectspan = $ '.mobile .subject', post
+    postnum = postnumspan.textContent
+    oinfo = Names.nameByPost[postnum]
+    linfo = Names.nameByID[id]
 
 Settings =
   main:
