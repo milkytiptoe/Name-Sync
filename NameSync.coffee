@@ -155,7 +155,7 @@ Names =
     Names.updatePost @nodes.post
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
-    if name and name = name.trim() isnt ''
+    if name and name.trim() isnt ''
       @nameByID[id] =
         n: name,
         t: ''
