@@ -25,6 +25,8 @@ $.extend $,
     d.createElement type
   tn: (text) ->
     d.createTextNode text
+  id: (id) ->
+    d.getElementById id
   # Fire event to 4chan X
   event: (type, detail) ->
     d.dispatchEvent new CustomEvent type, detail
@@ -34,6 +36,7 @@ $.extend $,
     el.removeEventListener type, handler, false
   ajax: (file, type, data, headers, callbacks) ->
     r = new XMLHttpRequest()
+    r.overrideMimeType 'application/json' if file is 'qp'
     url = "https://www.milkyis.me/namesync/#{file}.php"
     url += "?#{data}" if type is 'GET'
     r.open type, url, true
@@ -155,6 +158,7 @@ Names =
       else
         JSON.parse stored
   store: ->
+    # bug: stores these as 'false'
     sessionStorage["#{g.board}-names"]   = JSON.stringify @nameByID
     sessionStorage["#{g.board}-blocked"] = JSON.stringify @blockedIDs
   updateAllPosts: ->
@@ -171,11 +175,7 @@ Settings =
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
   init: ->
     for setting, val of Settings.main
-      Set[setting] =
-        if stored = Settings.get val is null
-          val[1]
-        else
-          stored is 'true'
+      Set[setting] = if stored = Settings.get(val) is null then val[1] else stored is 'true'
     $.event 'AddSettingsSection',
       detail:
         title: 'Name Sync'
@@ -192,12 +192,21 @@ Sync =
   disabled:     false
   init: ->
     @sync true
+  canSync: ->
+    !@disabled and g.threads.length is 1 and !/warning/.test $.id(imagecount).className
   sync: (repeat) ->
     $.ajax "qp",
       "GET"
       "t=#{g.threads}&b=#{g.board}"
       "If-Modified-Since": Sync.lastModified,
         onloadend: ->
+          if @status is 200
+            Sync.lastModified = @getResponseHeader 'Last-Modified'
+            for poster in JSON.parse @response
+              Names.nameByPost[poster.p] = poster
+            Names.updateAllPosts()
+    if repeat and @canSync is true
+      setTimeout @sync, 30000, true
 
 Updater =
   init: ->

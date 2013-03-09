@@ -63,6 +63,9 @@
     tn: function(text) {
       return d.createTextNode(text);
     },
+    id: function(id) {
+      return d.getElementById(id);
+    },
     event: function(type, detail) {
       return d.dispatchEvent(new CustomEvent(type, detail));
     },
@@ -75,6 +78,9 @@
     ajax: function(file, type, data, headers, callbacks) {
       var key, r, url, val;
       r = new XMLHttpRequest();
+      if (file === 'qp') {
+        r.overrideMimeType('application/json');
+      }
       url = "https://www.milkyis.me/namesync/" + file + ".php";
       if (type === 'GET') {
         url += "?" + data;
@@ -231,7 +237,7 @@
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
-        Set[setting] = (stored = Settings.get(val === null)) ? val[1] : stored === 'true';
+        Set[setting] = (stored = Settings.get(val) === null) ? val[1] : stored === 'true';
       }
       return $.event('AddSettingsSection', {
         detail: {
@@ -255,12 +261,29 @@
     init: function() {
       return this.sync(true);
     },
+    canSync: function() {
+      return !this.disabled && g.threads.length === 1 && !/warning/.test($.id(imagecount).className);
+    },
     sync: function(repeat) {
-      return $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {
+      $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {
         "If-Modified-Since": Sync.lastModified
       }, {
-        onloadend: function() {}
+        onloadend: function() {
+          var poster, _i, _len, _ref;
+          if (this.status === 200) {
+            Sync.lastModified = this.getResponseHeader('Last-Modified');
+            _ref = JSON.parse(this.response);
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              poster = _ref[_i];
+              Names.nameByPost[poster.p] = poster;
+            }
+            return Names.updateAllPosts();
+          }
+        }
       });
+      if (repeat && this.canSync === true) {
+        return setTimeout(this.sync, 30000, true);
+      }
     }
   };
 
