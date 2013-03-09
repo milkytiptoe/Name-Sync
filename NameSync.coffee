@@ -339,4 +339,4 @@ Updater =
         if @response isnt g.VERSION.replace(/\./g, '') and confirm "A new update for 4chan Name Sync (version #{@response}) is available, install now?"
           window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js'
 
-Main.init()
+$.on d, '4chanXInitFinished', Main.init

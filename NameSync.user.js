@@ -5,7 +5,7 @@
 // @description    Shares names with other posters on 4chan's forced anon boards. Requires 4chan X v3.
 // @author         milkytiptoe
 // @author         ihavenoface
-// @run-at         document-idle
+// @run-at         document-start
 // @include        *://boards.4chan.org/b/*
 // @include        *://boards.4chan.org/q/*
 // @include        *://boards.4chan.org/soc/*
@@ -487,6 +487,6 @@
     }
   };
 
-  Main.init();
+  $.on(d, '4chanXInitFinished', Main.init);
 
 }).call(this);
