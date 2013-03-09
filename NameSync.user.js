@@ -338,8 +338,15 @@
           postID: postID,
           threadID: threadID
         }), {
-          onerror: setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend),
-          onloadend: isLateOpSend ? (delete sessionStorage['#{g.board}-namesync-tosend'], Sync.sync()) : void 0
+          onerror: function() {
+            return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+          },
+          onloadend: function() {
+            if (isLateOpSend) {
+              delete sessionStorage['#{g.board}-namesync-tosend'];
+              return Sync.sync();
+            }
+          }
         });
       }
     },
@@ -353,7 +360,19 @@
         return this.update();
       }
     },
-    update: function() {}
+    update: function() {
+      return $.ajax('u3', 'GET', '', {
+        onloadend: function() {
+          if (this.status !== 200) {
+            return;
+          }
+          Settings.set("lastcheck", Date.now());
+          if (this.response !== g.VERSION.replace(/\./g, "") && confirm("A new update for 4chan Name Sync (version " + this.response + ") is available, install now?")) {
+            return window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
+          }
+        }
+      });
+    }
   };
 
   Main.init();

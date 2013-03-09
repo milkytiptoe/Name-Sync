@@ -250,19 +250,26 @@ Sync =
           subject: cSubject
           postID: postID
           threadID: threadID
-        onerror:
+        onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
-        onloadend:
+        onloadend: ->
           if isLateOpSend
             delete sessionStorage['#{g.board}-namesync-tosend']
             Sync.sync()
   clear: ->
-    
 
 Updater =
   init: ->
     if last = Settings.get('lastcheck') is null or Date.now() > last + 86400000
       @update()
   update: ->
+    $.ajax 'u3',
+      'GET',
+      '',
+      onloadend: ->
+        return if @status isnt 200
+        Settings.set "lastcheck", Date.now()
+        if @response isnt g.VERSION.replace(/\./g, "") and confirm "A new update for 4chan Name Sync (version #{@response}) is available, install now?"
+          window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js"
 
 Main.init()
