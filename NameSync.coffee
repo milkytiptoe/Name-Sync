@@ -143,6 +143,7 @@ Names =
           cb: Names.cb
     return if g.threads.length > 1
     $.on d, 'ThreadUpdate', @checkThreadUpdate
+    @updateAllPosts()
   cb: ->
     Names.updatePost @nodes.post
   change: (uid) ->
@@ -174,8 +175,10 @@ Names =
     sessionStorage["#{g.board}-names"]   = JSON.stringify @nameByID
     sessionStorage["#{g.board}-blocked"] = JSON.stringify @blockedIDs
   updateAllPosts: ->
+    @updatePost post for post in $$('.thread .post')
     @store()
   updatePost: (post) ->
+    # 60 lines of jshit here
 
 Settings =
   main:
@@ -225,19 +228,19 @@ Sync =
     if repeat and @canSync is true
       setTimeout @sync, 30000, true
   requestSend: (e) ->
-    postID =    e.detail.postID
-    threadID =  e.detail.threadID
+    postID = e.detail.postID
+    threadID = e.detail.threadID
     if Set['Persona Fields']
-      cName =    Settings.get 'Name'
-      cEmail =   Settings.get 'Email'
+      cName = Settings.get 'Name'
+      cEmail = Settings.get 'Email'
       cSubject = Settings.get 'Subject'
     else
-      qr =       $.id 'qr'
-      cName =    $('input[name=name]', qr).value
-      cEmail =   $('input[name=email]', qr).value
+      qr = $.id 'qr'
+      cName = $('input[name=name]', qr).value
+      cEmail = $('input[name=email]', qr).value
       cSubject = $('input[name=sub]', qr).value
-    cName =    cName.trim()
-    cEmail =   cEmail.trim()
+    cName = cName.trim()
+    cEmail = cEmail.trim()
     cSubject = cSubject.trim()
     if not (cName is '' and cEmail is '' and cSubject is '')
       Sync.send cName, cEmail, cSubject, postID, threadID

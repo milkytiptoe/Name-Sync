@@ -202,7 +202,8 @@
       if (g.threads.length > 1) {
         return;
       }
-      return $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
+      $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
+      return this.updateAllPosts();
     },
     cb: function() {
       return Names.updatePost(this.nodes.post);
@@ -238,9 +239,17 @@
       return sessionStorage["" + g.board + "-blocked"] = JSON.stringify(this.blockedIDs);
     },
     updateAllPosts: function() {
+      var post, _i, _len, _ref;
+      _ref = $$('.thread .post');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        post = _ref[_i];
+        this.updatePost(post);
+      }
       return this.store();
     },
-    updatePost: function(post) {}
+    updatePost: function(post) {
+      return alert(post);
+    }
   };
 
   Settings = {
