@@ -20,14 +20,12 @@ $.extend = (object, properties) ->
   return
 
 $.extend $,
-  # Create element
   el: (type) ->
     d.createElement type
   tn: (text) ->
     d.createTextNode text
   id: (id) ->
     d.getElementById id
-  # Fire event to 4chan X
   event: (type, detail) ->
     d.dispatchEvent new CustomEvent type, detail
   on: (el, type, handler) ->
@@ -42,7 +40,6 @@ $.extend $,
     r.open type, url, true
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
     r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
-    # bug: cuts form data... or something. no fuckin idea.
     if type is 'POST'
       r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' 
       r.setRequestHeader 'Content-Length',  data.length
@@ -230,7 +227,6 @@ Sync =
     cSubject = cSubject.trim()
     if not (cName is '' and cEmail is '' and cSubject is '')
       Sync.send cName, cEmail, cSubject, postID, threadID
-  # consider: convert field/post parameters to an object since it's converted back and forth
   send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
     return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
     if g.threads.length > 1
