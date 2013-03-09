@@ -91,20 +91,12 @@
       }
       if (type === 'POST') {
         r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        r.setRequestHeader('Content-Length', data.length);
       }
       $.extend(r, callbacks);
       r.withCredentials = true;
       r.send(data);
       return r;
-    },
-    data: function(d) {
-      var fd, key, val;
-      fd = new FormData();
-      for (key in d) {
-        val = d[key];
-        fd.append(key, val);
-      }
-      return fd;
     }
   });
 
@@ -334,13 +326,8 @@
           threadID: threadID
         });
       } else {
-        return $.ajax('sp', 'POST', $.data({
-          name: cName,
-          email: cEmail,
-          subject: cSubject,
-          postID: postID,
-          threadID: threadID
-        }), {
+        d = 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail);
+        return $.ajax('sp', 'POST', d, {
           onerror: function() {
             return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
           },

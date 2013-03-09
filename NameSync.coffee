@@ -43,15 +43,13 @@ $.extend $,
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
     r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
     # bug: cuts form data... or something. no fuckin idea.
-    r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' if type is 'POST'
+    if type is 'POST'
+      r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' 
+      r.setRequestHeader 'Content-Length',  data.length
     $.extend r, callbacks
     r.withCredentials = true
     r.send data
     r
-  data: (d) ->
-    fd = new FormData()
-    fd.append key, val for key, val of d
-    fd
 
 CSS =
   init: ->
@@ -244,16 +242,10 @@ Sync =
         postID: postID
         threadID: threadID
     else
-      # bug: data sends as formdata but server rejects, need to find how jquery does it
-      # old data: d = "p=#{postID}&t=#{threadID}&b=#{g.board}&n="+encodeURIComponent(cName)+"&s="+encodeURIComponent(cSubject)+"&e="+encodeURIComponent(cEmail);
+      d = 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail)
       $.ajax 'sp',
         'POST',
-        $.data
-          name: cName
-          email: cEmail
-          subject: cSubject
-          postID: postID
-          threadID: threadID
+        d,
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->
