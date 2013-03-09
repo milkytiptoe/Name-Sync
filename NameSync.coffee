@@ -53,7 +53,7 @@ $.extend $,
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
     r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
     if type is 'POST'
-      r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' 
+      r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8'
       r.setRequestHeader 'Content-Length',  data.length
     $.extend r, callbacks
     r.withCredentials = true
@@ -175,7 +175,7 @@ Names =
     sessionStorage["#{g.board}-names"]   = JSON.stringify @nameByID
     sessionStorage["#{g.board}-blocked"] = JSON.stringify @blockedIDs
   updateAllPosts: ->
-    @updatePost post for post in $$('.thread .post')
+    @updatePost post for post in $$ '.thread .post'
     @store()
   updatePost: (post) ->
     # 60 lines of jshit here
@@ -228,19 +228,19 @@ Sync =
     if repeat and @canSync is true
       setTimeout @sync, 30000, true
   requestSend: (e) ->
-    postID = e.detail.postID
+    postID   = e.detail.postID
     threadID = e.detail.threadID
     if Set['Persona Fields']
-      cName = Settings.get 'Name'
-      cEmail = Settings.get 'Email'
+      cName    = Settings.get 'Name'
+      cEmail   = Settings.get 'Email'
       cSubject = Settings.get 'Subject'
     else
-      qr = $.id 'qr'
-      cName = $('input[name=name]', qr).value
-      cEmail = $('input[name=email]', qr).value
+      qr       = $.id 'qr'
+      cName    = $('input[name=name]', qr).value
+      cEmail   = $('input[name=email]', qr).value
       cSubject = $('input[name=sub]', qr).value
-    cName = cName.trim()
-    cEmail = cEmail.trim()
+    cName    = cName.trim()
+    cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
     if not (cName is '' and cEmail is '' and cSubject is '')
       Sync.send cName, cEmail, cSubject, postID, threadID
@@ -248,32 +248,32 @@ Sync =
     return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
     if g.threads.length > 1
       isLateOpSend = true
-      sessionStorage[g.board+"-namesync-tosend"] = JSON.stringify
-        name: cName
-        email: cEmail
-        subject: cSubject
-        postID: postID
+      sessionStorage["#{g.board}-namesync-tosend"] = JSON.stringify
+        name:     cName
+        email:    cEmail
+        subject:  cSubject
+        postID:   postID
         threadID: threadID
     else
       $.ajax 'sp',
         'POST',
-        'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + if Set['Do Not Track'] then '1' else '0',
+        "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent cName}&s=#{encodeURIComponent cSubject}&e=#{encodeURIComponent cEmail}&dnt=#{if Set['Do Not Track'] then '1' else '0'}",
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->
           if isLateOpSend
-            delete sessionStorage['#{g.board}-namesync-tosend']
+            delete sessionStorage["#{g.board}-namesync-tosend"]
             Sync.sync()
   clear: ->
-    return if not confirm "This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?"
+    return if not confirm 'This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?'
     $.ajax 'rm',
       'POST',
       '',
       onerror: ->
-        alert "Error removing history"
+        alert 'Error removing history'
       onloadend: ->
         alert @response if @status is 200
-          
+
 Updater =
   init: ->
     if last = Settings.get('lastcheck') is null or Date.now() > last + 86400000
@@ -284,8 +284,8 @@ Updater =
       '',
       onloadend: ->
         return if @status isnt 200
-        Settings.set "lastcheck", Date.now()
-        if @response isnt g.VERSION.replace(/\./g, "") and confirm "A new update for 4chan Name Sync (version #{@response}) is available, install now?"
-          window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js"
+        Settings.set 'lastcheck', Date.now()
+        if @response isnt g.VERSION.replace(/\./g, '') and confirm "A new update for 4chan Name Sync (version #{@response}) is available, install now?"
+          window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js'
 
 Main.init()

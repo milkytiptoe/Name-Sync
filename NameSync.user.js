@@ -247,9 +247,7 @@
       }
       return this.store();
     },
-    updatePost: function(post) {
-      return alert(post);
-    }
+    updatePost: function(post) {}
   };
 
   Settings = {
@@ -347,7 +345,7 @@
       }
       if (g.threads.length > 1) {
         isLateOpSend = true;
-        return sessionStorage[g.board + "-namesync-tosend"] = JSON.stringify({
+        return sessionStorage["" + g.board + "-namesync-tosend"] = JSON.stringify({
           name: cName,
           email: cEmail,
           subject: cSubject,
@@ -355,13 +353,13 @@
           threadID: threadID
         });
       } else {
-        return $.ajax('sp', 'POST', 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + (Set['Do Not Track'] ? '1' : '0'), {
+        return $.ajax('sp', 'POST', "p=" + postID + "&t=" + threadID + "&b=" + g.board + "&n=" + (encodeURIComponent(cName)) + "&s=" + (encodeURIComponent(cSubject)) + "&e=" + (encodeURIComponent(cEmail)) + "&dnt=" + (Set['Do Not Track'] ? '1' : '0'), {
           onerror: function() {
             return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
           },
           onloadend: function() {
             if (isLateOpSend) {
-              delete sessionStorage['#{g.board}-namesync-tosend'];
+              delete sessionStorage["" + g.board + "-namesync-tosend"];
               return Sync.sync();
             }
           }
@@ -369,12 +367,12 @@
       }
     },
     clear: function() {
-      if (!confirm("This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?")) {
+      if (!confirm('This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?')) {
         return;
       }
       return $.ajax('rm', 'POST', '', {
         onerror: function() {
-          return alert("Error removing history");
+          return alert('Error removing history');
         },
         onloadend: function() {
           if (this.status === 200) {
@@ -398,9 +396,9 @@
           if (this.status !== 200) {
             return;
           }
-          Settings.set("lastcheck", Date.now());
-          if (this.response !== g.VERSION.replace(/\./g, "") && confirm("A new update for 4chan Name Sync (version " + this.response + ") is available, install now?")) {
-            return window.location = "https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js";
+          Settings.set('lastcheck', Date.now());
+          if (this.response !== g.VERSION.replace(/\./g, '') && confirm("A new update for 4chan Name Sync (version " + this.response + ") is available, install now?")) {
+            return window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js';
           }
         }
       });
