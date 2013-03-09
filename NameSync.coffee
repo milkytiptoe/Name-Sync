@@ -54,7 +54,6 @@ $.extend $,
     r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
     if type is 'POST'
       r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8'
-      r.setRequestHeader 'Content-Length',  data.length
     $.extend r, callbacks
     r.withCredentials = true
     r.send data
