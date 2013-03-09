@@ -197,7 +197,7 @@ Sync =
       r = JSON.parse(sessionStorage["#{g.board}-namesync-tosend"])
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
   canSync: ->
-    !@disabled and g.threads.length is 1 and !/warning/.test $.id(imagecount).className
+    !@disabled and g.threads.length is 1
   sync: (repeat) ->
     $.ajax "qp",
       "GET"

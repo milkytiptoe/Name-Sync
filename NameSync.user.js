@@ -267,7 +267,7 @@
       }
     },
     canSync: function() {
-      return !this.disabled && g.threads.length === 1 && !/warning/.test($.id(imagecount).className);
+      return !this.disabled && g.threads.length === 1;
     },
     sync: function(repeat) {
       $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {
