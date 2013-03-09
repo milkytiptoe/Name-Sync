@@ -48,8 +48,8 @@ $.extend $,
     r
   data: (d) ->
     fd = new FormData()
-    for key, val of data
-      fd.append key, val if val
+    fd.append key, val for key, val of d
+    fd
 
 CSS =
   init: ->

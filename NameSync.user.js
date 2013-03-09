@@ -95,18 +95,13 @@
       return r;
     },
     data: function(d) {
-      var fd, key, val, _results;
+      var fd, key, val;
       fd = new FormData();
-      _results = [];
-      for (key in data) {
-        val = data[key];
-        if (val) {
-          _results.push(fd.append(key, val));
-        } else {
-          _results.push(void 0);
-        }
+      for (key in d) {
+        val = d[key];
+        fd.append(key, val);
       }
-      return _results;
+      return fd;
     }
   });
 
