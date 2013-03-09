@@ -279,7 +279,12 @@
       } else {
         return;
       }
-      return console.log(post);
+      if (namespan.textContent !== name) {
+        namespan.textContent = name;
+      }
+      if (subject && subject !== '' && subjectspan.textContent !== subject) {
+        return subjectspan.textContent = subject;
+      }
     }
   };
 

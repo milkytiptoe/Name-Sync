@@ -177,6 +177,7 @@ Names =
     @store()
   updatePost: (post) ->
     # todo: 60 lines of jshit here
+    # todo: decide what to do about 'sticky names' later
     # work with just desktop dom for now i guess
     id =             $('.hand', post).textContent
     return if /^##/.test id
@@ -203,7 +204,10 @@ Names =
       name =     linfo.n
       tripcode = linfo.t
     else return
-    console.log post
+    if namespan.textContent isnt name
+      namespan.textContent = name
+    if subject and subject isnt '' and subjectspan.textContent isnt subject
+      subjectspan.textContent = subject
     
 Settings =
   main:
