@@ -74,8 +74,8 @@
     off: function(el, type, handler) {
       return el.removeEventListener(type, handler, false);
     },
-    ajax: function(file, type, data, headers, callbacks) {
-      var key, r, url, val;
+    ajax: function(file, type, data, callbacks) {
+      var r, url;
       r = new XMLHttpRequest();
       if (file === 'qp') {
         r.overrideMimeType('application/json');
@@ -86,14 +86,27 @@
       }
       r.open(type, url, true);
       r.setRequestHeader('X-Requested-With', 'NameSync3');
-      for (key in headers) {
-        val = headers[key];
-        r.setRequestHeader(key, val);
+      if (file === 'qp') {
+        r.setRequestHeader('If-Modified-Since', Sync.lastModified);
       }
       $.extend(r, callbacks);
       r.withCredentials = true;
       r.send(data);
       return r;
+    },
+    data: function(d) {
+      var fd, key, val, _results;
+      fd = new FormData();
+      _results = [];
+      for (key in data) {
+        val = data[key];
+        if (val) {
+          _results.push(fd.append(key, val));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
     }
   });
 
@@ -271,8 +284,6 @@
     },
     sync: function(repeat) {
       $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {
-        "If-Modified-Since": Sync.lastModified
-      }, {
         onloadend: function() {
           var poster, _i, _len, _ref;
           if (this.status === 200) {
@@ -325,7 +336,16 @@
           threadID: threadID
         });
       } else {
-
+        return $.ajax('sp', 'POST', $.data({
+          name: cName,
+          email: cEmail,
+          subject: cSubject,
+          postID: postID,
+          threadID: threadID
+        }), {
+          onerror: setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend),
+          onloadend: isLateOpSend ? (delete sessionStorage['#{g.board}-namesync-tosend'], Sync.sync()) : void 0
+        });
       }
     },
     clear: function() {}

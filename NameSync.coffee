@@ -34,19 +34,22 @@ $.extend $,
     el.addEventListener type, handler, false
   off: (el, type, handler) ->
     el.removeEventListener type, handler, false
-  ajax: (file, type, data, headers, callbacks) ->
+  ajax: (file, type, data, callbacks) ->
     r = new XMLHttpRequest()
     r.overrideMimeType 'application/json' if file is 'qp'
     url = "https://www.milkyis.me/namesync/#{file}.php"
     url += "?#{data}" if type is 'GET'
     r.open type, url, true
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
-    for key, val of headers
-      r.setRequestHeader key, val
+    r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
     $.extend r, callbacks
     r.withCredentials = true
     r.send data
     r
+  data: (d) ->
+    fd = new FormData()
+    for key, val of data
+      fd.append key, val if val
 
 CSS =
   init: ->
@@ -200,15 +203,14 @@ Sync =
     !@disabled and g.threads.length is 1
   sync: (repeat) ->
     $.ajax "qp",
-      "GET"
-      "t=#{g.threads}&b=#{g.board}"
-      "If-Modified-Since": Sync.lastModified,
-        onloadend: ->
-          if @status is 200
-            Sync.lastModified = @getResponseHeader 'Last-Modified'
-            for poster in JSON.parse @response
-              Names.nameByPost[poster.p] = poster
-            Names.updateAllPosts()
+      "GET",
+      "t=#{g.threads}&b=#{g.board}",
+      onloadend: ->
+        if @status is 200
+          Sync.lastModified = @getResponseHeader 'Last-Modified'
+          for poster in JSON.parse @response
+            Names.nameByPost[poster.p] = poster
+          Names.updateAllPosts()
     if repeat and @canSync is true
       setTimeout @sync, 30000, true
   requestSend: (e) ->
@@ -228,6 +230,7 @@ Sync =
     cSubject = cSubject.trim()
     if not (cName is '' and cEmail is '' and cSubject is '')
       Sync.send cName, cEmail, cSubject, postID, threadID
+  # consider: convert field/post parameters to an object since it's converted back and forth
   send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
     return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
     if g.threads.length > 1
@@ -239,7 +242,20 @@ Sync =
         postID: postID
         threadID: threadID
     else
-      # sp ajax goes here
+      $.ajax 'sp',
+        'POST',
+        $.data
+          name: cName
+          email: cEmail
+          subject: cSubject
+          postID: postID
+          threadID: threadID
+        onerror:
+          setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
+        onloadend:
+          if isLateOpSend
+            delete sessionStorage['#{g.board}-namesync-tosend']
+            Sync.sync()
   clear: ->
     
 
