@@ -152,6 +152,7 @@ Names =
     $.on d, 'ThreadUpdate', @checkThreadUpdate
     @updateAllPosts()
   cb: ->
+    # bug: doesnt work
     Names.updatePost @nodes.post
   change: (uid) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
@@ -185,18 +186,14 @@ Names =
     @updatePost post for post in $$ '.thread .post'
     @store()
   updatePost: (post) ->
-    # todo: 60 lines of jshit here
     # todo: decide what to do about 'sticky names' later
-    # work with just desktop dom for now i guess
+    # todo: mobile support
     id =             $('.hand', post).textContent
     return if /^##/.test id
     postnumspan =    $ 'a[title="Quote this post"]', post
     namespan =       $ '.desktop .name', post
-    mobnamespan =    $ '.mobile .name', post
     tripspan =       $ '.desktop .postertrip', post
-    mobtripspan =    $ '.mobile .postertrip', post
     subjectspan =    $ '.desktop .subject', post
-    mobsubjectspan = $ '.mobile .subject', post
     postnum =        postnumspan.textContent
     oinfo =          Names.nameByPost[postnum]
     linfo =          Names.nameByID[id]
@@ -217,6 +214,19 @@ Names =
       namespan.textContent = name
     if subject and subject isnt '' and subjectspan.textContent isnt subject
       subjectspan.textContent = subject
+    if email && email isnt ''
+      # ded
+      emailspan = $ '.desktop .useremail', post
+      if emailspan is null
+        nameblockspan = $ '.desktop .nameBlock', post
+        emailspan = $.el 'a'
+        $.addClass emailspan, 'useremail'
+        $.before namespan, emailspan
+      $.add emailspan, namespan
+      if tripspan isnt null
+        $.after namespan, $.tn " "
+        $.add emailspan, tripspan
+      emailspan.href = "mailto:#{email}"
     if tripcode and tripcode isnt ''
       if tripspan is null
         tripspan = $.el "span"
@@ -228,8 +238,7 @@ Names =
     else
       if tripspan isnt null
         $.rm tripspan
-    
-        
+
 Settings =
   main:
     'Sync on /b/':       ['Enable sync on /b/', true]

@@ -262,18 +262,15 @@
       return this.store();
     },
     updatePost: function(post) {
-      var email, id, linfo, mobnamespan, mobsubjectspan, mobtripspan, name, namespan, oinfo, postnum, postnumspan, subject, subjectspan, tripcode, tripspan;
+      var email, emailspan, id, linfo, name, nameblockspan, namespan, oinfo, postnum, postnumspan, subject, subjectspan, tripcode, tripspan;
       id = $('.hand', post).textContent;
       if (/^##/.test(id)) {
         return;
       }
       postnumspan = $('a[title="Quote this post"]', post);
       namespan = $('.desktop .name', post);
-      mobnamespan = $('.mobile .name', post);
       tripspan = $('.desktop .postertrip', post);
-      mobtripspan = $('.mobile .postertrip', post);
       subjectspan = $('.desktop .subject', post);
-      mobsubjectspan = $('.mobile .subject', post);
       postnum = postnumspan.textContent;
       oinfo = Names.nameByPost[postnum];
       linfo = Names.nameByID[id];
@@ -299,6 +296,21 @@
       }
       if (subject && subject !== '' && subjectspan.textContent !== subject) {
         subjectspan.textContent = subject;
+      }
+      if (email && email !== '') {
+        emailspan = $('.desktop .useremail', post);
+        if (emailspan === null) {
+          nameblockspan = $('.desktop .nameBlock', post);
+          emailspan = $.el('a');
+          $.addClass(emailspan, 'useremail');
+          $.before(namespan, emailspan);
+        }
+        $.add(emailspan, namespan);
+        if (tripspan !== null) {
+          $.after(namespan, $.tn(" "));
+          $.add(emailspan, tripspan);
+        }
+        emailspan.href = "mailto:" + email;
       }
       if (tripcode && tripcode !== '') {
         if (tripspan === null) {
