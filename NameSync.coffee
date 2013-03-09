@@ -32,6 +32,18 @@ $.extend $,
     el.addEventListener type, handler, false
   off: (el, type, handler) ->
     el.removeEventListener type, handler, false
+  addClass: (el, className) ->
+    el.classList.add className
+  rmClass: (el, className) ->
+    el.classList.remove className
+  add: (parent, children) ->
+    parent.appendChild $.nodes children
+  prepend: (parent, children) ->
+    parent.insertBefore $.nodes(children), parent.firstChild
+  after: (root, el) ->
+    root.parentNode.insertBefore $.nodes(el), root.nextSibling
+  before: (root, el) ->
+    root.parentNode.insertBefore $.nodes(el), root
   ajax: (file, type, data, callbacks) ->
     r = new XMLHttpRequest()
     r.overrideMimeType 'application/json' if file is 'qp'
@@ -173,6 +185,7 @@ Settings =
     'Hide IDs':          ['Hide Unique IDs next to names', false]
     'Automatic Updates': ['Check for updates automatically', true]
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
+    'Do Not Track':      ['Send a request to third party archives to not store your history', false]
   init: ->
     for setting, val of Settings.main
       Set[setting] = if stored = Settings.get(val) is null then val[1] else stored is 'true'
@@ -238,10 +251,9 @@ Sync =
         postID: postID
         threadID: threadID
     else
-      d = 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail)
       $.ajax 'sp',
         'POST',
-        d,
+        'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + Set['Do Not Track'],
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->
@@ -249,7 +261,15 @@ Sync =
             delete sessionStorage['#{g.board}-namesync-tosend']
             Sync.sync()
   clear: ->
-
+    return if not confirm "This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?"
+    $.ajax 'rm',
+      'POST',
+      '',
+      onerror: ->
+        alert "Error removing history"
+      onloadend: ->
+        alert @response if @status is 200
+          
 Updater =
   init: ->
     if last = Settings.get('lastcheck') is null or Date.now() > last + 86400000

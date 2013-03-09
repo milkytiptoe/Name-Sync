@@ -74,6 +74,24 @@
     off: function(el, type, handler) {
       return el.removeEventListener(type, handler, false);
     },
+    addClass: function(el, className) {
+      return el.classList.add(className);
+    },
+    rmClass: function(el, className) {
+      return el.classList.remove(className);
+    },
+    add: function(parent, children) {
+      return parent.appendChild($.nodes(children));
+    },
+    prepend: function(parent, children) {
+      return parent.insertBefore($.nodes(children), parent.firstChild);
+    },
+    after: function(root, el) {
+      return root.parentNode.insertBefore($.nodes(el), root.nextSibling);
+    },
+    before: function(root, el) {
+      return root.parentNode.insertBefore($.nodes(el), root);
+    },
     ajax: function(file, type, data, callbacks) {
       var r, url;
       r = new XMLHttpRequest();
@@ -232,7 +250,8 @@
       'Sync on /soc/': ['Enable sync on /soc/', true],
       'Hide IDs': ['Hide Unique IDs next to names', false],
       'Automatic Updates': ['Check for updates automatically', true],
-      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false]
+      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false],
+      'Do Not Track': ['Send a request to third party archives to not store your history', false]
     },
     init: function() {
       var setting, stored, val, _ref;
@@ -326,8 +345,7 @@
           threadID: threadID
         });
       } else {
-        d = 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail);
-        return $.ajax('sp', 'POST', d, {
+        return $.ajax('sp', 'POST', 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + Set['Do Not Track'], {
           onerror: function() {
             return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
           },
@@ -340,7 +358,21 @@
         });
       }
     },
-    clear: function() {}
+    clear: function() {
+      if (!confirm("This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?")) {
+        return;
+      }
+      return $.ajax('rm', 'POST', '', {
+        onerror: function() {
+          return alert("Error removing history");
+        },
+        onloadend: function() {
+          if (this.status === 200) {
+            return alert(this.response);
+          }
+        }
+      });
+    }
   };
 
   Updater = {
