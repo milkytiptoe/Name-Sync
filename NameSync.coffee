@@ -224,19 +224,19 @@ Sync =
     if repeat and @canSync is true
       setTimeout @sync, 30000, true
   requestSend: (e) ->
-    postID   = e.detail.postID
-    threadID = e.detail.threadID
+    postID =    e.detail.postID
+    threadID =  e.detail.threadID
     if Set['Persona Fields']
-      cName = Settings.get 'Name'
-      cEmail = Settings.get 'Email'
+      cName =    Settings.get 'Name'
+      cEmail =   Settings.get 'Email'
       cSubject = Settings.get 'Subject'
     else
-      qr = $.id 'qr'
-      cName = $('input[name=name]', qr).value
-      cEmail = $('input[name=email]', qr).value
+      qr =       $.id 'qr'
+      cName =    $('input[name=name]', qr).value
+      cEmail =   $('input[name=email]', qr).value
       cSubject = $('input[name=sub]', qr).value
-    cName = cName.trim()
-    cEmail = cEmail.trim()
+    cName =    cName.trim()
+    cEmail =   cEmail.trim()
     cSubject = cSubject.trim()
     if not (cName is '' and cEmail is '' and cSubject is '')
       Sync.send cName, cEmail, cSubject, postID, threadID
