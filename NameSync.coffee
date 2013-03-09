@@ -97,6 +97,9 @@ CSS =
       display: none;
     }
     """
+    el = $.el 'style'
+    el.textContent = css
+    $.add d.body, el
 
 Main =
   init: ->

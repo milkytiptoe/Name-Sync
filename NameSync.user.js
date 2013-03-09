@@ -134,11 +134,14 @@
 
   CSS = {
     init: function() {
-      var css;
+      var css, el;
       css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n.section-name-sync {\n  background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;\n}";
       if (Set['Hide IDs']) {
-        return css += ".posteruid {\n  display: none;\n}";
+        css += ".posteruid {\n  display: none;\n}";
       }
+      el = $.el('style');
+      el.textContent = css;
+      return $.add(d.body, el);
     }
   };
 
