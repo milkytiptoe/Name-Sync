@@ -253,7 +253,7 @@ Sync =
     else
       $.ajax 'sp',
         'POST',
-        'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + Set['Do Not Track'],
+        'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + if Set['Do Not Track'] then '1' else '0',
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->

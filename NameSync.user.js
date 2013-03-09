@@ -345,7 +345,7 @@
           threadID: threadID
         });
       } else {
-        return $.ajax('sp', 'POST', 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + Set['Do Not Track'], {
+        return $.ajax('sp', 'POST', 'p=' + postID + '&t=' + threadID + '&b=' + g.board + '&n=' + encodeURIComponent(cName) + '&s=' + encodeURIComponent(cSubject) + '&e=' + encodeURIComponent(cEmail) + '&dnt=' + (Set['Do Not Track'] ? '1' : '0'), {
           onerror: function() {
             return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
           },
