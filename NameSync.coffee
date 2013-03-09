@@ -52,8 +52,7 @@ $.extend $,
     r.open type, url, true
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
     r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
-    if type is 'POST'
-      r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8'
+    r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' if type is 'POST'
     $.extend r, callbacks
     r.withCredentials = true
     r.send data
