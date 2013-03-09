@@ -83,6 +83,9 @@
     add: function(parent, children) {
       return parent.appendChild($.nodes(children));
     },
+    rm: function(el) {
+      return el.parentNode.removeChild(el);
+    },
     prepend: function(parent, children) {
       return parent.insertBefore($.nodes(children), parent.firstChild);
     },
@@ -91,6 +94,18 @@
     },
     before: function(root, el) {
       return root.parentNode.insertBefore($.nodes(el), root);
+    },
+    nodes: function(nodes) {
+      var frag, node, _i, _len;
+      if (!(nodes instanceof Array)) {
+        return nodes;
+      }
+      frag = d.createDocumentFragment();
+      for (_i = 0, _len = nodes.length; _i < _len; _i++) {
+        node = nodes[_i];
+        frag.appendChild(node);
+      }
+      return frag;
     },
     ajax: function(file, type, data, callbacks) {
       var r, url;
@@ -283,7 +298,22 @@
         namespan.textContent = name;
       }
       if (subject && subject !== '' && subjectspan.textContent !== subject) {
-        return subjectspan.textContent = subject;
+        subjectspan.textContent = subject;
+      }
+      if (tripcode && tripcode !== '') {
+        if (tripspan === null) {
+          tripspan = $.el("span");
+          $.addClass(tripspan, "postertrip");
+          $.after(namespan, tripspan);
+          $.after(namespan, $.tn(" "));
+        }
+        if (tripspan.textContent !== tripcode) {
+          return tripspan.textContent = tripcode;
+        }
+      } else {
+        if (tripspan !== null) {
+          return $.rm(tripspan);
+        }
       }
     }
   };

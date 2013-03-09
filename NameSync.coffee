@@ -38,12 +38,21 @@ $.extend $,
     el.classList.remove className
   add: (parent, children) ->
     parent.appendChild $.nodes children
+  rm: (el) ->
+    el.parentNode.removeChild el
   prepend: (parent, children) ->
     parent.insertBefore $.nodes(children), parent.firstChild
   after: (root, el) ->
     root.parentNode.insertBefore $.nodes(el), root.nextSibling
   before: (root, el) ->
     root.parentNode.insertBefore $.nodes(el), root
+  nodes: (nodes) ->
+    unless nodes instanceof Array
+      return nodes
+    frag = d.createDocumentFragment()
+    for node in nodes
+      frag.appendChild node
+    frag
   ajax: (file, type, data, callbacks) ->
     r = new XMLHttpRequest()
     r.overrideMimeType 'application/json' if file is 'qp'
@@ -208,7 +217,19 @@ Names =
       namespan.textContent = name
     if subject and subject isnt '' and subjectspan.textContent isnt subject
       subjectspan.textContent = subject
+    if tripcode and tripcode isnt ''
+      if tripspan is null
+        tripspan = $.el "span"
+        $.addClass tripspan, "postertrip"
+        $.after namespan, tripspan
+        $.after namespan, $.tn " "
+      if tripspan.textContent isnt tripcode
+        tripspan.textContent = tripcode
+    else
+      if tripspan isnt null
+        $.rm tripspan
     
+        
 Settings =
   main:
     'Sync on /b/':       ['Enable sync on /b/', true]
