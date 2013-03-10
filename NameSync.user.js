@@ -359,7 +359,9 @@
         }
       });
     },
-    open: function(section, g) {},
+    open: function(section, g) {
+      return section.innerHTML = "<ul>Main<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>";
+    },
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);
     },
@@ -443,6 +445,9 @@
             return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
           },
           onloadend: function() {
+            if (this.status !== 200) {
+              return this.onerror();
+            }
             if (isLateOpSend) {
               delete sessionStorage["" + g.board + "-namesync-tosend"];
               return Sync.sync();

@@ -210,7 +210,6 @@ Names =
     if subject and subject isnt '' and subjectspan.textContent isnt subject
       subjectspan.textContent = subject
     if email && email isnt ''
-      # ded
       emailspan = $ '.desktop .useremail', post
       if emailspan is null
         nameblockspan = $ '.desktop .nameBlock', post
@@ -251,7 +250,9 @@ Settings =
         title: 'Name Sync'
         open:  Settings.open
   open: (section, g) ->
-
+    # ill indent it all later so lazy
+    section.innerHTML = "<ul>Main<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>"
+    
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->
@@ -315,6 +316,7 @@ Sync =
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->
+          return @.onerror() if @status isnt 200
           if isLateOpSend
             delete sessionStorage["#{g.board}-namesync-tosend"]
             Sync.sync()
