@@ -261,13 +261,14 @@ Settings =
       ul.innerHTML += "<li><label><input type='checkbox' name='#{setting}' #{checked}/>#{setting}</label><span class='description'>: #{val[0]}</span></li>"
     $.prepend section, ul
     checks = $$ 'input[type=checkbox]', section
+    # bug: only seems to work for last checkbox
     for check in checks
       $.on check, 'change', ->
         Settings.set check.name, check.checked
     texts = $$ 'input[type=text]', section
     for text in texts
       text.value = Settings.get(text.name) or ''
-      # bug: only the subject field works
+      # bug: loads properly, but thinks .name is Subject on all fields on input event
       $.on text, 'input', ->
         Settings.set text.name, text.value
     return
