@@ -56,6 +56,9 @@ h2 {
 .contact {
 	background: url(contactblack.png) left top no-repeat;
 }
+.donate {
+	background: url(donateblack.png) left top no-repeat;
+}
 ul {
 	margin-left: 12px;
 	list-style: none;
