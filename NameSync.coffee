@@ -264,6 +264,12 @@ Settings =
     for check in checks
       $.on check, 'change', ->
         Settings.set check.name, check.checked
+    texts = $$ 'input[type=text]', section
+    for text in texts
+      text.value = Settings.get(text.name) or ''
+      # bug: doesnt seem to listen for anything
+      $.on text, 'input', ->
+        Settings.set text.name, check.value
     return
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"

@@ -361,7 +361,7 @@
       });
     },
     open: function(section, g) {
-      var check, checked, checks, istrue, setting, stored, ul, val, _i, _len, _ref;
+      var check, checked, checks, istrue, setting, stored, text, texts, ul, val, _i, _j, _len, _len1, _ref;
       section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>";
       ul = $.el('ul');
       ul.textContent = 'Main';
@@ -379,6 +379,14 @@
         check = checks[_i];
         $.on(check, 'change', function() {
           return Settings.set(check.name, check.checked);
+        });
+      }
+      texts = $$('input[type=text]', section);
+      for (_j = 0, _len1 = texts.length; _j < _len1; _j++) {
+        text = texts[_j];
+        text.value = Settings.get(text.name) || '';
+        $.on(text, 'input', function() {
+          return Settings.set(text.name, check.value);
         });
       }
     },
