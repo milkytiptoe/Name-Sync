@@ -263,9 +263,8 @@ Settings =
     texts = $$ 'input[type=text]', section
     for text in texts
       text.value = Settings.get(text.name) or ''
-      # bug: loads properly, but thinks .name is Subject on all fields on input event
       $.on text, 'input', ->
-        Settings.set text.name, text.value
+        Settings.set @name, @value
     return
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
