@@ -77,14 +77,8 @@
     addClass: function(el, className) {
       return el.classList.add(className);
     },
-    rmClass: function(el, className) {
-      return el.classList.remove(className);
-    },
     add: function(parent, children) {
       return parent.appendChild($.nodes(children));
-    },
-    rm: function(el) {
-      return el.parentNode.removeChild(el);
     },
     prepend: function(parent, children) {
       return parent.insertBefore($.nodes(children), parent.firstChild);
