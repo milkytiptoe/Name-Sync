@@ -244,15 +244,27 @@ Settings =
     'Do Not Track':      ['Send a request to third party archives to not store your history', false]
   init: ->
     for setting, val of Settings.main
-      Set[setting] = if stored = Settings.get(val) is null then val[1] else stored is 'true'
+      stored = Settings.get(setting)
+      Set[setting] = if stored is null then val[1] else stored is 'true'
     $.event 'AddSettingsSection',
       detail:
         title: 'Name Sync'
         open:  Settings.open
   open: (section, g) ->
-    # ill indent it all later so lazy
-    section.innerHTML = "<ul>Main<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>"
-    
+    section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>"
+    ul = $.el 'ul'
+    ul.textContent = 'Main'
+    for setting, val of Settings.main
+      stored = Settings.get(setting)
+      istrue = if stored is null then val[1] else stored is 'true'
+      checked = if istrue then 'checked ' else ''
+      ul.innerHTML += "<li><label><input type='checkbox' name='#{setting}' #{checked}/>#{setting}</label><span class='description'>: #{val[0]}</span></li>"
+    $.prepend section, ul
+    checks = $$ 'input[type=checkbox]', section
+    for check in checks
+      $.on check, 'change', ->
+        Settings.set check.name, check.checked
+    return
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->

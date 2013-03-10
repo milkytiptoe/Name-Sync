@@ -350,7 +350,8 @@
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
-        Set[setting] = (stored = Settings.get(val) === null) ? val[1] : stored === 'true';
+        stored = Settings.get(setting);
+        Set[setting] = stored === null ? val[1] : stored === 'true';
       }
       return $.event('AddSettingsSection', {
         detail: {
@@ -360,7 +361,26 @@
       });
     },
     open: function(section, g) {
-      return section.innerHTML = "<ul>Main<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>";
+      var check, checked, checks, istrue, setting, stored, ul, val, _i, _len, _ref;
+      section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>";
+      ul = $.el('ul');
+      ul.textContent = 'Main';
+      _ref = Settings.main;
+      for (setting in _ref) {
+        val = _ref[setting];
+        stored = Settings.get(setting);
+        istrue = stored === null ? val[1] : stored === 'true';
+        checked = istrue ? 'checked ' : '';
+        ul.innerHTML += "<li><label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[0] + "</span></li>";
+      }
+      $.prepend(section, ul);
+      checks = $$('input[type=checkbox]', section);
+      for (_i = 0, _len = checks.length; _i < _len; _i++) {
+        check = checks[_i];
+        $.on(check, 'change', function() {
+          return Settings.set(check.name, check.checked);
+        });
+      }
     },
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);
