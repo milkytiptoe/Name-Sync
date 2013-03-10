@@ -386,7 +386,7 @@
         text = texts[_j];
         text.value = Settings.get(text.name) || '';
         $.on(text, 'input', function() {
-          return Settings.set(text.name, check.value);
+          return Settings.set(text.name, text.value);
         });
       }
     },
