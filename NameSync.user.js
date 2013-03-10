@@ -80,6 +80,9 @@
     add: function(parent, children) {
       return parent.appendChild($.nodes(children));
     },
+    rm: function(el) {
+      return el.parentNode.removeChild(el);
+    },
     prepend: function(parent, children) {
       return parent.insertBefore($.nodes(children), parent.firstChild);
     },

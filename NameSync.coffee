@@ -36,6 +36,8 @@ $.extend $,
     el.classList.add className
   add: (parent, children) ->
     parent.appendChild $.nodes children
+  rm: (el) ->
+    el.parentNode.removeChild el
   prepend: (parent, children) ->
     parent.insertBefore $.nodes(children), parent.firstChild
   after: (root, el) ->
