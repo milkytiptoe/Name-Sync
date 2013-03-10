@@ -371,8 +371,8 @@
       checks = $$('input[type=checkbox]', section);
       for (_i = 0, _len = checks.length; _i < _len; _i++) {
         check = checks[_i];
-        $.on(check, 'change', function() {
-          return Settings.set(check.name, check.checked);
+        $.on(check, 'click', function() {
+          return Settings.set(this.name, this.checked);
         });
       }
       texts = $$('input[type=text]', section);
