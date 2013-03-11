@@ -295,6 +295,7 @@ Sync =
           for poster in JSON.parse @response
             Names.nameByPost[poster.p] = poster
           Names.updateAllPosts()
+    # bug: doesnt repeat every 30 seconds
     if repeat and @canSync is true
       setTimeout @sync, 30000, true
   requestSend: (e) ->
