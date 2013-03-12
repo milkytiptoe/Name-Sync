@@ -1,3 +1,7 @@
+2.6.84
+- Disabled https for time being
+- Fixed syncing
+
 2.6.83
 - Fixed tripcodes showing on new posts when removed from name field
 

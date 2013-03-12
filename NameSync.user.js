@@ -13,7 +13,7 @@
 // @include       http*://boards.4chan.org/q/*
 // @updateURL     https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
 // @homepage      http://milkytiptoe.github.com/Name-Sync/
-// @version       2.6.83
+// @version       2.6.84
 // @icon          http://i.imgur.com/3MFtd.png
 // ==/UserScript==
 
@@ -23,7 +23,7 @@
 var $j = jQuery.noConflict();
 
 var namespace = "NameSync.";
-var version = "2.6.83";
+var version = "2.6.84";
 
 var Set = {};
 
@@ -59,7 +59,7 @@ var AutoUpdate = {
 		updatelink.text("Checking...");
 		$j.ajax({
 			headers: {"X-Requested-With":"NameSync"},
-			url: "//www.milkyis.me/namesync/uq.php"
+			url: "http://199.101.50.147/namesync/uq.php"
 		}).done(function(latest) {
 			if (latest.length > 6)
 				return updatelink.text("Error checking for update");
@@ -122,7 +122,7 @@ var Settings = {
 			$j.ajax({
 				headers: {"X-Requested-With":"NameSync"},
 				type: "POST",
-				url: "//www.milkyis.me/namesync/rm.php",
+				url: "http://199.101.50.147/namesync/rm.php",
 				data: {}
 			}).done(function(response) {
 				alert(response);
@@ -160,7 +160,7 @@ function addStyles() {
 	var css = "\
 	#settingsOverlay { z-index: 99; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); }\
 	#settingsWrapper * { margin: 0; padding: 0; }\
-	#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(//www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); overflow-y: scroll; }\
+	#settingsWrapper { padding: 12px; width: 400px; height: 400px; z-index: 100; color: black; background: url(//184.173.205.206/namesync/bg.png) no-repeat #F0E0D6 bottom right; position: fixed; top: 50%; left: 50%; margin-top: -200px; margin-left: -200px; border: 1px solid rgba(0, 0, 0, 0.25); overflow-y: scroll; }\
 	#settingsWrapper label { width: 100%; margin-bottom: 2px; cursor: pointer; display: block; }\
 	#syncStatus { color: gray; }\
 	#openSettings, #settingsWrapper a { color: blue !important; text-decoration: none; }\
@@ -246,7 +246,7 @@ function uploadName(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
 		$j.ajax({
 			headers: {"X-Requested-With":"NameSync"},
 			type: "POST",
-			url: "//www.milkyis.me/namesync/sp.php",
+			url: "http://199.101.50.147/namesync/sp.php",
 			data: d,
 			xhrFields: {
 				withCredentials: true
@@ -293,7 +293,7 @@ function sync(norepeat) {
 	$j.ajax({
 		headers: {"X-Requested-With":"NameSync"},
 		dataType: "json",
-		url: "//www.milkyis.me/namesync/qp.php?t="+threads+"&b="+board,
+		url: "http://199.101.50.147/namesync/qp.php?t="+threads+"&b="+board,
 		ifModified: true,
 		xhrFields: {
 			withCredentials: true
