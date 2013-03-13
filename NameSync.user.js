@@ -110,7 +110,7 @@
       if (file === 'qp') {
         r.overrideMimeType('application/json');
       }
-      url = "https://www.milkyis.me/namesync/" + file + ".php";
+      url = "http://www.milkyis.me/namesync/" + file + ".php";
       if (type === 'GET') {
         url += "?" + data;
       }

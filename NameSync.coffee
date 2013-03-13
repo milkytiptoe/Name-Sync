@@ -54,7 +54,7 @@ $.extend $,
   ajax: (file, type, data, callbacks) ->
     r = new XMLHttpRequest()
     r.overrideMimeType 'application/json' if file is 'qp'
-    url = "https://www.milkyis.me/namesync/#{file}.php"
+    url = "http://www.milkyis.me/namesync/#{file}.php"
     url += "?#{data}" if type is 'GET'
     r.open type, url, true
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
