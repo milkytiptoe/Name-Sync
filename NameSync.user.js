@@ -245,13 +245,13 @@
     },
     load: function() {
       var stored;
-      stored = sessionStorage["" + g.board + "-names"];
+      stored = sessionStorage["" + g.board + "-4-names"];
       this.nameByID = stored ? JSON.parse(stored) : {};
       stored = sessionStorage["" + g.board + "-blocked"];
       return this.blockedIDs = stored ? JSON.parse(stored) : {};
     },
     store: function() {
-      sessionStorage["" + g.board + "-names"] = JSON.stringify(this.nameByID);
+      sessionStorage["" + g.board + "-4-names"] = JSON.stringify(this.nameByID);
       return sessionStorage["" + g.board + "-blocked"] = JSON.stringify(this.blockedIDs);
     },
     updateAllPosts: function() {
@@ -426,7 +426,7 @@
           }
         }
       });
-      if (repeat && this.canSync === true) {
+      if (repeat && this.canSync()) {
         return setTimeout(this.sync, 30000, true);
       }
     },

@@ -168,12 +168,12 @@ Names =
       clearTimeout Sync.delay
       Sync.delay = setTimeout Sync.sync, 2000
   load: ->
-    stored = sessionStorage["#{g.board}-names"]
+    stored = sessionStorage["#{g.board}-4-names"]
     @nameByID = if stored then JSON.parse(stored) else {}
     stored = sessionStorage["#{g.board}-blocked"]
     @blockedIDs = if stored then JSON.parse(stored) else {}
   store: ->
-    sessionStorage["#{g.board}-names"]   = JSON.stringify @nameByID
+    sessionStorage["#{g.board}-4-names"] = JSON.stringify @nameByID
     sessionStorage["#{g.board}-blocked"] = JSON.stringify @blockedIDs
   updateAllPosts: ->
     @updatePost post for post in $$ '.thread .post'
@@ -295,8 +295,8 @@ Sync =
           for poster in JSON.parse @response
             Names.nameByPost[poster.p] = poster
           Names.updateAllPosts()
-    # bug: doesnt repeat every 30 seconds
-    if repeat and @canSync is true
+    
+    if repeat and @canSync()
       setTimeout @sync, 30000, true
   requestSend: (e) ->
     postID   = e.detail.postID
