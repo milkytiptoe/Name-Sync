@@ -165,8 +165,7 @@ Names =
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]
-      clearTimeout Sync.delay
-      Sync.delay = setTimeout Sync.sync, 2000
+      Sync.sync()
   load: ->
     stored = sessionStorage["#{g.board}-4-names"]
     @nameByID = if stored then JSON.parse(stored) else {}
@@ -276,7 +275,6 @@ Settings =
 Sync =
   lastModified: '0'
   disabled:     false
-  delay:        null
   init: ->
     $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true
@@ -296,8 +294,8 @@ Sync =
             Names.nameByPost[poster.p] = poster
           Names.updateAllPosts()
     
-    if repeat and @canSync()
-      setTimeout @sync, 30000, true
+    if repeat and Sync.canSync()
+      setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
     postID   = e.detail.postID
     threadID = e.detail.threadID

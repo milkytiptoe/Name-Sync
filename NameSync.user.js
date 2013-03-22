@@ -239,8 +239,7 @@
         return Sync.disabled = true;
       }
       if (Set["Sync on /" + g.board + "/"]) {
-        clearTimeout(Sync.delay);
-        return Sync.delay = setTimeout(Sync.sync, 2000);
+        return Sync.sync();
       }
     },
     load: function() {
@@ -398,7 +397,6 @@
   Sync = {
     lastModified: '0',
     disabled: false,
-    delay: null,
     init: function() {
       var r;
       $.on(d, 'QRPostSuccessful', Sync.requestSend);
@@ -426,8 +424,8 @@
           }
         }
       });
-      if (repeat && this.canSync()) {
-        return setTimeout(this.sync, 30000, true);
+      if (repeat && Sync.canSync()) {
+        return setTimeout(Sync.sync, 30000, true);
       }
     },
     requestSend: function(e) {
