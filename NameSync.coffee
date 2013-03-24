@@ -121,9 +121,16 @@ Menus =
       'header', ->
         $.event 'OpenSettings',
           detail: 'Name Sync'
+    # todo: put in sub menu? idk
     @add 'Change name',
       'post', ->
         Names.change Menus.uid,
+      (post) ->
+        Menus.uid = post.info.uniqueID
+        !/Heaven/.test Menus.uid
+    @add 'Reset name',
+      'post', ->
+        Names.reset Menus.uid,
       (post) ->
         Menus.uid = post.info.uniqueID
         !/Heaven/.test Menus.uid
@@ -162,6 +169,9 @@ Names =
         t: ''
       @blockedIDs[id] = true
       @updateAllPosts()
+  reset: (id) ->
+    # to-do
+    return
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]

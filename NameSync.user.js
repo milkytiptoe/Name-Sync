@@ -176,8 +176,14 @@
           detail: 'Name Sync'
         });
       });
-      return this.add('Change name', 'post', function() {
+      this.add('Change name', 'post', function() {
         return Names.change(Menus.uid);
+      }, function(post) {
+        Menus.uid = post.info.uniqueID;
+        return !/Heaven/.test(Menus.uid);
+      });
+      return this.add('Reset name', 'post', function() {
+        return Names.reset(Menus.uid);
       }, function(post) {
         Menus.uid = post.info.uniqueID;
         return !/Heaven/.test(Menus.uid);
@@ -234,6 +240,7 @@
         return this.updateAllPosts();
       }
     },
+    reset: function(id) {},
     checkThreadUpdate: function(e) {
       if (e.detail[404]) {
         return Sync.disabled = true;
