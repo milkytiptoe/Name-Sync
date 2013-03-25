@@ -215,6 +215,7 @@
         detail: {
           type: 'Post',
           callback: {
+            name: '4chan X Name Sync',
             cb: Names.cb
           }
         }
