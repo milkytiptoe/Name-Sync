@@ -259,7 +259,7 @@ Settings =
         title: 'Name Sync'
         open:  Settings.open
   open: (section, g) ->
-    section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>"
+    section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input id='syncUpdate' type='button' value='Check for update'> <input id='syncClear' type='button' value='Clear sync history'></li></ul>"
     ul = $.el 'ul'
     ul.textContent = 'Main'
     for setting, val of Settings.main
@@ -277,6 +277,8 @@ Settings =
       text.value = Settings.get(text.name) or ''
       $.on text, 'input', ->
         Settings.set @name, @value
+    $.on $('#syncUpdate', section), 'click', Updater.update
+    $.on $('#syncClear', section), 'click', Sync.clear
     return
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
@@ -341,7 +343,7 @@ Sync =
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->
-          return @.onerror() if @status isnt 200
+          return @onerror() if @status isnt 200
           if isLateOpSend
             delete sessionStorage["#{g.board}-namesync-tosend"]
             Sync.sync()
@@ -353,11 +355,13 @@ Sync =
       onerror: ->
         alert 'Error removing history'
       onloadend: ->
-        alert @response if @status is 200
+        return @onerror() if @status isnt 200
+        alert @response
 
 Updater =
   init: ->
-    if last = Settings.get('lastcheck') is null or Date.now() > last + 86400000
+    last = Settings.get('lastcheck')
+    if last is null or Date.now() > last + 86400000
       @update()
   update: ->
     $.ajax 'u3',
@@ -366,7 +370,7 @@ Updater =
       onloadend: ->
         return if @status isnt 200
         Settings.set 'lastcheck', Date.now()
-        if @response isnt g.VERSION.replace(/\./g, '') and confirm "A new update for 4chan Name Sync (version #{@response}) is available, install now?"
+        if @response isnt g.VERSION.replace(/\./g, '') and confirm "A new update for 4chan Name Sync is available, install now?"
           window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js'
 
 $.on d, '4chanXInitFinished', Main.init

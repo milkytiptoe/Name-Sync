@@ -1,10 +1,11 @@
 v4.0.0 (4chan X v3 required)
 - Renamed sync posters will load their changed names on refresh
 - Added 'Do Not Track' setting to request archives to not record your posts
-- Improvements to script start time
+- Improvement to script start time
 - Removed the delay on syncing on new autoupdated posts
 - All connections go through http for the time being
 - Added 'Reset name' to 4chan X menus
+- Fixed autoupdate checking
 
 v3.0.0 (4chan X v3 required)
 - Moved settings in to the 4chan X settings

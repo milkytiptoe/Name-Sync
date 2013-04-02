@@ -366,7 +366,7 @@
     },
     open: function(section, g) {
       var check, checked, checks, istrue, setting, stored, text, texts, ul, val, _i, _j, _len, _len1, _ref;
-      section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input type='button' value='Check for update'> <input type='button' value='Clear sync history'></li></ul>";
+      section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input id='syncUpdate' type='button' value='Check for update'> <input id='syncClear' type='button' value='Clear sync history'></li></ul>";
       ul = $.el('ul');
       ul.textContent = 'Main';
       _ref = Settings.main;
@@ -393,6 +393,8 @@
           return Settings.set(this.name, this.value);
         });
       }
+      $.on($('#syncUpdate', section), 'click', Updater.update);
+      $.on($('#syncClear', section), 'click', Sync.clear);
     },
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);
@@ -496,9 +498,10 @@
           return alert('Error removing history');
         },
         onloadend: function() {
-          if (this.status === 200) {
-            return alert(this.response);
+          if (this.status !== 200) {
+            return this.onerror();
           }
+          return alert(this.response);
         }
       });
     }
@@ -507,7 +510,8 @@
   Updater = {
     init: function() {
       var last;
-      if (last = Settings.get('lastcheck') === null || Date.now() > last + 86400000) {
+      last = Settings.get('lastcheck');
+      if (last === null || Date.now() > last + 86400000) {
         return this.update();
       }
     },
@@ -518,7 +522,7 @@
             return;
           }
           Settings.set('lastcheck', Date.now());
-          if (this.response !== g.VERSION.replace(/\./g, '') && confirm("A new update for 4chan Name Sync (version " + this.response + ") is available, install now?")) {
+          if (this.response !== g.VERSION.replace(/\./g, '') && confirm("A new update for 4chan Name Sync is available, install now?")) {
             return window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js';
           }
         }
