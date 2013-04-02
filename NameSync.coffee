@@ -311,7 +311,6 @@ Sync =
           for poster in JSON.parse @response
             Names.nameByPost[poster.p] = poster
           Names.updateAllPosts()
-    
     if repeat and Sync.canSync()
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
