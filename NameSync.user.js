@@ -241,7 +241,14 @@
         return this.updateAllPosts();
       }
     },
-    reset: function(id) {},
+    reset: function(id) {
+      this.nameByID[id] = {
+        n: 'Anonymous',
+        t: ''
+      };
+      this.blockedIDs[id] = false;
+      return this.updateAllPosts();
+    },
     checkThreadUpdate: function(e) {
       if (e.detail[404]) {
         return Sync.disabled = true;

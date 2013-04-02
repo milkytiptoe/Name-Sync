@@ -171,8 +171,11 @@ Names =
       @blockedIDs[id] = true
       @updateAllPosts()
   reset: (id) ->
-    # to-do
-    return
+    @nameByID[id] =
+      n: 'Anonymous',
+      t: ''
+    @blockedIDs[id] = false
+    @updateAllPosts()
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]
