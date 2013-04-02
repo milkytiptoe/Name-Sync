@@ -9,7 +9,7 @@ HEADER  = """
 // @name           4chan X Name Sync
 // @version        #{VERSION}
 // @namespace      milky
-// @description    Shares names with other posters on 4chan's forced anon boards. Requires 4chan X v3.
+// @description    Enables names on 4chan's forced anon boards. Requires 4chan X v3.
 // @author         milkytiptoe
 // @author         ihavenoface
 // @run-at         document-start
