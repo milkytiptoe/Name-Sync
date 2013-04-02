@@ -166,13 +166,13 @@ Names =
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
     if name and name.trim() isnt ''
       @nameByID[id] =
-        n: name,
+        n: name
         t: ''
       @blockedIDs[id] = true
       @updateAllPosts()
   reset: (id) ->
     @nameByID[id] =
-      n: 'Anonymous',
+      n: 'Anonymous'
       t: ''
     @blockedIDs[id] = false
     @updateAllPosts()
