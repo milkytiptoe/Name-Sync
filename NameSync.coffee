@@ -191,7 +191,9 @@ Names =
   updatePost: (post) ->
     # todo: decide what to do about 'sticky names' later
     # todo: mobile support
-    id =             $('.hand', post).textContent
+    idspan =         $('.hand', post)
+    return if idspan is null
+    id =             idspan.textContent
     return if /^##/.test id
     postnumspan =    $ 'a[title="Quote this post"]', post
     namespan =       $ '.desktop .name', post

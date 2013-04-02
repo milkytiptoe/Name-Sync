@@ -271,8 +271,12 @@
       return this.store();
     },
     updatePost: function(post) {
-      var email, emailspan, id, linfo, name, nameblockspan, namespan, oinfo, postnum, postnumspan, subject, subjectspan, tripcode, tripspan;
-      id = $('.hand', post).textContent;
+      var email, emailspan, id, idspan, linfo, name, nameblockspan, namespan, oinfo, postnum, postnumspan, subject, subjectspan, tripcode, tripspan;
+      idspan = $('.hand', post);
+      if (idspan === null) {
+        return;
+      }
+      id = idspan.textContent;
       if (/^##/.test(id)) {
         return;
       }
