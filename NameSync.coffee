@@ -121,7 +121,6 @@ Menus =
       'header', ->
         $.event 'OpenSettings',
           detail: 'Name Sync'
-    # todo: put in sub menu? idk
     @add 'Change name',
       'post', ->
         Names.change Menus.uid,
@@ -192,8 +191,6 @@ Names =
     @updatePost post for post in $$ '.thread .post'
     @store()
   updatePost: (post) ->
-    # todo: decide what to do about 'sticky names' later
-    # todo: mobile support
     idspan =         $('.hand', post)
     return if idspan is null
     id =             idspan.textContent
