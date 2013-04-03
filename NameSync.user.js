@@ -346,7 +346,7 @@
           $.before(namespan, emailspan);
         }
         $.add(emailspan, namespan);
-        if (tripspan !== null) {
+        if (tripspan != null) {
           $.after(namespan, $.tn(' '));
           $.add(emailspan, tripspan);
         }
@@ -356,14 +356,13 @@
         if (tripspan === null) {
           tripspan = $.el('span');
           $.addClass(tripspan, 'postertrip');
-          $.after(namespan, tripspan);
-          $.after(namespan, $.tn(' '));
+          $.after(namespan, [tripspan, $.tn(' ')]);
         }
         if (tripspan.textContent !== tripcode) {
           return tripspan.textContent = tripcode;
         }
       } else {
-        if (tripspan !== null) {
+        if (tripspan != null) {
           return $.rm(tripspan);
         }
       }
@@ -398,7 +397,7 @@
       });
     },
     open: function(section, g) {
-      var check, checked, checks, field, istrue, setting, stored, text, texts, val, _i, _j, _len, _len1, _ref;
+      var check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
       section.innerHTML = "<fieldset><legend>Persona</legend><div><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></div></fieldset><fieldset><legend>Advanced</legend><input id='syncUpdate' type='button' value='Check for update'><input id='syncClear' type='button' value='Clear sync history'></fieldset>";
       field = $.el('fieldset');
@@ -416,23 +415,23 @@
         }));
       }
       $.prepend(section, field);
-      checks = $$('input[type=checkbox]', section);
-      for (_i = 0, _len = checks.length; _i < _len; _i++) {
-        check = checks[_i];
+      _ref1 = $$('input[type=checkbox]', section);
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        check = _ref1[_i];
         $.on(check, 'click', function() {
           return Settings.set(this.name, this.checked);
         });
       }
-      texts = $$('input[type=text]', section);
-      for (_j = 0, _len1 = texts.length; _j < _len1; _j++) {
-        text = texts[_j];
+      _ref2 = $$('input[type=text]', section);
+      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+        text = _ref2[_j];
         text.value = Settings.get(text.name) || '';
         $.on(text, 'input', function() {
           return Settings.set(this.name, this.value);
         });
       }
       $.on($('#syncUpdate', section), 'click', Updater.update);
-      $.on($('#syncClear', section), 'click', Sync.clear);
+      return $.on($('#syncClear', section), 'click', Sync.clear);
     },
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);

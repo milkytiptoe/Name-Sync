@@ -106,7 +106,9 @@ Main =
     path = location.pathname.slice(1).split '/'
     return if path[1] is 'catalog'
     g.board = path[0]
-    g.threads.push thread.id[1..] for thread in $$ '.thread'
+    for thread in $$ '.thread'
+      g.threads.push thread.id[1..]
+
     Settings.init()
     Names.init()
     CSS.init()
@@ -199,39 +201,41 @@ Names =
     return if idspan is null
     id =             idspan.textContent
     return if /^##/.test id
-    postnumspan =    $ 'a[title="Quote this post"]', post
-    namespan =       $ '.desktop .name', post
-    tripspan =       $ '.desktop .postertrip', post
-    subjectspan =    $ '.desktop .subject', post
-    postnum =        postnumspan.textContent
-    oinfo =          Names.nameByPost[postnum]
-    linfo =          Names.nameByID[id]
+    postnumspan = $ 'a[title="Quote this post"]', post
+    namespan    = $ '.desktop .name', post
+    tripspan    = $ '.desktop .postertrip', post
+    subjectspan = $ '.desktop .subject', post
+    postnum     = postnumspan.textContent
+    oinfo       = Names.nameByPost[postnum]
+    linfo       = Names.nameByID[id]
     if oinfo and not Names.blockedIDs[id]
-      name =     oinfo.n
-      tripcode = oinfo.t
+      name      = oinfo.n
+      tripcode  = oinfo.t
       if !/Heaven/.test id
         Names.nameByID[id] =
           n: name
           t: tripcode
-      email =   oinfo.e
+      email   = oinfo.e
       subject = oinfo.s
     else if linfo
-      name =     linfo.n
+      name     = linfo.n
       tripcode = linfo.t
-    else return
+    else
+      return
+
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject and subject isnt '' and subjectspan.textContent isnt subject
       subjectspan.textContent = subject
-    if email && email isnt ''
+    if email and email isnt ''
       emailspan = $ '.desktop .useremail', post
-      if emailspan is null
+      if emailspan is null # Do we want to compare to null actually?
         nameblockspan = $ '.desktop .nameBlock', post
         emailspan = $.el 'a'
         $.addClass emailspan, 'useremail'
         $.before namespan, emailspan
       $.add emailspan, namespan
-      if tripspan isnt null
+      if tripspan?
         $.after namespan, $.tn ' '
         $.add emailspan, tripspan
       emailspan.href = "mailto:#{email}"
@@ -239,12 +243,11 @@ Names =
       if tripspan is null
         tripspan = $.el 'span'
         $.addClass tripspan, 'postertrip'
-        $.after namespan, tripspan
-        $.after namespan, $.tn ' '
+        $.after namespan, [tripspan, $.tn ' ']
       if tripspan.textContent isnt tripcode
         tripspan.textContent = tripcode
     else
-      if tripspan isnt null
+      if tripspan?
         $.rm tripspan
 
 Settings =
@@ -259,7 +262,7 @@ Settings =
     'Do Not Track':      ['Send a request to third party archives to not store your history', false]
   init: ->
     for setting, val of Settings.main
-      stored = Settings.get(setting)
+      stored = Settings.get setting
       Set[setting] = if stored is null then val[1] else stored is 'true'
     $.event 'AddSettingsSection',
       detail:
@@ -270,6 +273,7 @@ Settings =
     field = $.el 'fieldset'
     $.add field, $.el 'legend',
       textContent: 'Main'
+
     for setting, val of Settings.main
       stored  = Settings.get setting
       istrue  = if stored is null then val[1] else stored is 'true'
@@ -277,18 +281,17 @@ Settings =
       $.add field, $.el 'div',
         innerHTML: "<label><input type='checkbox' name='#{setting}' #{checked}/>#{setting}</label><span class='description'>: #{val[0]}</span>"
     $.prepend section, field
-    checks = $$ 'input[type=checkbox]', section
-    for check in checks
+    for check in $$ 'input[type=checkbox]', section
       $.on check, 'click', ->
         Settings.set @name, @checked
-    texts = $$ 'input[type=text]', section
-    for text in texts
+
+    for text in $$ 'input[type=text]', section
       text.value = Settings.get(text.name) or ''
       $.on text, 'input', ->
         Settings.set @name, @value
+
     $.on $('#syncUpdate', section), 'click', Updater.update
-    $.on $('#syncClear', section), 'click', Sync.clear
-    return
+    $.on $('#syncClear',  section), 'click', Sync.clear
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->
@@ -296,7 +299,7 @@ Settings =
 
 Sync =
   lastModified: '0'
-  disabled:     false
+  disabled: false
   init: ->
     return unless Set['Share Sage']
     $.on d, 'QRPostSuccessful', Sync.requestSend
@@ -308,8 +311,8 @@ Sync =
     !@disabled and g.threads.length is 1
   sync: (repeat) ->
     $.ajax "qp",
-      "GET",
-      "t=#{g.threads}&b=#{g.board}",
+      "GET"
+      "t=#{g.threads}&b=#{g.board}"
       onloadend: ->
         if @status is 200
           Sync.lastModified = @getResponseHeader 'Last-Modified'
@@ -327,13 +330,13 @@ Sync =
       cSubject = Settings.get 'Subject'
     else
       qr       = $.id 'qr'
-      cName    = $('input[name=name]', qr).value
+      cName    = $('input[name=name]',  qr).value
       cEmail   = $('input[name=email]', qr).value
-      cSubject = $('input[name=sub]', qr).value
+      cSubject = $('input[name=sub]',   qr).value
     cName    = cName.trim()
     cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
-    if not (cName is '' and cEmail is '' and cSubject is '')
+    unless cName is '' and cEmail is '' and cSubject is ''
       Sync.send cName, cEmail, cSubject, postID, threadID
   send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
     return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
@@ -347,8 +350,8 @@ Sync =
         threadID: threadID
     else
       $.ajax 'sp',
-        'POST',
-        "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent cName}&s=#{encodeURIComponent cSubject}&e=#{encodeURIComponent cEmail}&dnt=#{if Set['Do Not Track'] then '1' else '0'}",
+        'POST'
+        "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent cName}&s=#{encodeURIComponent cSubject}&e=#{encodeURIComponent cEmail}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->
@@ -359,8 +362,8 @@ Sync =
   clear: ->
     return if not confirm 'This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?'
     $.ajax 'rm',
-      'POST',
-      '',
+      'POST'
+      ''
       onerror: ->
         alert 'Error removing history'
       onloadend: ->
@@ -369,13 +372,13 @@ Sync =
 
 Updater =
   init: ->
-    last = Settings.get('lastcheck')
+    last = Settings.get 'lastcheck'
     if last is null or Date.now() > last + 86400000
       @update()
   update: ->
     $.ajax 'u3',
-      'GET',
-      '',
+      'GET'
+      ''
       onloadend: ->
         return if @status isnt 200
         Settings.set 'lastcheck', Date.now()
