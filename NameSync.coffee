@@ -123,13 +123,15 @@ Menus =
           detail: 'Name Sync'
     @add 'Change name',
       'post', ->
-        Names.change Menus.uid,
+        Names.change Menus.uid
+        $.event 'CloseMenu',
       (post) ->
         Menus.uid = post.info.uniqueID
         !/Heaven/.test Menus.uid
     @add 'Reset name',
       'post', ->
-        Names.reset Menus.uid,
+        Names.reset Menus.uid
+        $.event 'CloseMenu',
       (post) ->
         Menus.uid = post.info.uniqueID
         !/Heaven/.test Menus.uid

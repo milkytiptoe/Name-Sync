@@ -177,13 +177,15 @@
         });
       });
       this.add('Change name', 'post', function() {
-        return Names.change(Menus.uid);
+        Names.change(Menus.uid);
+        return $.event('CloseMenu');
       }, function(post) {
         Menus.uid = post.info.uniqueID;
         return !/Heaven/.test(Menus.uid);
       });
       return this.add('Reset name', 'post', function() {
-        return Names.reset(Menus.uid);
+        Names.reset(Menus.uid);
+        return $.event('CloseMenu');
       }, function(post) {
         Menus.uid = post.info.uniqueID;
         return !/Heaven/.test(Menus.uid);
