@@ -57,8 +57,14 @@
   };
 
   $.extend($, {
-    el: function(type) {
-      return d.createElement(type);
+    el: function(tag, properties) {
+      var el;
+
+      el = d.createElement(tag);
+      if (properties) {
+        $.extend(el, properties);
+      }
+      return el;
     },
     tn: function(text) {
       return d.createTextNode(text);
@@ -140,8 +146,9 @@
       if (Set['Hide IDs']) {
         css += ".posteruid {\n  display: none;\n}";
       }
-      el = $.el('style');
-      el.textContent = css;
+      el = $.el('style', {
+        textContent: css
+      });
       return $.add(d.body, el);
     }
   };
@@ -199,9 +206,10 @@
     add: function(text, type, click, open) {
       var a;
 
-      a = $.el('a');
-      a.href = 'javascript:;';
-      a.textContent = text;
+      a = $.el('a', {
+        href: 'javascript:;',
+        textContent: text
+      });
       $.on(a, 'click', click);
       return $.event('AddMenuEntry', {
         detail: {
@@ -339,17 +347,17 @@
         }
         $.add(emailspan, namespan);
         if (tripspan !== null) {
-          $.after(namespan, $.tn(" "));
+          $.after(namespan, $.tn(' '));
           $.add(emailspan, tripspan);
         }
         emailspan.href = "mailto:" + email;
       }
       if (tripcode && tripcode !== '') {
         if (tripspan === null) {
-          tripspan = $.el("span");
-          $.addClass(tripspan, "postertrip");
+          tripspan = $.el('span');
+          $.addClass(tripspan, 'postertrip');
           $.after(namespan, tripspan);
-          $.after(namespan, $.tn(" "));
+          $.after(namespan, $.tn(' '));
         }
         if (tripspan.textContent !== tripcode) {
           return tripspan.textContent = tripcode;
@@ -390,20 +398,22 @@
       });
     },
     open: function(section, g) {
-      var check, checked, checks, field, istrue, legend, setting, stored, text, texts, val, _i, _j, _len, _len1, _ref;
+      var check, checked, checks, field, istrue, setting, stored, text, texts, val, _i, _j, _len, _len1, _ref;
 
       section.innerHTML = "<fieldset><legend>Persona</legend><div><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></div></fieldset><fieldset><legend>Advanced</legend><input id='syncUpdate' type='button' value='Check for update'><input id='syncClear' type='button' value='Clear sync history'></fieldset>";
       field = $.el('fieldset');
-      legend = $.el('legend');
-      legend.innerHTML = '<legend>Main</legend>';
-      $.add(field, legend);
+      $.add(field, $.el('legend', {
+        textContent: 'Main'
+      }));
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
         stored = Settings.get(setting);
         istrue = stored === null ? val[1] : stored === 'true';
         checked = istrue ? 'checked ' : '';
-        field.innerHTML += "<div><label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[0] + "</span></div>";
+        $.add(field, $.el('div', {
+          innerHTML: "<label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[0] + "</span>"
+        }));
       }
       $.prepend(section, field);
       checks = $$('input[type=checkbox]', section);
