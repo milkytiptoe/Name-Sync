@@ -124,14 +124,14 @@ Menus =
     @add 'Change name',
       'post', ->
         Names.change Menus.uid
-        $.event 'CloseMenu',
+        $.event 'CloseMenu'
       (post) ->
         Menus.uid = post.info.uniqueID
         !/Heaven/.test Menus.uid
     @add 'Reset name',
       'post', ->
         Names.reset Menus.uid
-        $.event 'CloseMenu',
+        $.event 'CloseMenu'
       (post) ->
         Menus.uid = post.info.uniqueID
         !/Heaven/.test Menus.uid
