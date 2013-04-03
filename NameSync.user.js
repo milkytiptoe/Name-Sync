@@ -390,20 +390,22 @@
       });
     },
     open: function(section, g) {
-      var check, checked, checks, istrue, setting, stored, text, texts, ul, val, _i, _j, _len, _len1, _ref;
+      var check, checked, checks, field, istrue, legend, setting, stored, text, texts, val, _i, _j, _len, _len1, _ref;
 
-      section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input id='syncUpdate' type='button' value='Check for update'> <input id='syncClear' type='button' value='Clear sync history'></li></ul>";
-      ul = $.el('ul');
-      ul.textContent = 'Main';
+      section.innerHTML = "<fieldset><legend>Persona</legend><div><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></div></fieldset><fieldset><legend>Advanced</legend><input id='syncUpdate' type='button' value='Check for update'><input id='syncClear' type='button' value='Clear sync history'></fieldset>";
+      field = $.el('fieldset');
+      legend = $.el('legend');
+      legend.innerHTML = '<legend>Main</legend>';
+      $.add(field, legend);
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
         stored = Settings.get(setting);
         istrue = stored === null ? val[1] : stored === 'true';
         checked = istrue ? 'checked ' : '';
-        ul.innerHTML += "<li><label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[0] + "</span></li>";
+        field.innerHTML += "<div><label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[0] + "</span></div>";
       }
-      $.prepend(section, ul);
+      $.prepend(section, field);
       checks = $$('input[type=checkbox]', section);
       for (_i = 0, _len = checks.length; _i < _len; _i++) {
         check = checks[_i];

@@ -264,15 +264,17 @@ Settings =
         title: 'Name Sync'
         open:  Settings.open
   open: (section, g) ->
-    section.innerHTML = "<ul>Persona<li><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></li></ul><ul>Advanced<li><input id='syncUpdate' type='button' value='Check for update'> <input id='syncClear' type='button' value='Clear sync history'></li></ul>"
-    ul = $.el 'ul'
-    ul.textContent = 'Main'
+    section.innerHTML = "<fieldset><legend>Persona</legend><div><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></div></fieldset><fieldset><legend>Advanced</legend><input id='syncUpdate' type='button' value='Check for update'><input id='syncClear' type='button' value='Clear sync history'></fieldset>"
+    field  = $.el 'fieldset' ## Those constructs are weird as hell. We should be able to add props.
+    legend = $.el 'legend'
+    legend.innerHTML = '<legend>Main</legend>'
+    $.add field, legend
     for setting, val of Settings.main
       stored = Settings.get(setting)
       istrue = if stored is null then val[1] else stored is 'true'
       checked = if istrue then 'checked ' else ''
-      ul.innerHTML += "<li><label><input type='checkbox' name='#{setting}' #{checked}/>#{setting}</label><span class='description'>: #{val[0]}</span></li>"
-    $.prepend section, ul
+      field.innerHTML += "<div><label><input type='checkbox' name='#{setting}' #{checked}/>#{setting}</label><span class='description'>: #{val[0]}</span></div>"
+    $.prepend section, field
     checks = $$ 'input[type=checkbox]', section
     for check in checks
       $.on check, 'click', ->
