@@ -1,1 +1,1 @@
-Branch designated for rewriting Name Sync in CoffeeScript without jQuery.
+For installation and more information [click here](http://milkytiptoe.github.com/Name-Sync/)
