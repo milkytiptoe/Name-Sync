@@ -301,7 +301,6 @@ Sync =
   lastModified: '0'
   disabled: false
   init: ->
-    return unless Set['Share Sage']
     $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true
     if sessionStorage["#{g.board}-namesync-tosend"]
@@ -336,7 +335,7 @@ Sync =
     cName    = cName.trim()
     cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
-    unless cName is '' and cEmail is '' and cSubject is ''
+    unless cName is '' and cEmail is '' and cSubject is '' or (Set['Hide Sage'] and /sage/i.test cEmail)
       Sync.send cName, cEmail, cSubject, postID, threadID
   send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
     return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]

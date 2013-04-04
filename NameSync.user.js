@@ -433,9 +433,6 @@
     disabled: false,
     init: function() {
       var r;
-      if (!Set['Share Sage']) {
-        return;
-      }
       $.on(d, 'QRPostSuccessful', Sync.requestSend);
       this.sync(true);
       if (sessionStorage["" + g.board + "-namesync-tosend"]) {
@@ -482,7 +479,7 @@
       cName = cName.trim();
       cEmail = cEmail.trim();
       cSubject = cSubject.trim();
-      if (!(cName === '' && cEmail === '' && cSubject === '')) {
+      if (!(cName === '' && cEmail === '' && cSubject === '' || (Set['Hide Sage'] && /sage/i.test(cEmail)))) {
         return Sync.send(cName, cEmail, cSubject, postID, threadID);
       }
     },
