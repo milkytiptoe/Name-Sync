@@ -229,7 +229,7 @@ Names =
       subjectspan.textContent = subject
     if email and email isnt ''
       emailspan = $ '.desktop .useremail', post
-      if emailspan is null # Do we want to compare to null actually? null is returned if it doesn't exist
+      if emailspan is null
         nameblockspan = $ '.desktop .nameBlock', post
         emailspan = $.el 'a',
           className: 'useremail'
@@ -247,9 +247,8 @@ Names =
         $.after namespan, $.tn ' '
       if tripspan.textContent isnt tripcode
         tripspan.textContent = tripcode
-    else
-      if tripspan?
-        $.rm tripspan
+    else if tripspan
+      $.rm tripspan
 
 Settings =
   main:
@@ -270,7 +269,21 @@ Settings =
         title: 'Name Sync'
         open:  Settings.open
   open: (section, g) ->
-    section.innerHTML = "<fieldset><legend>Persona</legend><div><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></div></fieldset><fieldset><legend>Advanced</legend><input id='syncUpdate' type='button' value='Check for update'><input id='syncClear' type='button' value='Clear sync history'></fieldset>"
+    section.innerHTML = '
+      <fieldset>
+        <legend>Persona</legend>
+        <div>
+          <input type=text name=Name placeholder=Name>
+          <input type=text name=Email placeholder=Email>
+          <input type=text name=Subject placeholder=Subject>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Advanced</legend>
+        <input id=syncUpdate type=button value="Check for update">
+        <input id=syncClear type=button value="Clear sync history">
+      </fieldset>
+    '
     field = $.el 'fieldset'
     $.add field, $.el 'legend',
       textContent: 'Main'

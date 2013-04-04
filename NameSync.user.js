@@ -364,10 +364,8 @@
         if (tripspan.textContent !== tripcode) {
           return tripspan.textContent = tripcode;
         }
-      } else {
-        if (tripspan != null) {
-          return $.rm(tripspan);
-        }
+      } else if (tripspan) {
+        return $.rm(tripspan);
       }
     }
   };
@@ -402,7 +400,21 @@
     open: function(section, g) {
       var check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset><legend>Persona</legend><div><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></div></fieldset><fieldset><legend>Advanced</legend><input id='syncUpdate' type='button' value='Check for update'><input id='syncClear' type='button' value='Clear sync history'></fieldset>";
+      section.innerHTML = '\
+      <fieldset>\
+        <legend>Persona</legend>\
+        <div>\
+          <input type=text name=Name placeholder=Name>\
+          <input type=text name=Email placeholder=Email>\
+          <input type=text name=Subject placeholder=Subject>\
+        </div>\
+      </fieldset>\
+      <fieldset>\
+        <legend>Advanced</legend>\
+        <input id=syncUpdate type=button value="Check for update">\
+        <input id=syncClear type=button value="Clear sync history">\
+      </fieldset>\
+    ';
       field = $.el('fieldset');
       $.add(field, $.el('legend', {
         textContent: 'Main'
