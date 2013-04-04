@@ -49,6 +49,7 @@
 
   $.extend = function(object, properties) {
     var key, val;
+
     for (key in properties) {
       val = properties[key];
       object[key] = val;
@@ -58,6 +59,7 @@
   $.extend($, {
     el: function(tag, properties) {
       var el;
+
       el = d.createElement(tag);
       if (properties) {
         $.extend(el, properties);
@@ -99,6 +101,7 @@
     },
     nodes: function(nodes) {
       var frag, node, _i, _len;
+
       if (!(nodes instanceof Array)) {
         return nodes;
       }
@@ -111,6 +114,7 @@
     },
     ajax: function(file, type, data, callbacks) {
       var r, url;
+
       r = new XMLHttpRequest();
       if (file === 'qp') {
         r.overrideMimeType('application/json');
@@ -137,6 +141,7 @@
   CSS = {
     init: function() {
       var css, el;
+
       css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n.section-name-sync {\n  background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;\n}";
       if (Set['Hide IDs']) {
         css += ".posteruid {\n  display: none;\n}";
@@ -151,6 +156,7 @@
   Main = {
     init: function() {
       var path, thread, _i, _len, _ref;
+
       path = location.pathname.slice(1).split('/');
       if (path[1] === 'catalog') {
         return;
@@ -199,6 +205,7 @@
     },
     add: function(text, type, click, open) {
       var a;
+
       a = $.el('a', {
         href: 'javascript:;',
         textContent: text
@@ -240,6 +247,7 @@
     },
     change: function(id) {
       var name;
+
       name = prompt('What would you like this poster to be named?', 'Anonymous');
       if (name && name.trim() !== '') {
         this.nameByID[id] = {
@@ -268,6 +276,7 @@
     },
     load: function() {
       var stored;
+
       stored = sessionStorage["" + g.board + "-4-names"];
       this.nameByID = stored ? JSON.parse(stored) : {};
       stored = sessionStorage["" + g.board + "-blocked"];
@@ -279,6 +288,7 @@
     },
     updateAllPosts: function() {
       var post, _i, _len, _ref;
+
       _ref = $$('.thread .post');
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         post = _ref[_i];
@@ -288,6 +298,7 @@
     },
     updatePost: function(post) {
       var email, emailspan, id, idspan, linfo, name, nameblockspan, namespan, oinfo, postnum, postnumspan, subject, subjectspan, tripcode, tripspan;
+
       idspan = $('.hand', post);
       if (idspan === null) {
         return;
@@ -374,6 +385,7 @@
     },
     init: function() {
       var setting, stored, val, _ref;
+
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
@@ -389,6 +401,7 @@
     },
     open: function(section, g) {
       var check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+
       section.innerHTML = "<fieldset><legend>Persona</legend><div><input type='text' name='Name' placeholder='Name'><input type='text' name='Email' placeholder='Email'><input type='text' name='Subject' placeholder='Subject'></div></fieldset><fieldset><legend>Advanced</legend><input id='syncUpdate' type='button' value='Check for update'><input id='syncClear' type='button' value='Clear sync history'></fieldset>";
       field = $.el('fieldset');
       $.add(field, $.el('legend', {
@@ -436,6 +449,7 @@
     disabled: false,
     init: function() {
       var r;
+
       $.on(d, 'QRPostSuccessful', Sync.requestSend);
       this.sync(true);
       if (sessionStorage["" + g.board + "-namesync-tosend"]) {
@@ -450,6 +464,7 @@
       $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {
         onloadend: function() {
           var poster, _i, _len, _ref;
+
           if (this.status === 200) {
             Sync.lastModified = this.getResponseHeader('Last-Modified');
             _ref = JSON.parse(this.response);
@@ -467,6 +482,7 @@
     },
     requestSend: function(e) {
       var cEmail, cName, cSubject, postID, qr, threadID;
+
       postID = e.detail.postID;
       threadID = e.detail.threadID;
       if (Set['Persona Fields']) {
@@ -537,6 +553,7 @@
   Updater = {
     init: function() {
       var last;
+
       last = Settings.get('lastcheck');
       if (last === null || Date.now() > last + 86400000) {
         return this.update();
