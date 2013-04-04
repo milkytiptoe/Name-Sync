@@ -243,7 +243,8 @@ Names =
       if tripspan is null
         tripspan = $.el 'span'
         $.addClass tripspan, 'postertrip'
-        $.after namespan, [tripspan, $.tn ' ']
+        $.after namespan, tripspan
+        $.after namespan, $.tn ' '
       if tripspan.textContent isnt tripcode
         tripspan.textContent = tripcode
     else

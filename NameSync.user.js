@@ -345,7 +345,8 @@
         if (tripspan === null) {
           tripspan = $.el('span');
           $.addClass(tripspan, 'postertrip');
-          $.after(namespan, [tripspan, $.tn(' ')]);
+          $.after(namespan, tripspan);
+          $.after(namespan, $.tn(' '));
         }
         if (tripspan.textContent !== tripcode) {
           return tripspan.textContent = tripcode;
