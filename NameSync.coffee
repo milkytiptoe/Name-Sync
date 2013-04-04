@@ -229,10 +229,10 @@ Names =
       subjectspan.textContent = subject
     if email and email isnt ''
       emailspan = $ '.desktop .useremail', post
-      if emailspan is null # Do we want to compare to null actually?
+      if emailspan is null # Do we want to compare to null actually? null is returned if it doesn't exist
         nameblockspan = $ '.desktop .nameBlock', post
-        emailspan = $.el 'a'
-        $.addClass emailspan, 'useremail'
+        emailspan = $.el 'a',
+          className: 'useremail'
         $.before namespan, emailspan
       $.add emailspan, namespan
       if tripspan?
@@ -241,8 +241,8 @@ Names =
       emailspan.href = "mailto:#{email}"
     if tripcode and tripcode isnt ''
       if tripspan is null
-        tripspan = $.el 'span'
-        $.addClass tripspan, 'postertrip'
+        tripspan = $.el 'span',
+          className: 'postertrip'
         $.after namespan, tripspan
         $.after namespan, $.tn ' '
       if tripspan.textContent isnt tripcode

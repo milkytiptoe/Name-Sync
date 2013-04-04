@@ -330,8 +330,9 @@
         emailspan = $('.desktop .useremail', post);
         if (emailspan === null) {
           nameblockspan = $('.desktop .nameBlock', post);
-          emailspan = $.el('a');
-          $.addClass(emailspan, 'useremail');
+          emailspan = $.el('a', {
+            className: 'useremail'
+          });
           $.before(namespan, emailspan);
         }
         $.add(emailspan, namespan);
@@ -343,8 +344,9 @@
       }
       if (tripcode && tripcode !== '') {
         if (tripspan === null) {
-          tripspan = $.el('span');
-          $.addClass(tripspan, 'postertrip');
+          tripspan = $.el('span', {
+            className: 'postertrip'
+          });
           $.after(namespan, tripspan);
           $.after(namespan, $.tn(' '));
         }
