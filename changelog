@@ -6,6 +6,7 @@ v4.0.0 (4chan X v3 required)
 - All connections go through http for the time being
 - Added 'Reset name' to 4chan X menus
 - Fixed autoupdate checking
+- Added 'Hide Sage' setting to not share fields with sage in the email field
 
 v3.0.0 (4chan X v3 required)
 - Moved settings in to the 4chan X settings
