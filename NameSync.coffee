@@ -258,7 +258,7 @@ Settings =
     'Hide IDs':          ['Hide Unique IDs next to names', false]
     'Automatic Updates': ['Check for updates automatically', true]
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
-    'Share Sage':        ['Blue names!', true] ## Needs proper description
+    'Hide Sage':         ['Hide your name when sage is in the email fied', false]
     'Do Not Track':      ['Send a request to third party archives to not store your history', false]
   init: ->
     for setting, val of Settings.main
