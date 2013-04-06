@@ -258,7 +258,7 @@ Settings =
     'Hide IDs':          ['Hide Unique IDs next to names', false]
     'Automatic Updates': ['Check for updates automatically', true]
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
-    'Hide Sage':         ['Hide your name when sage is in the email fied', false]
+    'Hide Sage':         ['Hide your fields when sage is in the email fied', false]
     'Do Not Track':      ['Send a request to third party archives to not store your history', false]
   init: ->
     for setting, val of Settings.main
@@ -268,8 +268,8 @@ Settings =
       detail:
         title: 'Name Sync'
         open:  Settings.open
-  open: (section, g) ->
-    section.innerHTML = '
+  open: (section) ->
+    section.innerHTML = """
       <fieldset>
         <legend>Persona</legend>
         <div>
@@ -280,10 +280,17 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Advanced</legend>
-        <input id=syncUpdate type=button value="Check for update">
-        <input id=syncClear type=button value="Clear sync history">
+        <input id=syncUpdate type=button value='Check for update'>
+        <input id=syncClear type=button value='Clear sync history'>
       </fieldset>
-    '
+      <fieldset>
+        <legend>About</legend>
+        <div>4chan X Name Sync v#{g.VERSION}</div>
+        <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>
+        <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>
+        <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>
+      </fieldset>
+    """
     field = $.el 'fieldset'
     $.add field, $.el 'legend',
       textContent: 'Main'
