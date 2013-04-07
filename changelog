@@ -1,14 +1,14 @@
-v4.0.0 (4chan X v3 required)
+4.0.0
 - Renamed sync posters will load their changed names on refresh
 - Added 'Do Not Track' setting to request archives to not record your posts
 - Improvement to script start time
-- Removed the delay on syncing on new autoupdated posts
+- Added 'Sync Delay' setting to adjust time before downloading new names (default is no delay)
 - All connections go through http for the time being
 - Added 'Reset name' to 4chan X menus
 - Fixed autoupdate checking
 - Added 'Hide Sage' setting to not share fields with sage in the email field
 
-v3.0.0 (4chan X v3 required)
+3.0.0
 - Moved settings in to the 4chan X settings
 - Sync status is no longer shown above threads or logged in the console
 - Assign buttons in 4chan X menus are always enabled

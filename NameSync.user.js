@@ -278,7 +278,8 @@
         return Sync.disabled = true;
       }
       if (Set["Sync on /" + g.board + "/"]) {
-        return Sync.sync();
+        clearTimeout(Sync.delay);
+        return Sync.delay = setTimeout(Sync.sync, Settings.get('Delay') || 0);
       }
     },
     load: function() {
@@ -407,7 +408,7 @@
     open: function(section) {
       var check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history'>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>";
+      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history'>\n  <div>Sync Delay: <input type=number name=Delay placeholder='Delay (ms)'></div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>";
       field = $.el('fieldset');
       $.add(field, $.el('legend', {
         textContent: 'Main'
@@ -430,7 +431,7 @@
           return Settings.set(this.name, this.checked);
         });
       }
-      _ref2 = $$('input[type=text]', section);
+      _ref2 = $$('input[type=text], input[type=number]', section);
       for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
         text = _ref2[_j];
         text.value = Settings.get(text.name) || '';
@@ -452,6 +453,7 @@
   Sync = {
     lastModified: '0',
     disabled: false,
+    delay: null,
     init: function() {
       var r;
 

@@ -184,7 +184,8 @@ Names =
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]
-      Sync.sync()
+      clearTimeout Sync.delay
+      Sync.delay = setTimeout Sync.sync, Settings.get('Delay') or 0
   load: ->
     stored = sessionStorage["#{g.board}-4-names"]
     @nameByID = if stored then JSON.parse(stored) else {}
@@ -282,6 +283,7 @@ Settings =
         <legend>Advanced</legend>
         <input id=syncUpdate type=button value='Check for update'>
         <input id=syncClear type=button value='Clear sync history'>
+        <div>Sync Delay: <input type=number name=Delay placeholder='Delay (ms)'></div>
       </fieldset>
       <fieldset>
         <legend>About</legend>
@@ -306,11 +308,11 @@ Settings =
       $.on check, 'click', ->
         Settings.set @name, @checked
 
-    for text in $$ 'input[type=text]', section
+    for text in $$ 'input[type=text], input[type=number]', section
       text.value = Settings.get(text.name) or ''
       $.on text, 'input', ->
         Settings.set @name, @value
-
+    
     $.on $('#syncUpdate', section), 'click', Updater.update
     $.on $('#syncClear',  section), 'click', Sync.clear
   get: (name) ->
@@ -321,6 +323,7 @@ Settings =
 Sync =
   lastModified: '0'
   disabled: false
+  delay: null
   init: ->
     $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true
