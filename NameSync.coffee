@@ -283,7 +283,7 @@ Settings =
         <legend>Advanced</legend>
         <input id=syncUpdate type=button value='Check for update'>
         <input id=syncClear type=button value='Clear sync history'>
-        <div>Sync Delay: <input type=number name=Delay placeholder='Delay (ms)'></div>
+        <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=0> ms</div>
       </fieldset>
       <fieldset>
         <legend>About</legend>
