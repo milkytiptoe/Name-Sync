@@ -88,7 +88,7 @@ CSS =
       text-decoration: underline;
     }
     .section-name-sync {
-      background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;
+      background: url(http://www.milkyis.me/namesync/bg.png) no-repeat bottom right;
     }
     """
     if Set['Hide IDs']

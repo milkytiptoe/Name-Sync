@@ -14,10 +14,17 @@
 // @icon           data:image/gif;base64,R0lGODlhIAAgAMQQABAQEM/Pz9/f3zAwMH9/f+/v7yAgIGBgYJ+fn6+vr4+Pj1BQUHBwcL+/v0BAQAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABAALAAAAAAgACAAAAXNICSOZGmeaKqubOu6QvC+DSDPopAQfFOMjYdthhg8jsiHowEJKmGOpPToUFBbAcB0i3SwBNqkYUE4GLbeVRRpQJQaxmQ6lUgOfqKDYx/vqpEAeCJZXHMnAkkEJoRThiYISYIkAg2Vlg03OJqbnC8MDgcEbikBew5hQpkjBUkMKk5TQyQESaomsLECQHYruA8DTCUIqA/BKb4PBgpMAghrSAcsyFxIAy1OBsRcB5LHVAIH1AYJLwJGaQIEDmdKB+Q4BQMLnSkF7/T4+fr4IQA7
 // ==/UserScript==
 
-// Contributers: https://github.com/milkytiptoe/Name-Sync/graphs/contributors
-
-// This script contains code from 4chan X (https://github.com/MayhemYDG/4chan-x)
-// @license: https://github.com/MayhemYDG/4chan-x/blob/v3/LICENSE
+/*
+  4chan X Name Sync v4.0.0  
+  http://milkytiptoe.github.io/Name-Sync/
+  
+  Developers: milkytiptoe and ihavenoface
+  
+  Contributers: https://github.com/milkytiptoe/Name-Sync/graphs/contributors
+  
+  This script contains code from 4chan X (https://github.com/MayhemYDG/4chan-x)
+  @license: https://github.com/MayhemYDG/4chan-x/blob/v3/LICENSE
+*/
 
 (function() {
   var $, $$, CSS, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
@@ -142,7 +149,7 @@
     init: function() {
       var css, el;
 
-      css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n.section-name-sync {\n  background: url(http://www.milkyis.me/namesync/bg.png) no-repeat #F0E0D6 bottom right;\n}";
+      css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n.section-name-sync {\n  background: url(http://www.milkyis.me/namesync/bg.png) no-repeat bottom right;\n}";
       if (Set['Hide IDs']) {
         css += ".posteruid {\n  display: none;\n}";
       }

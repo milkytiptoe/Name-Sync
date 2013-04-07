@@ -21,10 +21,17 @@ HEADER  = """
 // @icon           data:image/gif;base64,R0lGODlhIAAgAMQQABAQEM/Pz9/f3zAwMH9/f+/v7yAgIGBgYJ+fn6+vr4+Pj1BQUHBwcL+/v0BAQAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABAALAAAAAAgACAAAAXNICSOZGmeaKqubOu6QvC+DSDPopAQfFOMjYdthhg8jsiHowEJKmGOpPToUFBbAcB0i3SwBNqkYUE4GLbeVRRpQJQaxmQ6lUgOfqKDYx/vqpEAeCJZXHMnAkkEJoRThiYISYIkAg2Vlg03OJqbnC8MDgcEbikBew5hQpkjBUkMKk5TQyQESaomsLECQHYruA8DTCUIqA/BKb4PBgpMAghrSAcsyFxIAy1OBsRcB5LHVAIH1AYJLwJGaQIEDmdKB+Q4BQMLnSkF7/T4+fr4IQA7
 // ==/UserScript==
 
-// Contributers: https://github.com/milkytiptoe/Name-Sync/graphs/contributors
-
-// This script contains code from 4chan X (https://github.com/MayhemYDG/4chan-x)
-// @license: https://github.com/MayhemYDG/4chan-x/blob/v3/LICENSE
+/*
+  4chan X Name Sync v#{VERSION}  
+  http://milkytiptoe.github.io/Name-Sync/
+  
+  Developers: milkytiptoe and ihavenoface
+  
+  Contributers: https://github.com/milkytiptoe/Name-Sync/graphs/contributors
+  
+  This script contains code from 4chan X (https://github.com/MayhemYDG/4chan-x)
+  @license: https://github.com/MayhemYDG/4chan-x/blob/v3/LICENSE
+*/
 
 
 """
