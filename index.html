@@ -6,14 +6,6 @@
     <title>4chan X Name Sync</title>
     <link rel="stylesheet" type="text/css" href="stylewhite.css" id="stylesheet" />
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-	<script type="text/javascript">
-		function changeStyle() {
-			if (/style\.css/.test(document.getElementById("stylesheet").href))
-				document.getElementById("stylesheet").href = "stylewhite.css";
-			else
-				document.getElementById("stylesheet").href = "style.css";
-		}
-	</script>
 </head>
     <body>
     	<div id="wrapper">
@@ -31,32 +23,33 @@
 			            <li>Works on mobile devices with userscript support</li>
 			        </ul>
                 </div>
-                <div class="content-block requirements">
-                    <ul>
-                        <li>Google Chrome</li>
-                        <li>Mozilla Firefox with <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank">Greasemonkey (required)</a></li>
-                        <li>Opera Mobile or Opera</li>
-                    </ul>
-                </div>
 				<div class="content-block install">
-            <ul>
-                <li>You must install 4chan X linked under your desired branch before installing Name Sync underneath it. Beta is not compatible with Stable.</li>
-                <li><br />Stable:</li>
-                <li><a href="http://mayhemydg.github.com/4chan-x/" target="_blank">Install 4chan X v2 (required)</a></li>
-                <li><a href="https://github.com/milkytiptoe/Name-Sync/raw/v2/NameSync.user.js">Install /b/ Name Sync</a></li>
-                <li><br />Beta:</li>
-                <li><span style="color: red;">Disable previous versions of 4chan X and Name Sync before upgrading</span></li>
-                <li><a href="https://github.com/MayhemYDG/4chan-x/wiki/4chan-X-LATEST" target="_blank">Install 4chan X v3 LATEST (required)</a></li>
-                <li><a href="https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js">Install 4chan X Name Sync</a></li>
-            </ul>
+            <p>4chan X v3 is required. You can find information and installation instructions <a href="https://4chan-x.just-believe.in/" target="_blank">here</a>.</p>
+            <p id="chrome">Chrome</p>
+            <p>
+                <a href="https://chrome.google.com/webstore/detail/4chan-x/cellaaeoekimmemgdheibaibbaoeefbl" target="_blank">Install 4chan X</a><br />
+                <a href="https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js">Install 4chan X Name Sync</a>
+            </p>
+            <p id="firefox">Firefox</p>
+            <p>
+                <a href="https://4chan-x.just-believe.in/builds/4chan-X.user.js" target="_blank">Install 4chan X</a><br />
+                <a href="https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js">Install 4chan X Name Sync</a>
+            </p>
+            <p id="opera">Opera</p>
+            <p>
+                <a href="https://4chan-x.just-believe.in/builds/4chan-X.js" target="_blank">Install 4chan X</a><br />
+                <a href="https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js">Install 4chan X Name Sync</a>
+            </p>
+            <p>Old 4chan X users can install the old, unsupported <a href="https://github.com/milkytiptoe/Name-Sync/raw/v2/NameSync.user.js">/b/ Name Sync</a></p>
         </div>
 				<div class="content-block support">
 				    <ul>
 						<li>Try the following if you are having issues:<br /><br /></li>
 				        <li>
 							<ul>
-								<li>Update Name Sync</li>
-								<li>Update 4chan X</li>
+                <li>Verify you are running 4chan X v3 and 4chan X Name Sync v4</li>
+                <li>Update 4chan X</li>
+								<li>Update 4chan X Name Sync</li>
 								<li>Update your browser <strong>manually</strong></li>
 								<li>Allow the 'www.milkyis.me' domain in any privacy and proxy add-on settings</li>
 							</ul>
@@ -81,7 +74,7 @@
 				    </ul>
 				</div>
             </div>
-            <div id="footer"><a href="javascript:;" onclick="javascript:changeStyle();">Swap themes</a> | Developed by milkytiptoe and ihavenoface</div>
+            <div id="footer">Developed by milkytiptoe and ihavenoface</div>
         </div>
     </body>
 </html>

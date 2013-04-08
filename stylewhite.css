@@ -59,6 +59,20 @@ h2 {
 .donate {
 	background: url(donateblack.png) left top no-repeat;
 }
+#firefox, #chrome, #opera {
+  background-repeat: no-repeat;
+  background-size: 19px;
+  padding-left: 22px;
+}
+#firefox {
+  background-image: url(firefox.png);
+}
+#chrome {
+  background-image: url(chrome.png);
+}
+#opera {
+  background-image: url(opera.png);
+}
 ul {
 	margin-left: 12px;
 	list-style: none;
@@ -69,4 +83,7 @@ li ul {
 }
 li img {
   vertical-align: middle;
+}
+p {
+  margin: 0 0 12px 12px;
 }
