@@ -9,8 +9,8 @@
 // @include        *://boards.4chan.org/b/*
 // @include        *://boards.4chan.org/q/*
 // @include        *://boards.4chan.org/soc/*
-// @updateURL      https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
-// @downloadURL    https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js
+// @updateURL      https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js
+// @downloadURL    https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js
 // @icon           http://www.milkyis.me/namesync/logo.png
 // ==/UserScript==
 
