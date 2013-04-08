@@ -4,7 +4,7 @@ fs     = require 'fs'
 
 VERSION = '4.0.2'
 
-HEADER  = """
+HEADERUS = """
 // ==UserScript==
 // @name           4chan X Name Sync
 // @version        #{VERSION}
@@ -21,6 +21,10 @@ HEADER  = """
 // @icon           http://www.milkyis.me/namesync/logo.png
 // ==/UserScript==
 
+
+"""
+
+HEADERJS = """
 /*
   4chan X Name Sync v#{VERSION}  
   http://milkytiptoe.github.io/Name-Sync/
@@ -36,16 +40,20 @@ HEADER  = """
 
 """
 
+
 CAKEFILE  = 'Cakefile'
 INFILE    = 'NameSync.coffee'
-OUTFILE   = 'NameSync.user.js'
 
 task 'build', ->
-  exec 'coffee --print NameSync.coffee', {maxBuffer: 1024 * 1024}, (err, stdout, stderr) ->
+  exec 'coffee --print ' + INFILE, {maxBuffer: 1024 * 1024}, (err, stdout, stderr) ->
     throw err if err
-    fs.writeFile OUTFILE, HEADER + stdout, (err) ->
+    fs.writeFile 'builds/firefox/NameSync.user.js', HEADERUS + HEADERJS + stdout, (err) ->
       throw err if err
-
+    fs.writeFile 'builds/opera/NameSync.js', HEADERUS + HEADERJS + stdout, (err) ->
+      throw err if err
+    fs.writeFile 'builds/chrome/NameSync.js', HEADERJS + stdout, (err) ->
+      throw err if err
+      
 task 'dev', ->
   invoke 'build'
   fs.watchFile INFILE, interval: 250, (curr, prev) ->
