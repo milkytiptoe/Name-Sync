@@ -1,3 +1,6 @@
+4.0.2
+- Changed default sync delay to 250 ms
+
 4.0.0
 - Renamed sync posters will load their changed names on refresh
 - Added 'Do Not Track' setting to request archives to not record your posts

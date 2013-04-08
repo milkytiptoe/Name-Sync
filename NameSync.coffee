@@ -4,7 +4,7 @@ Set = {}
 d = document
 g =
   NAMESPACE: "NameSync."
-  VERSION:   "4.0.0"
+  VERSION:   "4.0.2"
   threads:   []
   board:     null
 
@@ -185,7 +185,7 @@ Names =
     return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]
       clearTimeout Sync.delay
-      Sync.delay = setTimeout Sync.sync, Settings.get('Delay') or 0
+      Sync.delay = setTimeout Sync.sync, Settings.get('Delay') or 250
   load: ->
     stored = sessionStorage["#{g.board}-4-names"]
     @nameByID = if stored then JSON.parse(stored) else {}
@@ -283,7 +283,7 @@ Settings =
         <legend>Advanced</legend>
         <input id=syncUpdate type=button value='Check for update'>
         <input id=syncClear type=button value='Clear sync history'>
-        <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=0> ms</div>
+        <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>
       </fieldset>
       <fieldset>
         <legend>About</legend>

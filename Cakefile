@@ -2,7 +2,7 @@
 {exec} = require 'child_process'
 fs     = require 'fs'
 
-VERSION = '4.0.0'
+VERSION = '4.0.2'
 
 HEADER  = """
 // ==UserScript==
