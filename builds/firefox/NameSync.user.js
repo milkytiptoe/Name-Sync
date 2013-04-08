@@ -574,7 +574,7 @@
           }
           Settings.set('lastcheck', Date.now());
           if (this.response !== g.VERSION.replace(/\./g, '') && confirm("A new update for 4chan Name Sync is available, install now?")) {
-            return window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js';
+            return window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js';
           }
         }
       });

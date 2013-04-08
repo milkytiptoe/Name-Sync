@@ -406,6 +406,6 @@ Updater =
         return if @status isnt 200
         Settings.set 'lastcheck', Date.now()
         if @response isnt g.VERSION.replace(/\./g, '') and confirm "A new update for 4chan Name Sync is available, install now?"
-          window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/NameSync.user.js'
+          window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js'
 
 $.on d, '4chanXInitFinished', Main.init
