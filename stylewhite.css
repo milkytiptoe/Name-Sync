@@ -66,13 +66,13 @@ h2 {
   padding-left: 22px;
 }
 #firefox {
-  background-image: url(firefox.png);
+  background-image: url(firefox.svg);
 }
 #chrome {
-  background-image: url(chrome.png);
+  background-image: url(chrome.svg);
 }
 #opera {
-  background-image: url(opera.png);
+  background-image: url(opera.svg);
 }
 ul {
 	margin-left: 12px;
