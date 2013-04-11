@@ -17,6 +17,6 @@
   "minimum_chrome_version": "26",
   "permissions": [
     "storage",
-    ""<%= meta.page %>*"
+    "<%= meta.page %>*"
   ]
 }
