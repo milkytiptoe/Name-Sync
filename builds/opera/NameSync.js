@@ -64,6 +64,7 @@
   };
 
   $.extend($, {
+    engine: /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase(),
     el: function(tag, properties) {
       var el;
 
@@ -181,7 +182,7 @@
       if (Set["Sync on /" + g.board + "/"]) {
         Sync.init();
       }
-      if (Set['Automatic Updates']) {
+      if (Set['Automatic Updates'] && $.engine !== 'webkit') {
         return Updater.init();
       }
     }
@@ -440,7 +441,11 @@
         });
       }
       $.on($('#syncUpdate', section), 'click', Updater.update);
-      return $.on($('#syncClear', section), 'click', Sync.clear);
+      $.on($('#syncClear', section), 'click', Sync.clear);
+      if ($.engine === 'webkit') {
+        $.rm($('#syncUpdate', section));
+        return $.rm($('input[name="Automatic Updates"]', section).parentNode.parentNode);
+      }
     },
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);
@@ -569,13 +574,27 @@
     update: function() {
       return $.ajax('u3', 'GET', '', {
         onloadend: function() {
-          if (this.status !== 200) {
-            return;
-          }
+          var link;
+
           Settings.set('lastcheck', Date.now());
-          if (this.response !== g.VERSION.replace(/\./g, '') && confirm("A new update for 4chan Name Sync is available, install now?")) {
-            return window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js';
+          if (this.status !== 200 || this.response === g.VERSION.replace(/\./g, '')) {
+            return $('#syncUpdate').value = 'None available';
           }
+          if ($.engine === 'gecko') {
+            link = '<a href=https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js target=_blank>Install now</a>.';
+          } else {
+            link = '<a href=http://www.milkyis.me target=_blank>Get it here</a>.';
+          }
+          $.event('CreateNotification', {
+            detail: {
+              type: 'info',
+              content: $.el('span', {
+                innerHTML: "An update for 4chan X Name Sync is available. " + link
+              }),
+              lifetime: 10
+            }
+          });
+          return $('#fourchanx-settings .close').click();
         }
       });
     }

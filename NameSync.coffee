@@ -20,6 +20,7 @@ $.extend = (object, properties) ->
   return
 
 $.extend $,
+  engine: /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase()
   el: (tag, properties) ->
     el = d.createElement tag
     $.extend el, properties if properties
@@ -115,7 +116,7 @@ Main =
     Menus.init()
     if Set["Sync on /#{g.board}/"]
       Sync.init()
-    if Set['Automatic Updates']
+    if Set['Automatic Updates'] and $.engine isnt 'webkit'
       Updater.init()
 
 Menus =
@@ -315,6 +316,10 @@ Settings =
     
     $.on $('#syncUpdate', section), 'click', Updater.update
     $.on $('#syncClear',  section), 'click', Sync.clear
+    
+    if $.engine is 'webkit'
+      $.rm $ '#syncUpdate', section
+      $.rm $('input[name="Automatic Updates"]', section).parentNode.parentNode
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->
@@ -403,9 +408,19 @@ Updater =
       'GET'
       ''
       onloadend: ->
-        return if @status isnt 200
         Settings.set 'lastcheck', Date.now()
-        if @response isnt g.VERSION.replace(/\./g, '') and confirm "A new update for 4chan Name Sync is available, install now?"
-          window.location = 'https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js'
+        if @status isnt 200 or @response is g.VERSION.replace(/\./g, '')
+          return $('#syncUpdate').value = 'None available'
+        if $.engine is 'gecko'
+          link = '<a href=https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js target=_blank>Install now</a>.'
+        else
+          link = '<a href=http://www.milkyis.me target=_blank>Get it here</a>.'
+        $.event 'CreateNotification',
+          detail:
+            type: 'info'
+            content: $.el 'span',
+              innerHTML: "An update for 4chan X Name Sync is available. #{link}"
+            lifetime: 10
+        $('#fourchanx-settings .close').click()
 
 $.on d, '4chanXInitFinished', Main.init
