@@ -20,7 +20,6 @@ $.extend = (object, properties) ->
   return
 
 $.extend $,
-  engine: /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase()
   el: (tag, properties) ->
     el = d.createElement tag
     $.extend el, properties if properties
@@ -116,8 +115,10 @@ Main =
     Menus.init()
     if Set["Sync on /#{g.board}/"]
       Sync.init()
-    if Set['Automatic Updates'] and $.engine isnt 'webkit'
+    <% if (type !== 'crx') { %>
+    if Set['Automatic Updates']
       Updater.init()
+    <% } %>
 
 Menus =
   uid: null
@@ -258,7 +259,7 @@ Settings =
     'Sync on /q/':       ['Enable sync on /q/', true]
     'Sync on /soc/':     ['Enable sync on /soc/', true]
     'Hide IDs':          ['Hide Unique IDs next to names', false]
-    'Automatic Updates': ['Check for updates automatically', true]
+    <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically', true]<% } %>
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
     'Hide Sage':         ['Hide your fields when sage is in the email fied', false]
     'Do Not Track':      ['Send a request to third party archives to not store your history', false]
@@ -282,7 +283,7 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Advanced</legend>
-        <input id=syncUpdate type=button value='Check for update'>
+        <% if (type !== 'crx') { %><input id=syncUpdate type=button value='Check for update'><% } %>
         <input id=syncClear type=button value='Clear sync history'>
         <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>
       </fieldset>
@@ -314,12 +315,8 @@ Settings =
       $.on text, 'input', ->
         Settings.set @name, @value
     
-    $.on $('#syncUpdate', section), 'click', Updater.update
+    <% if (type !== 'crx') { %>$.on $('#syncUpdate', section), 'click', Updater.update<% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
-    
-    if $.engine is 'webkit'
-      $.rm $ '#syncUpdate', section
-      $.rm $('input[name="Automatic Updates"]', section).parentNode.parentNode
   get: (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
   set: (name, value) ->
@@ -398,6 +395,7 @@ Sync =
         return @onerror() if @status isnt 200
         alert @response
 
+<% if (type !== 'crx') { %>
 Updater =
   init: ->
     last = Settings.get 'lastcheck'
@@ -411,16 +409,13 @@ Updater =
         Settings.set 'lastcheck', Date.now()
         if @status isnt 200 or @response is g.VERSION.replace(/\./g, '')
           return $('#syncUpdate').value = 'None available'
-        if $.engine is 'gecko'
-          link = '<a href=https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js target=_blank>Install now</a>.'
-        else
-          link = '<a href=http://www.milkyis.me target=_blank>Get it here</a>.'
         $.event 'CreateNotification',
           detail:
             type: 'info'
             content: $.el 'span',
-              innerHTML: "An update for 4chan X Name Sync is available. #{link}"
+              innerHTML: "An update for 4chan X Name Sync is available.<% if (type === 'userscript') { %> <a href=<%= meta.builds %>firefox/NameSync.user.js target=_blank>Install now</a>. <% } else { %> <a href=<%= meta.page %> target=_blank>Get it here</a>.<% } %>"
             lifetime: 10
         $('#fourchanx-settings .close').click()
+<% } %>
 
 $.on d, '4chanXInitFinished', Main.init

@@ -64,7 +64,6 @@
   };
 
   $.extend($, {
-    engine: /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase(),
     el: function(tag, properties) {
       var el;
 
@@ -182,7 +181,7 @@
       if (Set["Sync on /" + g.board + "/"]) {
         Sync.init();
       }
-      if (Set['Automatic Updates'] && $.engine !== 'webkit') {
+      if (Set['Automatic Updates']) {
         return Updater.init();
       }
     }
@@ -441,11 +440,7 @@
         });
       }
       $.on($('#syncUpdate', section), 'click', Updater.update);
-      $.on($('#syncClear', section), 'click', Sync.clear);
-      if ($.engine === 'webkit') {
-        $.rm($('#syncUpdate', section));
-        return $.rm($('input[name="Automatic Updates"]', section).parentNode.parentNode);
-      }
+      return $.on($('#syncClear', section), 'click', Sync.clear);
     },
     get: function(name) {
       return localStorage.getItem("" + g.NAMESPACE + name);
@@ -574,22 +569,15 @@
     update: function() {
       return $.ajax('u3', 'GET', '', {
         onloadend: function() {
-          var link;
-
           Settings.set('lastcheck', Date.now());
           if (this.status !== 200 || this.response === g.VERSION.replace(/\./g, '')) {
             return $('#syncUpdate').value = 'None available';
-          }
-          if ($.engine === 'gecko') {
-            link = '<a href=https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js target=_blank>Install now</a>.';
-          } else {
-            link = '<a href=http://www.milkyis.me target=_blank>Get it here</a>.';
           }
           $.event('CreateNotification', {
             detail: {
               type: 'info',
               content: $.el('span', {
-                innerHTML: "An update for 4chan X Name Sync is available. " + link
+                innerHTML: "An update for 4chan X Name Sync is available. <a href=http://www.milkyis.me/ target=_blank>Get it here</a>."
               }),
               lifetime: 10
             }
