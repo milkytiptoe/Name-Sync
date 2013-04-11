@@ -1,3 +1,11 @@
+4.0.3
+- Fixed update install link for Opera users
+- Fixed GreaseMonkey update checking
+- Update alerts are now displayed with 4chan X notifications
+- 'Check for update' button in settings will change value to 'None available' if no updates are available
+
+This update does not affect Chrome users.
+
 4.0.2
 - Changed default sync delay to 250 ms
 
