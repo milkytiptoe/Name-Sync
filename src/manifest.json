@@ -1,0 +1,22 @@
+{
+  "name": "<%= meta.name %>",
+  "version": "<%= version %>",
+  "manifest_version": 2,
+  "description": "<%= description %>",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [{
+    "js": ["NameSync.js"],
+    "matches": <%= JSON.stringify(meta.requires) %>,
+    "run_at": "document_start"
+  }],
+  "homepage_url": "<%= meta.page %>",
+  "minimum_chrome_version": "26",
+  "permissions": [
+    "storage",
+    ""<%= meta.page %>*"
+  ]
+}

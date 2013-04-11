@@ -4,7 +4,7 @@ Set = {}
 d = document
 g =
   NAMESPACE: "NameSync."
-  VERSION:   "4.0.2"
+  VERSION:   '<%= version %>'
   threads:   []
   board:     null
 

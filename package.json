@@ -1,0 +1,33 @@
+{
+  "name": "NameSync",
+  "version": "4.0.2",
+  "description": "Enables names on 4chan's forced anon boards. Requires 4chan X v3.",
+  "meta": {
+    "name": "4chan X Name Sync",
+    "page": "http://www.milkyis.me/",
+    "builds": "https://github.com/milkytiptoe/Name-Sync/raw/master/builds/",
+    "includes": [
+      "*://boards.4chan.org/b/*",
+      "*://boards.4chan.org/q/*",
+      "*://boards.4chan.org/soc/*"
+    ],
+    "authors": [
+      "milkytiptoe",
+      "ihavenoface"
+    ]
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-bump": "~0.0.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-coffee": "~0.6.6",
+    "grunt-contrib-compress": "~0.4.9",
+    "grunt-contrib-concat": "~0.2.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-exec": "~0.4.0"
+  },
+  "engines": {
+    "node": ">=0.8"
+  }
+}
