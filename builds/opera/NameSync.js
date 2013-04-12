@@ -505,19 +505,7 @@
       cName = cName.trim();
       cEmail = cEmail.trim();
       cSubject = cSubject.trim();
-      if (Set['Hide Sage'] && /sage/i.test(cEmail)) {
-        return;
-      }
-      if (cName.length > 150) {
-        Sync.fieldWarning("name");
-      }
-      if (cSubject.length > 100) {
-        Sync.fieldWarning("subject");
-      }
-      if (cEmail.length > 40) {
-        Sync.fieldWarning("email");
-      }
-      if (!(cName === '' && cEmail === '' && cSubject === '')) {
+      if (!(cName === '' && cEmail === '' && cSubject === '' || (Set['Hide Sage'] && /sage/i.test(cEmail)))) {
         return Sync.send(cName, cEmail, cSubject, postID, threadID);
       }
     },
@@ -550,15 +538,6 @@
           }
         });
       }
-    },
-    fieldWarning: function(field) {
-      return $.event('CreateNotification', {
-        detail: {
-          type: 'warning',
-          content: "Your " + field + " is too long and will be trimmed.",
-          lifetime: 3
-        }
-      });
     },
     clear: function() {
       $('#syncClear').disabled = true;

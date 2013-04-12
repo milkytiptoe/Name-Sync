@@ -361,11 +361,7 @@ Sync =
     cName    = cName.trim()
     cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
-    return if Set['Hide Sage'] and /sage/i.test cEmail
-    Sync.fieldWarning "name" if cName.length > 150
-    Sync.fieldWarning "subject" if cSubject.length > 100
-    Sync.fieldWarning "email" if cEmail.length > 40
-    unless cName is '' and cEmail is '' and cSubject is ''
+    unless cName is '' and cEmail is '' and cSubject is '' or (Set['Hide Sage'] and /sage/i.test cEmail)
       Sync.send cName, cEmail, cSubject, postID, threadID
   send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
     return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
@@ -388,12 +384,6 @@ Sync =
           if isLateOpSend
             delete sessionStorage["#{g.board}-namesync-tosend"]
             Sync.sync()
-  fieldWarning: (field) ->
-    $.event 'CreateNotification',
-      detail:
-        type: 'warning'
-        content: "Your #{field} is too long and will be trimmed."
-        lifetime: 3
   clear: ->
     $('#syncClear').disabled = true
     $.ajax 'rm',
