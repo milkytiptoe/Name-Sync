@@ -1,3 +1,6 @@
+4.0.4
+- Added field length warning notifications if your fields are too long
+
 4.0.3
 - Fixed update install link for Opera users
 - Fixed GreaseMonkey update checking

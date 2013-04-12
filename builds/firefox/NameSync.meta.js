@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan X Name Sync
-// @version      4.0.3
+// @version      4.0.4
 // @namespace    milky
 // @description  Enables names on 4chan's forced anon boards. Requires 4chan X v3.
 // @author       milkytiptoe
