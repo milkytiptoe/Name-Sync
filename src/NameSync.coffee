@@ -380,20 +380,30 @@ Sync =
         onerror: ->
           setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
         onloadend: ->
-          return @onerror() if @status isnt 200
+          return if @status isnt 200
           if isLateOpSend
             delete sessionStorage["#{g.board}-namesync-tosend"]
             Sync.sync()
   clear: ->
-    return if not confirm 'This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?'
     $.ajax 'rm',
       'POST'
       ''
       onerror: ->
-        alert 'Error removing history'
+        $.event 'CreateNotification',
+          detail:
+            type: 'error'
+            content: $.el 'span',
+              innerHTML: 'Error removing 4chan X Name Sync history'
+            lifetime: 5
       onloadend: ->
-        return @onerror() if @status isnt 200
-        alert @response
+        return if @status isnt 200
+        $.event 'CreateNotification',
+          detail:
+            type: 'success'
+            content: $.el 'span',
+              innerHTML: @response
+            lifetime: 5
+    $('#fourchanx-settings .close').click()
 
 <% if (type !== 'crx') { %>
 Updater =

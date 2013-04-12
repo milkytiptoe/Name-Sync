@@ -10,7 +10,7 @@
   },
   "content_scripts": [{
     "js": ["NameSync.js"],
-    "matches": <%= JSON.stringify(meta.requires) %>,
+    "matches": <%= JSON.stringify(meta.includes) %>,
     "run_at": "document_start"
   }],
   "homepage_url": "<%= meta.page %>",

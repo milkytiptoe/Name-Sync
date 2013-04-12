@@ -529,7 +529,7 @@
           },
           onloadend: function() {
             if (this.status !== 200) {
-              return this.onerror();
+              return;
             }
             if (isLateOpSend) {
               delete sessionStorage["" + g.board + "-namesync-tosend"];
@@ -540,20 +540,34 @@
       }
     },
     clear: function() {
-      if (!confirm('This will remove 4chan X Name Sync name, email and subject history stored online by you. Continue?')) {
-        return;
-      }
-      return $.ajax('rm', 'POST', '', {
+      $.ajax('rm', 'POST', '', {
         onerror: function() {
-          return alert('Error removing history');
+          return $.event('CreateNotification', {
+            detail: {
+              type: 'error',
+              content: $.el('span', {
+                innerHTML: 'Error removing 4chan X Name Sync history'
+              }),
+              lifetime: 5
+            }
+          });
         },
         onloadend: function() {
           if (this.status !== 200) {
-            return this.onerror();
+            return;
           }
-          return alert(this.response);
+          return $.event('CreateNotification', {
+            detail: {
+              type: 'success',
+              content: $.el('span', {
+                innerHTML: this.response
+              }),
+              lifetime: 5
+            }
+          });
         }
       });
+      return $('#fourchanx-settings .close').click();
     }
   };
 
