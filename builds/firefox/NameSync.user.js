@@ -505,7 +505,19 @@
       cName = cName.trim();
       cEmail = cEmail.trim();
       cSubject = cSubject.trim();
-      if (!(cName === '' && cEmail === '' && cSubject === '' || (Set['Hide Sage'] && /sage/i.test(cEmail)))) {
+      if (Set['Hide Sage'] && /sage/i.test(cEmail)) {
+        return;
+      }
+      if (cName.length > 150) {
+        Sync.fieldWarning("name");
+      }
+      if (cSubject.length > 100) {
+        Sync.fieldWarning("subject");
+      }
+      if (cEmail.length > 40) {
+        Sync.fieldWarning("email");
+      }
+      if (!(cName === '' && cEmail === '' && cSubject === '')) {
         return Sync.send(cName, cEmail, cSubject, postID, threadID);
       }
     },
@@ -539,35 +551,28 @@
         });
       }
     },
+    fieldWarning: function(field) {
+      return $.event('CreateNotification', {
+        detail: {
+          type: 'warning',
+          content: "Your " + field + " is too long and will be trimmed.",
+          lifetime: 3
+        }
+      });
+    },
     clear: function() {
-      $.ajax('rm', 'POST', '', {
+      $('#syncClear').disabled = true;
+      return $.ajax('rm', 'POST', '', {
         onerror: function() {
-          return $.event('CreateNotification', {
-            detail: {
-              type: 'error',
-              content: $.el('span', {
-                innerHTML: 'Error removing 4chan X Name Sync history'
-              }),
-              lifetime: 5
-            }
-          });
+          return $('#syncClear').value = 'Error';
         },
         onloadend: function() {
           if (this.status !== 200) {
             return;
           }
-          return $.event('CreateNotification', {
-            detail: {
-              type: 'success',
-              content: $.el('span', {
-                innerHTML: this.response
-              }),
-              lifetime: 5
-            }
-          });
+          return $('#syncClear').value = 'Cleared';
         }
       });
-      return $('#fourchanx-settings .close').click();
     }
   };
 
@@ -581,6 +586,7 @@
       }
     },
     update: function() {
+      $('#syncUpdate').disabled = true;
       return $.ajax('u3', 'GET', '', {
         onloadend: function() {
           Settings.set('lastcheck', Date.now());

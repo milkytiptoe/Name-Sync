@@ -361,7 +361,11 @@ Sync =
     cName    = cName.trim()
     cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
-    unless cName is '' and cEmail is '' and cSubject is '' or (Set['Hide Sage'] and /sage/i.test cEmail)
+    return if Set['Hide Sage'] and /sage/i.test cEmail
+    Sync.fieldWarning "name" if cName.length > 150
+    Sync.fieldWarning "subject" if cSubject.length > 100
+    Sync.fieldWarning "email" if cEmail.length > 40
+    unless cName is '' and cEmail is '' and cSubject is ''
       Sync.send cName, cEmail, cSubject, postID, threadID
   send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
     return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
@@ -384,26 +388,22 @@ Sync =
           if isLateOpSend
             delete sessionStorage["#{g.board}-namesync-tosend"]
             Sync.sync()
+  fieldWarning: (field) ->
+    $.event 'CreateNotification',
+      detail:
+        type: 'warning'
+        content: "Your #{field} is too long and will be trimmed."
+        lifetime: 3
   clear: ->
+    $('#syncClear').disabled = true
     $.ajax 'rm',
       'POST'
       ''
       onerror: ->
-        $.event 'CreateNotification',
-          detail:
-            type: 'error'
-            content: $.el 'span',
-              innerHTML: 'Error removing 4chan X Name Sync history'
-            lifetime: 5
+        $('#syncClear').value = 'Error'
       onloadend: ->
         return if @status isnt 200
-        $.event 'CreateNotification',
-          detail:
-            type: 'success'
-            content: $.el 'span',
-              innerHTML: @response
-            lifetime: 5
-    $('#fourchanx-settings .close').click()
+        $('#syncClear').value = 'Cleared'
 
 <% if (type !== 'crx') { %>
 Updater =
@@ -412,6 +412,7 @@ Updater =
     if last is null or Date.now() > last + 86400000
       @update()
   update: ->
+    $('#syncUpdate').disabled = true
     $.ajax 'u3',
       'GET'
       ''
