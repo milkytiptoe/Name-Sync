@@ -213,7 +213,10 @@
         el: this.makeSubEntry('Reset', function() {
           Names.reset(Menus.uid);
           return $.event('CloseMenu');
-        })
+        }),
+        open: function() {
+          return Names.blockedIDs[Menus.uid] === true;
+        }
       });
       return $.event('AddMenuEntry', {
         detail: {

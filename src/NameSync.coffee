@@ -138,6 +138,8 @@ Menus =
       el: @makeSubEntry 'Reset', ->
         Names.reset Menus.uid
         $.event 'CloseMenu'
+      open: ->
+        Names.blockedIDs[Menus.uid] is true
     $.event 'AddMenuEntry',
       detail:
         type: 'post'
