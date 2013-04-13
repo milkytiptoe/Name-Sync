@@ -129,6 +129,7 @@ Menus =
         el: @makeSubEntry '4chan X Name Sync Settings', ->
           $.event 'OpenSettings',
           detail: 'Name Sync'
+    subEntries = []
     subEntries.push {
       el: @makeSubEntry 'Change', ->
         Names.change Menus.uid

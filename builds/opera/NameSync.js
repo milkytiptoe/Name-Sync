@@ -190,6 +190,8 @@
   Menus = {
     uid: null,
     init: function() {
+      var subEntries;
+
       $.event('AddMenuEntry', {
         detail: {
           type: 'header',
@@ -200,6 +202,7 @@
           })
         }
       });
+      subEntries = [];
       subEntries.push({
         el: this.makeSubEntry('Change', function() {
           Names.change(Menus.uid);
