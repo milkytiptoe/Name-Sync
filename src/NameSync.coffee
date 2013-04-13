@@ -130,16 +130,14 @@ Menus =
           $.event 'OpenSettings',
           detail: 'Name Sync'
     subEntries = []
-    subEntries.push {
+    subEntries.push
       el: @makeSubEntry 'Change', ->
         Names.change Menus.uid
         $.event 'CloseMenu'
-    }
-    subEntries.push {
+    subEntries.push
       el: @makeSubEntry 'Reset', ->
         Names.reset Menus.uid
         $.event 'CloseMenu'
-    }
     $.event 'AddMenuEntry',
       detail:
         type: 'post'
