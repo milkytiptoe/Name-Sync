@@ -123,34 +123,38 @@ Main =
 Menus =
   uid: null
   init: ->
-    @add '4chan X Name Sync Settings',
-      'header', ->
-        $.event 'OpenSettings',
+    $.event 'AddMenuEntry',
+      detail:
+        type: 'header'
+        el: @makeSubEntry '4chan X Name Sync Settings', ->
+          $.event 'OpenSettings',
           detail: 'Name Sync'
-    @add 'Change name',
-      'post', ->
+    subEntries.push {
+      el: @makeSubEntry 'Change', ->
         Names.change Menus.uid
         $.event 'CloseMenu'
-      (post) ->
-        Menus.uid = post.info.uniqueID
-        !/Heaven/.test Menus.uid
-    @add 'Reset name',
-      'post', ->
+    }
+    subEntries.push {
+      el: @makeSubEntry 'Reset', ->
         Names.reset Menus.uid
         $.event 'CloseMenu'
-      (post) ->
-        Menus.uid = post.info.uniqueID
-        !/Heaven/.test Menus.uid
-  add: (text, type, click, open) ->
-      a = $.el 'a',
-        href: 'javascript:;'
-        textContent: text
-      $.on a, 'click', click
-      $.event 'AddMenuEntry',
-        detail:
-          type: type
-          el:   a
-          open: open
+    }
+    $.event 'AddMenuEntry',
+      detail:
+        type: 'post'
+        el: $.el 'div',
+          href: 'javascript:;'
+          textContent: 'Name'
+        open: (post) ->
+          Menus.uid = post.info.uniqueID
+          !/Heaven/.test Menus.uid
+        subEntries: subEntries
+  makeSubEntry: (text, click) ->
+    a = $.el 'a',
+      href: 'javascript:;'
+      textContent: text
+    $.on a, 'click', click
+    a
 
 Names =
   nameByID:   {}

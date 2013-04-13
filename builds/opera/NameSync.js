@@ -190,27 +190,44 @@
   Menus = {
     uid: null,
     init: function() {
-      this.add('4chan X Name Sync Settings', 'header', function() {
-        return $.event('OpenSettings', {
-          detail: 'Name Sync'
-        });
+      $.event('AddMenuEntry', {
+        detail: {
+          type: 'header',
+          el: this.makeSubEntry('4chan X Name Sync Settings', function() {
+            return $.event('OpenSettings', {
+              detail: 'Name Sync'
+            });
+          })
+        }
       });
-      this.add('Change name', 'post', function() {
-        Names.change(Menus.uid);
-        return $.event('CloseMenu');
-      }, function(post) {
-        Menus.uid = post.info.uniqueID;
-        return !/Heaven/.test(Menus.uid);
+      subEntries.push({
+        el: this.makeSubEntry('Change', function() {
+          Names.change(Menus.uid);
+          return $.event('CloseMenu');
+        })
       });
-      return this.add('Reset name', 'post', function() {
-        Names.reset(Menus.uid);
-        return $.event('CloseMenu');
-      }, function(post) {
-        Menus.uid = post.info.uniqueID;
-        return !/Heaven/.test(Menus.uid);
+      subEntries.push({
+        el: this.makeSubEntry('Reset', function() {
+          Names.reset(Menus.uid);
+          return $.event('CloseMenu');
+        })
+      });
+      return $.event('AddMenuEntry', {
+        detail: {
+          type: 'post',
+          el: $.el('div', {
+            href: 'javascript:;',
+            textContent: 'Name'
+          }),
+          open: function(post) {
+            Menus.uid = post.info.uniqueID;
+            return !/Heaven/.test(Menus.uid);
+          },
+          subEntries: subEntries
+        }
       });
     },
-    add: function(text, type, click, open) {
+    makeSubEntry: function(text, click) {
       var a;
 
       a = $.el('a', {
@@ -218,13 +235,7 @@
         textContent: text
       });
       $.on(a, 'click', click);
-      return $.event('AddMenuEntry', {
-        detail: {
-          type: type,
-          el: a,
-          open: open
-        }
-      });
+      return a;
     }
   };
 
