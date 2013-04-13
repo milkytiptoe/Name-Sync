@@ -1,3 +1,7 @@
+4.0.6
+- Reset name menu item only shows on changed names
+- Moved Reset and Change name menu items as submenu items under Name
+
 4.0.5
 - Minor changes to update and clear sync history button feedback
 
