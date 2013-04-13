@@ -199,7 +199,8 @@
             return $.event('OpenSettings', {
               detail: 'Name Sync'
             });
-          })
+          }),
+          order: 112
         }
       });
       subEntries = [];
