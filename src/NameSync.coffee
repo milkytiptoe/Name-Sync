@@ -87,8 +87,10 @@ CSS =
     .section-name-sync label {
       text-decoration: underline;
     }
-    .section-name-sync {
-      background: url(http://www.milkyis.me/namesync/bg.png) no-repeat bottom right;
+    #bgimage {
+      bottom: 0px;
+      right: 0px;
+      position: absolute;
     }
     """
     if Set['Hide IDs']
@@ -300,6 +302,7 @@ Settings =
         <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>
         <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>
       </fieldset>
+      <img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />
     """
     field = $.el 'fieldset'
     $.add field, $.el 'legend',
@@ -320,7 +323,7 @@ Settings =
       text.value = Settings.get(text.name) or ''
       $.on text, 'input', ->
         Settings.set @name, @value
-    
+
     <% if (type !== 'crx') { %>$.on $('#syncUpdate', section), 'click', Updater.update<% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
   get: (name) ->
