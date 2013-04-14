@@ -304,6 +304,8 @@ Settings =
       </fieldset>
       <img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />
     """
+    bgimage = $ '#bgimage', section # Can't use $.id here.
+    bgimage.ondragstart = -> false
     field = $.el 'fieldset'
     $.add field, $.el 'legend',
       textContent: 'Main'
