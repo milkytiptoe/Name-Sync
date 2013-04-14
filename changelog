@@ -1,3 +1,6 @@
+4.0.7
+- Fixed error preventing persona fields from sending
+
 4.0.6
 - Reset name menu item only shows on changed names
 - Moved Reset and Change name menu items as submenu items under Name
