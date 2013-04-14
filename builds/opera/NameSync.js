@@ -511,9 +511,9 @@
       postID = e.detail.postID;
       threadID = e.detail.threadID;
       if (Set['Persona Fields']) {
-        cName = Settings.get('Name');
-        cEmail = Settings.get('Email');
-        cSubject = Settings.get('Subject');
+        cName = Settings.get('Name') || '';
+        cEmail = Settings.get('Email') || '';
+        cSubject = Settings.get('Subject') || '';
       } else {
         qr = $.id('qr');
         cName = $('input[name=name]', qr).value;

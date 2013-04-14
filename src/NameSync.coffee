@@ -356,9 +356,9 @@ Sync =
     postID   = e.detail.postID
     threadID = e.detail.threadID
     if Set['Persona Fields']
-      cName    = Settings.get 'Name'
-      cEmail   = Settings.get 'Email'
-      cSubject = Settings.get 'Subject'
+      cName    = Settings.get('Name') or ''
+      cEmail   = Settings.get('Email') or ''
+      cSubject = Settings.get('Subject') or ''
     else
       qr       = $.id 'qr'
       cName    = $('input[name=name]',  qr).value
