@@ -105,6 +105,7 @@ CSS =
 
 Main =
   init: ->
+    $.off d, '4chanXInitFinished', Main.init
     path = location.pathname.slice(1).split '/'
     return if path[1] is 'catalog'
     g.board = path[0]
@@ -304,8 +305,9 @@ Settings =
       </fieldset>
       <img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />
     """
-    bgimage = $ '#bgimage', section # Can't use $.id here.
+    bgimage = $ '#bgimage', section
     bgimage.ondragstart = -> false
+    bgimage.oncontextmenu = -> false
     field = $.el 'fieldset'
     $.add field, $.el 'legend',
       textContent: 'Main'

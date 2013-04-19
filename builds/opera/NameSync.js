@@ -2,7 +2,7 @@
 // @name         4chan X Name Sync
 // @version      4.0.7
 // @namespace    milky
-// @description  Enables names on 4chan's forced anon boards. Requires 4chan X v3.
+// @description  Enables names on 4chan's forced anon boards. Requires 4chan X.
 // @author       milkytiptoe
 // @author       ihavenoface
 // @include      *://boards.4chan.org/b/*
@@ -164,6 +164,7 @@
     init: function() {
       var path, thread, _i, _len, _ref;
 
+      $.off(d, '4chanXInitFinished', Main.init);
       path = location.pathname.slice(1).split('/');
       if (path[1] === 'catalog') {
         return;
@@ -429,6 +430,9 @@
       section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
+        return false;
+      };
+      bgimage.oncontextmenu = function() {
         return false;
       };
       field = $.el('fieldset');

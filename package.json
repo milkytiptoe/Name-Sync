@@ -1,7 +1,7 @@
 {
   "name": "NameSync",
   "version": "4.0.7",
-  "description": "Enables names on 4chan's forced anon boards. Requires 4chan X v3.",
+  "description": "Enables names on 4chan's forced anon boards. Requires 4chan X.",
   "meta": {
     "name": "4chan X Name Sync",
     "page": "http://www.milkyis.me/",

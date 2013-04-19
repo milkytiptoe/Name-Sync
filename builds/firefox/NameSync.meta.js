@@ -2,7 +2,7 @@
 // @name         4chan X Name Sync
 // @version      4.0.7
 // @namespace    milky
-// @description  Enables names on 4chan's forced anon boards. Requires 4chan X v3.
+// @description  Enables names on 4chan's forced anon boards. Requires 4chan X.
 // @author       milkytiptoe
 // @author       ihavenoface
 // @include      *://boards.4chan.org/b/*
