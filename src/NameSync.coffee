@@ -271,7 +271,7 @@ Settings =
     <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically', true]<% } %>
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
     'Hide Sage':         ['Hide your fields when sage is in the email fied', false]
-    'Do Not Track':      ['Send a request to third party archives to not store your history', false]
+    'Do Not Track':      ['Opt out of name tracking by third party websites', false]
   init: ->
     for setting, val of Settings.main
       stored = Settings.get setting
