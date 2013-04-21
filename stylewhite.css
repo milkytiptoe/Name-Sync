@@ -88,3 +88,6 @@ li img {
 p {
   margin: 0 0 12px 12px;
 }
+form {
+  margin-left: 12px;
+}
