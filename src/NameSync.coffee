@@ -303,12 +303,12 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Filter</legend>
-          <div>Use a regular expression to match criteria</div>
-          <br />
-          <input type=text name=FilterNames placeholder='Names'>
-          <input type=text name=FilterTripcodes placeholder='Tripcodes'>
-          <input type=text name=FilterEmails placeholder='Emails'>
-          <input type=text name=FilterSubjects placeholder='Subjects'>
+        <div>Use a regular expression to match criteria</div>
+        <br />
+        <input type=text name=FilterNames placeholder='Names'>
+        <input type=text name=FilterTripcodes placeholder='Tripcodes'>
+        <input type=text name=FilterEmails placeholder='Emails'>
+        <input type=text name=FilterSubjects placeholder='Subjects'>
       </fieldset>
       <fieldset>
         <legend>Advanced</legend>
