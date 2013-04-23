@@ -366,6 +366,12 @@ Settings =
     for text in $$ 'input[type=text], input[type=number]', section
       text.value = Settings.get(text.name) or ''
       $.on text, 'input', ->
+        if /^Filter/.test @name
+          try
+            regexp = RegExp @value
+          catch err
+            alert err.message
+            return @value = Settings.get @name
         Settings.set @name, @value
 
     <% if (type !== 'crx') { %>$.on $('#syncUpdate', section), 'click', Updater.update<% } %>

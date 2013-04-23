@@ -498,6 +498,17 @@
         text = _ref2[_j];
         text.value = Settings.get(text.name) || '';
         $.on(text, 'input', function() {
+          var err, regexp;
+
+          if (/^Filter/.test(this.name)) {
+            try {
+              regexp = RegExp(this.value);
+            } catch (_error) {
+              err = _error;
+              alert(err.message);
+              return this.value = Settings.get(this.name);
+            }
+          }
           return Settings.set(this.name, this.value);
         });
       }
