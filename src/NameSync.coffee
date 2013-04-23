@@ -10,7 +10,6 @@ g =
 
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
-
 $ = (selector, root = d.body) ->
   root.querySelector selector
 
@@ -103,6 +102,17 @@ CSS =
       textContent: css
     $.add d.body, el
 
+Filter =
+  names:     null
+  tripcodes: null
+  emails:    null
+  subjects:  null
+  init: ->
+    @names =     Settings.get "FilterNames"
+    @tripcodes = Settings.get "FilterTripcodes"
+    @names =     Settings.get "FilterEmails"
+    @names =     Settings.get "FilterSubjects"
+    
 Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
@@ -269,9 +279,10 @@ Settings =
     'Sync on /soc/':     ['Enable sync on /soc/', true]
     'Hide IDs':          ['Hide Unique IDs next to names', false]
     <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically', true]<% } %>
-    'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
     'Hide Sage':         ['Hide your fields when sage is in the email fied', false]
     'Do Not Track':      ['Opt out of name tracking by third party websites', false]
+    'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
+    'Filter':            ['Hide posts that match filter criteria', false]
   init: ->
     for setting, val of Settings.main
       stored = Settings.get setting
@@ -289,6 +300,15 @@ Settings =
           <input type=text name=Email placeholder=Email>
           <input type=text name=Subject placeholder=Subject>
         </div>
+      </fieldset>
+      <fieldset>
+        <legend>Filter</legend>
+          <div>Use a regular expression to match criteria</div>
+          <br />
+          <input type=text name=FilterNames placeholder='Names'>
+          <input type=text name=FilterTripcodes placeholder='Tripcodes'>
+          <input type=text name=FilterEmails placeholder='Emails'>
+          <input type=text name=FilterSubjects placeholder='Subjects'>
       </fieldset>
       <fieldset>
         <legend>Advanced</legend>

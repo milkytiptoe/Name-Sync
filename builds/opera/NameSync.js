@@ -27,7 +27,7 @@
 */
 
 (function() {
-  var $, $$, CSS, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
+  var $, $$, CSS, Filter, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
 
   Set = {};
 
@@ -157,6 +157,19 @@
         textContent: css
       });
       return $.add(d.body, el);
+    }
+  };
+
+  Filter = {
+    names: null,
+    tripcodes: null,
+    emails: null,
+    subjects: null,
+    init: function() {
+      this.names = Settings.get("FilterNames");
+      this.tripcodes = Settings.get("FilterTripcodes");
+      this.names = Settings.get("FilterEmails");
+      return this.names = Settings.get("FilterSubjects");
     }
   };
 
@@ -404,9 +417,10 @@
       'Sync on /soc/': ['Enable sync on /soc/', true],
       'Hide IDs': ['Hide Unique IDs next to names', false],
       'Automatic Updates': ['Check for updates automatically', true],
-      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false],
       'Hide Sage': ['Hide your fields when sage is in the email fied', false],
-      'Do Not Track': ['Opt out of name tracking by third party websites', false]
+      'Do Not Track': ['Opt out of name tracking by third party websites', false],
+      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false],
+      'Filter': ['Hide posts that match filter criteria', false]
     },
     init: function() {
       var setting, stored, val, _ref;
@@ -427,7 +441,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n    <div>Use a regular expression to match criteria</div>\n    <br />\n    <input type=text name=FilterNames placeholder='Names'>\n    <input type=text name=FilterTripcodes placeholder='Tripcodes'>\n    <input type=text name=FilterEmails placeholder='Emails'>\n    <input type=text name=FilterSubjects placeholder='Subjects'>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
