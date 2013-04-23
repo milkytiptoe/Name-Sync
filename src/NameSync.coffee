@@ -322,7 +322,8 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Filter</legend>
-        <div>Use a regular expression to match criteria. Exclude surrounding forward slashes. Example: ^D to filter fields starting with D.</div>
+        <div>Use a regular expression to match criteria. Exclude surrounding forward slashes.</div>
+        <div>Examples: ^D to filter fields starting with D. NameOne|NameTwo to filter multiple names.</div>
         <br />
         <input type=text name=FilterNames placeholder='Names'>
         <input type=text name=FilterTripcodes placeholder='Tripcodes'>
