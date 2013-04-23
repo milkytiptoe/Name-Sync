@@ -101,7 +101,7 @@ CSS =
     if Set['Filter']
       css += """
     .sync-filtered {
-      display: none;
+      display: none !important;
     }
     """
     el = $.el 'style',
@@ -129,6 +129,8 @@ Main =
       g.threads.push thread.id[1..]
 
     Settings.init()
+    if Set['Filter']
+      Filter.init()
     Names.init()
     CSS.init()
     Menus.init()
@@ -280,14 +282,14 @@ Names =
       
     if Set['Filter']
       if Filter.names and RegExp(Filter.names).test name
-        return $.addClass post, 'sync-filtered'
+        return $.addClass post.parentNode, 'sync-filtered'
       if Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test tripcode
-        return $.addClass post, 'sync-filtered'
+        return $.addClass post.parentNode, 'sync-filtered'
       if oinfo
         if Filter.subjects and subject and RegExp(Filter.subjects).test subject
-          return $.addClass post, 'sync-filtered'
+          return $.addClass post.parentNode, 'sync-filtered'
         if Filter.emails and email and RegExp(Filter.emails).test email
-          $.addClass post, 'sync-filtered'
+          $.addClass post.parentNode, 'sync-filtered'
 
 Settings =
   main:

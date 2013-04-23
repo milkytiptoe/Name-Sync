@@ -154,7 +154,7 @@
         css += ".posteruid {\n  display: none;\n}";
       }
       if (Set['Filter']) {
-        css += ".sync-filtered {\n  display: none;\n}";
+        css += ".sync-filtered {\n  display: none !important;\n}";
       }
       el = $.el('style', {
         textContent: css
@@ -192,6 +192,9 @@
         g.threads.push(thread.id.slice(1));
       }
       Settings.init();
+      if (Set['Filter']) {
+        Filter.init();
+      }
       Names.init();
       CSS.init();
       Menus.init();
@@ -412,17 +415,17 @@
       }
       if (Set['Filter']) {
         if (Filter.names && RegExp(Filter.names).test(name)) {
-          return $.addClass(post, 'sync-filtered');
+          return $.addClass(post.parentNode, 'sync-filtered');
         }
         if (Filter.tripcodes && tripcode && RegExp(Filter.tripcodes).test(tripcode)) {
-          return $.addClass(post, 'sync-filtered');
+          return $.addClass(post.parentNode, 'sync-filtered');
         }
         if (oinfo) {
           if (Filter.subjects && subject && RegExp(Filter.subjects).test(subject)) {
-            return $.addClass(post, 'sync-filtered');
+            return $.addClass(post.parentNode, 'sync-filtered');
           }
           if (Filter.emails && email && RegExp(Filter.emails).test(email)) {
-            return $.addClass(post, 'sync-filtered');
+            return $.addClass(post.parentNode, 'sync-filtered');
           }
         }
       }
