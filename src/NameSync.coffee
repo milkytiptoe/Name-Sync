@@ -116,8 +116,8 @@ Filter =
   init: ->
     @names     = Settings.get "FilterNames"
     @tripcodes = Settings.get "FilterTripcodes"
-    @names     = Settings.get "FilterEmails"
-    @names     = Settings.get "FilterSubjects"
+    @emails    = Settings.get "FilterEmails"
+    @subjects  = Settings.get "FilterSubjects"
     
 Main =
   init: ->
