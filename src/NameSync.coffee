@@ -98,6 +98,12 @@ CSS =
       display: none;
     }
     """
+    if Set['Filter']
+      css += """
+    .sync-filtered {
+      display: none;
+    }
+    """
     el = $.el 'style',
       textContent: css
     $.add d.body, el
@@ -108,10 +114,10 @@ Filter =
   emails:    null
   subjects:  null
   init: ->
-    @names =     Settings.get "FilterNames"
+    @names     = Settings.get "FilterNames"
     @tripcodes = Settings.get "FilterTripcodes"
-    @names =     Settings.get "FilterEmails"
-    @names =     Settings.get "FilterSubjects"
+    @names     = Settings.get "FilterEmails"
+    @names     = Settings.get "FilterSubjects"
     
 Main =
   init: ->
@@ -271,6 +277,17 @@ Names =
         tripspan.textContent = tripcode
     else if tripspan
       $.rm tripspan
+      
+    if Set['Filter']
+      if Filter.names and RegExp(Filter.names).test name
+        return $.addClass post, 'sync-filtered'
+      if Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test tripcode
+        return $.addClass post, 'sync-filtered'
+      if oinfo
+        if Filter.subjects and subject and RegExp(Filter.subjects).test subject
+          return $.addClass post, 'sync-filtered'
+        if Filter.emails and email and RegExp(Filter.emails).test email
+          $.addClass post, 'sync-filtered'
 
 Settings =
   main:
@@ -282,7 +299,7 @@ Settings =
     'Hide Sage':         ['Hide your fields when sage is in the email fied', false]
     'Do Not Track':      ['Opt out of name tracking by third party websites', false]
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
-    'Filter':            ['Hide posts that match filter criteria', false]
+    'Filter':            ['Hide posts by sync users that match filter criteria', false]
   init: ->
     for setting, val of Settings.main
       stored = Settings.get setting

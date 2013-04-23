@@ -153,6 +153,9 @@
       if (Set['Hide IDs']) {
         css += ".posteruid {\n  display: none;\n}";
       }
+      if (Set['Filter']) {
+        css += ".sync-filtered {\n  display: none;\n}";
+      }
       el = $.el('style', {
         textContent: css
       });
@@ -402,10 +405,26 @@
           $.after(namespan, $.tn(' '));
         }
         if (tripspan.textContent !== tripcode) {
-          return tripspan.textContent = tripcode;
+          tripspan.textContent = tripcode;
         }
       } else if (tripspan) {
-        return $.rm(tripspan);
+        $.rm(tripspan);
+      }
+      if (Set['Filter']) {
+        if (Filter.names && RegExp(Filter.names).test(name)) {
+          return $.addClass(post, 'sync-filtered');
+        }
+        if (Filter.tripcodes && tripcode && RegExp(Filter.tripcodes).test(tripcode)) {
+          return $.addClass(post, 'sync-filtered');
+        }
+        if (oinfo) {
+          if (Filter.subjects && subject && RegExp(Filter.subjects).test(subject)) {
+            return $.addClass(post, 'sync-filtered');
+          }
+          if (Filter.emails && email && RegExp(Filter.emails).test(email)) {
+            return $.addClass(post, 'sync-filtered');
+          }
+        }
       }
     }
   };
@@ -420,7 +439,7 @@
       'Hide Sage': ['Hide your fields when sage is in the email fied', false],
       'Do Not Track': ['Opt out of name tracking by third party websites', false],
       'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false],
-      'Filter': ['Hide posts that match filter criteria', false]
+      'Filter': ['Hide posts by sync users that match filter criteria', false]
     },
     init: function() {
       var setting, stored, val, _ref;
@@ -441,7 +460,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n    <div>Use a regular expression to match criteria</div>\n    <br />\n    <input type=text name=FilterNames placeholder='Names'>\n    <input type=text name=FilterTripcodes placeholder='Tripcodes'>\n    <input type=text name=FilterEmails placeholder='Emails'>\n    <input type=text name=FilterSubjects placeholder='Subjects'>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <div>Use a regular expression to match criteria</div>\n  <br />\n  <input type=text name=FilterNames placeholder='Names'>\n  <input type=text name=FilterTripcodes placeholder='Tripcodes'>\n  <input type=text name=FilterEmails placeholder='Emails'>\n  <input type=text name=FilterSubjects placeholder='Subjects'>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
