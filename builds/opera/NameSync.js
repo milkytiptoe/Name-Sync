@@ -438,11 +438,11 @@
       'Sync on /q/': ['Enable sync on /q/', true],
       'Sync on /soc/': ['Enable sync on /soc/', true],
       'Hide IDs': ['Hide Unique IDs next to names', false],
-      'Automatic Updates': ['Check for updates automatically', true],
       'Hide Sage': ['Hide your fields when sage is in the email fied', false],
       'Do Not Track': ['Opt out of name tracking by third party websites', false],
       'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false],
-      'Filter': ['Hide posts by sync users that match filter criteria', false]
+      'Filter': ['Hide posts by sync users that match filter criteria', false],
+      'Automatic Updates': ['Check for updates automatically', true]
     },
     init: function() {
       var setting, stored, val, _ref;

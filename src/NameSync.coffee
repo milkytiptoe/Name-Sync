@@ -297,11 +297,11 @@ Settings =
     'Sync on /q/':       ['Enable sync on /q/', true]
     'Sync on /soc/':     ['Enable sync on /soc/', true]
     'Hide IDs':          ['Hide Unique IDs next to names', false]
-    <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically', true]<% } %>
     'Hide Sage':         ['Hide your fields when sage is in the email fied', false]
     'Do Not Track':      ['Opt out of name tracking by third party websites', false]
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
     'Filter':            ['Hide posts by sync users that match filter criteria', false]
+    <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically', true]<% } %>
   init: ->
     for setting, val of Settings.main
       stored = Settings.get setting
