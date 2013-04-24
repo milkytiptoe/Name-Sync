@@ -118,7 +118,7 @@ Filter =
     @tripcodes = Settings.get "FilterTripcodes"
     @emails    = Settings.get "FilterEmails"
     @subjects  = Settings.get "FilterSubjects"
-    
+
 Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
@@ -227,14 +227,14 @@ Names =
     @updatePost post for post in $$ '.thread .post'
     @store()
   updatePost: (post) ->
-    idspan =         $('.hand', post)
+    idspan = $ '.hand', post
     return if idspan is null
-    id =             idspan.textContent
+    id = idspan.textContent
     return if /^##/.test id
     postnumspan = $ 'a[title="Quote this post"]', post
-    namespan    = $ '.desktop .name', post
-    tripspan    = $ '.desktop .postertrip', post
-    subjectspan = $ '.desktop .subject', post
+    namespan    = $ '.desktop .name',             post
+    tripspan    = $ '.desktop .postertrip',       post
+    subjectspan = $ '.desktop .subject',          post
     postnum     = postnumspan.textContent
     oinfo       = Names.nameByPost[postnum]
     linfo       = Names.nameByID[id]
@@ -279,7 +279,7 @@ Names =
         tripspan.textContent = tripcode
     else if tripspan
       $.rm tripspan
-      
+
     if Set['Filter']
       if Filter.names and RegExp(Filter.names).test name
         return $.addClass post.parentNode, 'sync-filtered'
@@ -409,8 +409,8 @@ Sync =
     postID   = e.detail.postID
     threadID = e.detail.threadID
     if Set['Persona Fields']
-      cName    = Settings.get('Name') or ''
-      cEmail   = Settings.get('Email') or ''
+      cName    = Settings.get('Name')    or ''
+      cEmail   = Settings.get('Email')   or ''
       cSubject = Settings.get('Subject') or ''
     else
       qr       = $.id 'qr'
@@ -467,7 +467,7 @@ Updater =
       ''
       onloadend: ->
         Settings.set 'lastcheck', Date.now()
-        if @status isnt 200 or @response is g.VERSION.replace(/\./g, '')
+        if @status isnt 200 or @response is g.VERSION.replace /\./g, ''
           return $('#syncUpdate').value = 'None available'
         $.event 'CreateNotification',
           detail:
