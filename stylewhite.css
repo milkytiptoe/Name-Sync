@@ -21,6 +21,9 @@ h2 {
 	font-size: 1em;
 	font-weight: normal;
 }
+img, input[type=image] {
+  border: 0;
+}
 .content-block {
 	min-height: 48px;
 	clear: both;
@@ -75,19 +78,12 @@ h2 {
   background-image: url(opera.svg);
 }
 ul {
-	margin-left: 12px;
-	list-style: none;
+  padding-left: 20px;
 }
-li ul {
-	padding-left: 8px;
-	list-style: disc;
-}
-li img {
-  vertical-align: middle;
+.features ul {
+  list-style: none;
+  padding: 0;
 }
 p {
-  margin: 0 0 12px 12px;
-}
-form {
-  margin-left: 12px;
+  margin-bottom: 12px;
 }
