@@ -323,7 +323,7 @@ Settings =
       <fieldset>
         <legend>Filter</legend>
         <div>Use a regular expression to match criteria. Exclude surrounding forward slashes.</div>
-        <div>Examples: ^(?!Anonymous$) to filter all named posters. NameOne|NameTwo to filter multiple names.</div>
+        <div>Example: ^(?!Anonymous$) to filter all named posters.</div>
         <br />
         <input type=text name=FilterNames placeholder='Names'>
         <input type=text name=FilterTripcodes placeholder='Tripcodes'>
@@ -333,8 +333,8 @@ Settings =
       <fieldset>
         <legend>Advanced</legend>
         <% if (type !== 'crx') { %><input id=syncUpdate type=button value='Check for update'><% } %>
-        <input id=syncClear type=button value='Clear sync history'>
-        <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250> ms</div>
+        <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>
+        <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250 title='Delay before downloading new names when a new post is inserted'> ms</div>
       </fieldset>
       <fieldset>
         <legend>About</legend>
