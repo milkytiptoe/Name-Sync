@@ -414,9 +414,9 @@ Sync =
       cSubject = Settings.get('Subject') or ''
     else
       qr       = $.id 'qr'
-      cName    = $('input[name=name]',  qr).value
-      cEmail   = $('input[name=email]', qr).value
-      cSubject = $('input[name=sub]',   qr).value
+      cName    = $('input[data-name=name]',  qr).value
+      cEmail   = $('input[data-name=email]', qr).value
+      cSubject = $('input[data-name=sub]',   qr).value
     cName    = cName.trim()
     cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
