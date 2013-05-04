@@ -13,46 +13,40 @@ $$ = (selector, root = d.body) ->
 $ = (selector, root = d.body) ->
   root.querySelector selector
 
-$.extend = (object, properties) ->
-  for key, val of properties
-    object[key] = val
-  return
-
-$.extend $,
-  el: (tag, properties) ->
+$.el = (tag, properties) ->
     el = d.createElement tag
     $.extend el, properties if properties
     el
-  tn: (text) ->
+$.tn = (text) ->
     d.createTextNode text
-  id: (id) ->
+$.id = (id) ->
     d.getElementById id
-  event: (type, detail) ->
+$.event = (type, detail) ->
     d.dispatchEvent new CustomEvent type, detail
-  on: (el, type, handler) ->
+$.on = (el, type, handler) ->
     el.addEventListener type, handler, false
-  off: (el, type, handler) ->
+$.off = (el, type, handler) ->
     el.removeEventListener type, handler, false
-  addClass: (el, className) ->
+$.addClass = (el, className) ->
     el.classList.add className
-  add: (parent, children) ->
+$.add = (parent, children) ->
     parent.appendChild $.nodes children
-  rm: (el) ->
+$.rm = (el) ->
     el.parentNode.removeChild el
-  prepend: (parent, children) ->
+$.prepend = (parent, children) ->
     parent.insertBefore $.nodes(children), parent.firstChild
-  after: (root, el) ->
+$.after = (root, el) ->
     root.parentNode.insertBefore $.nodes(el), root.nextSibling
-  before: (root, el) ->
+$.before = (root, el) ->
     root.parentNode.insertBefore $.nodes(el), root
-  nodes: (nodes) ->
+$.nodes = (nodes) ->
     unless nodes instanceof Array
       return nodes
     frag = d.createDocumentFragment()
     for node in nodes
       frag.appendChild node
     frag
-  ajax: (file, type, data, callbacks) ->
+$.ajax = (file, type, data, callbacks) ->
     r = new XMLHttpRequest()
     r.overrideMimeType 'application/json' if file is 'qp'
     url = "http://www.milkyis.me/namesync/#{file}.php"
@@ -65,7 +59,16 @@ $.extend $,
     r.withCredentials = true
     r.send data
     r
-
+$.extend = (object, properties) ->
+  for key, val of properties
+    object[key] = val
+  return
+# not sure whether to follow x's way of using browser storage apis or not
+$.get = (name) ->
+    localStorage.getItem "#{g.NAMESPACE}#{name}"
+$.set = (name, value) ->
+    localStorage.setItem "#{g.NAMESPACE}#{name}", value
+  
 CSS =
   init: ->
     css = """
@@ -104,9 +107,8 @@ CSS =
       display: none !important;
     }
     """
-    el = $.el 'style',
+    $.add d.body, $.el 'style',
       textContent: css
-    $.add d.body, el
 
 Filter =
   names:     null
@@ -114,10 +116,10 @@ Filter =
   emails:    null
   subjects:  null
   init: ->
-    @names     = Settings.get "FilterNames"
-    @tripcodes = Settings.get "FilterTripcodes"
-    @emails    = Settings.get "FilterEmails"
-    @subjects  = Settings.get "FilterSubjects"
+    @names     = $.get "FilterNames"
+    @tripcodes = $.get "FilterTripcodes"
+    @emails    = $.get "FilterEmails"
+    @subjects  = $.get "FilterSubjects"
 
 Main =
   init: ->
@@ -214,7 +216,7 @@ Names =
     return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]
       clearTimeout Sync.delay
-      Sync.delay = setTimeout Sync.sync, Settings.get('Delay') or 250
+      Sync.delay = setTimeout Sync.sync, $.get('Delay') or 250
   load: ->
     stored = sessionStorage["#{g.board}-4-names"]
     @nameByID = if stored then JSON.parse(stored) else {}
@@ -238,7 +240,7 @@ Names =
     postnum     = postnumspan.textContent
     oinfo       = Names.nameByPost[postnum]
     linfo       = Names.nameByID[id]
-    if oinfo and not Names.blockedIDs[id]
+    if oinfo and !Names.blockedIDs[id]
       name      = oinfo.n
       tripcode  = oinfo.t
       if !/Heaven/.test id
@@ -304,7 +306,7 @@ Settings =
     <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically', true]<% } %>
   init: ->
     for setting, val of Settings.main
-      stored = Settings.get setting
+      stored = $.get setting
       Set[setting] = if stored is null then val[1] else stored is 'true'
     $.event 'AddSettingsSection',
       detail:
@@ -353,7 +355,7 @@ Settings =
       textContent: 'Main'
 
     for setting, val of Settings.main
-      stored  = Settings.get setting
+      stored  = $.get setting
       istrue  = if stored is null then val[1] else stored is 'true'
       checked = if istrue then 'checked ' else ''
       $.add field, $.el 'div',
@@ -361,25 +363,21 @@ Settings =
     $.prepend section, field
     for check in $$ 'input[type=checkbox]', section
       $.on check, 'click', ->
-        Settings.set @name, @checked
+        $.set @name, @checked
 
     for text in $$ 'input[type=text], input[type=number]', section
-      text.value = Settings.get(text.name) or ''
+      text.value = $.get(text.name) or ''
       $.on text, 'input', ->
         if /^Filter/.test @name
           try
             regexp = RegExp @value
           catch err
             alert err.message
-            return @value = Settings.get @name
-        Settings.set @name, @value
+            return @value = $.get @name
+        $.set @name, @value
 
     <% if (type !== 'crx') { %>$.on $('#syncUpdate', section), 'click', Updater.update<% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
-  get: (name) ->
-    localStorage.getItem "#{g.NAMESPACE}#{name}"
-  set: (name, value) ->
-    localStorage.setItem "#{g.NAMESPACE}#{name}", value
 
 Sync =
   lastModified: '0'
@@ -389,7 +387,8 @@ Sync =
     $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true
     if sessionStorage["#{g.board}-namesync-tosend"]
-      r = JSON.parse(sessionStorage["#{g.board}-namesync-tosend"])
+      # todo: this needs to go through requestSend first. but also needs the last arg for send.
+      r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
   canSync: ->
     !@disabled and g.threads.length is 1
@@ -409,9 +408,9 @@ Sync =
     postID   = e.detail.postID
     threadID = e.detail.threadID
     if Set['Persona Fields']
-      cName    = Settings.get('Name')    or ''
-      cEmail   = Settings.get('Email')   or ''
-      cSubject = Settings.get('Subject') or ''
+      cName    = $.get('Name')    or ''
+      cEmail   = $.get('Email')   or ''
+      cSubject = $.get('Subject') or ''
     else
       qr       = $.id 'qr'
       cName    = $('input[data-name=name]',  qr).value
@@ -457,7 +456,7 @@ Sync =
 <% if (type !== 'crx') { %>
 Updater =
   init: ->
-    last = Settings.get 'lastcheck'
+    last = $.get 'lastcheck'
     if last is null or Date.now() > last + 86400000
       @update()
   update: ->
@@ -466,7 +465,7 @@ Updater =
       'GET'
       ''
       onloadend: ->
-        Settings.set 'lastcheck', Date.now()
+        $.set 'lastcheck', Date.now()
         if @status isnt 200 or @response is g.VERSION.replace /\./g, ''
           return $('#syncUpdate').value = 'None available'
         $.event 'CreateNotification',
