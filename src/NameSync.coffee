@@ -390,8 +390,6 @@ Sync =
       # todo: this needs to go through requestSend first. but also needs the last arg for send.
       r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
-  canSync: ->
-    !@disabled and g.threads.length is 1
   sync: (repeat) ->
     $.ajax "qp",
       "GET"
@@ -402,7 +400,7 @@ Sync =
           for poster in JSON.parse @response
             Names.nameByPost[poster.p] = poster
           Names.updateAllPosts()
-    if repeat and Sync.canSync()
+    if repeat and !Sync.disabled and g.threads.length is 1
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
     postID   = e.detail.postID
