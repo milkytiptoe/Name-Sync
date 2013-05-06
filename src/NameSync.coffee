@@ -294,15 +294,15 @@ Names =
 
 Settings =
   main:
-    'Sync on /b/':       ['Enable sync on /b/', true]
-    'Sync on /q/':       ['Enable sync on /q/', true]
-    'Sync on /soc/':     ['Enable sync on /soc/', true]
-    'Hide IDs':          ['Hide Unique IDs next to names', false]
-    'Hide Sage':         ['Hide your fields when sage is in the email fied', false]
-    'Do Not Track':      ['Opt out of name tracking by third party websites', false]
-    'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields', false]
-    'Filter':            ['Hide posts by sync users that match filter criteria', false]
-    <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically', true]<% } %>
+    'Sync on /b/':       ['Enable sync on /b/.', true]
+    'Sync on /q/':       ['Enable sync on /q/.', true]
+    'Sync on /soc/':     ['Enable sync on /soc/.', true]
+    'Hide IDs':          ['Hide Unique IDs next to names.', false]
+    'Hide Sage':         ['Hide your fields when sage is in the email fied.', false]
+    'Do Not Track':      ['Opt out of name tracking by third party websites.', false]
+    'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields.', false]
+    'Filter':            ['Hide posts by sync users that match filter regular expressions.', false]
+    <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically.', true]<% } %>
   init: ->
     for setting, val of Settings.main
       stored = $.get setting
@@ -323,7 +323,6 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Filter</legend>
-        <div>Use a regular expression to match criteria. Exclude surrounding forward slashes.</div>
         <div>Example: ^(?!Anonymous$) to filter all named posters.</div>
         <br />
         <input type=text name=FilterNames placeholder='Names'>
