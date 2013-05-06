@@ -3,7 +3,7 @@
 Set = {}
 d = document
 g =
-  NAMESPACE: "NameSync."
+  NAMESPACE: 'NameSync.'
   VERSION:   '<%= version %>'
   threads:   []
   board:     null
@@ -49,7 +49,7 @@ $.nodes = (nodes) ->
 $.ajax = (file, type, data, callbacks) ->
     r = new XMLHttpRequest()
     r.overrideMimeType 'application/json' if file is 'qp'
-    url = "http://www.namesync.org/namesync/#{file}.php"
+    url = "<%= meta.page %>namesync/#{file}.php"
     url += "?#{data}" if type is 'GET'
     r.open type, url, true
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
@@ -115,10 +115,10 @@ Filter =
   emails:    null
   subjects:  null
   init: ->
-    @names     = $.get "FilterNames"
-    @tripcodes = $.get "FilterTripcodes"
-    @emails    = $.get "FilterEmails"
-    @subjects  = $.get "FilterSubjects"
+    @names     = $.get 'FilterNames'
+    @tripcodes = $.get 'FilterTripcodes'
+    @emails    = $.get 'FilterEmails'
+    @subjects  = $.get 'FilterSubjects'
 
 Main =
   init: ->
@@ -344,7 +344,7 @@ Settings =
         <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>
         <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>
       </fieldset>
-      <img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />
+      <img id=bgimage src='<%= meta.page %>namesync/bg.png' />
     """
     bgimage = $ '#bgimage', section
     bgimage.ondragstart = -> false
@@ -390,8 +390,8 @@ Sync =
       r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
   sync: (repeat) ->
-    $.ajax "qp",
-      "GET"
+    $.ajax 'qp',
+      'GET'
       "t=#{g.threads}&b=#{g.board}"
       onloadend: ->
         if @status is 200

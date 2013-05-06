@@ -4,7 +4,7 @@
   "description": "Enables names on 4chan's forced anon boards. Requires 4chan X.",
   "meta": {
     "name": "4chan X Name Sync",
-    "page": "http://www.milkyis.me/",
+    "page": "http://www.namesync.org/",
     "builds": "https://github.com/milkytiptoe/Name-Sync/raw/master/builds/",
     "includes": [
       "*://boards.4chan.org/b/*",
