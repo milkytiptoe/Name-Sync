@@ -49,7 +49,7 @@ $.nodes = (nodes) ->
 $.ajax = (file, type, data, callbacks) ->
     r = new XMLHttpRequest()
     r.overrideMimeType 'application/json' if file is 'qp'
-    url = "http://www.milkyis.me/namesync/#{file}.php"
+    url = "http://www.namesync.org/namesync/#{file}.php"
     url += "?#{data}" if type is 'GET'
     r.open type, url, true
     r.setRequestHeader 'X-Requested-With', 'NameSync3'
@@ -63,7 +63,6 @@ $.extend = (object, properties) ->
   for key, val of properties
     object[key] = val
   return
-# not sure whether to follow x's way of using browser storage apis or not
 $.get = (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
 $.set = (name, value) ->
