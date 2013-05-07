@@ -274,7 +274,7 @@ Names =
       if tripspan is null
         tripspan = $.el 'span',
           className: 'postertrip'
-        $.after namespan, [$.tn(' '), tripspan]
+        $.after namespan, [$.tn ' '; tripspan]
       if tripspan.textContent isnt tripcode
         tripspan.textContent = tripcode
     else if tripspan
