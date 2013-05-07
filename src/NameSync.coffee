@@ -324,10 +324,10 @@ Settings =
         <legend>Filter</legend>
         <div>Example: ^(?!Anonymous$) to filter all named posters.</div>
         <br />
-        <input type=text name=FilterNames placeholder='Names'>
-        <input type=text name=FilterTripcodes placeholder='Tripcodes'>
-        <input type=text name=FilterEmails placeholder='Emails'>
-        <input type=text name=FilterSubjects placeholder='Subjects'>
+        <input type=text name=FilterNames placeholder=Names>
+        <input type=text name=FilterTripcodes placeholder=Tripcodes>
+        <input type=text name=FilterEmails placeholder=Emails>
+        <input type=text name=FilterSubjects placeholder=Subjects>
       </fieldset>
       <fieldset>
         <legend>Advanced</legend>
@@ -384,7 +384,6 @@ Sync =
     $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true
     if sessionStorage["#{g.board}-namesync-tosend"]
-      # todo: this needs to go through requestSend first. but also needs the last arg for send.
       r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
   sync: (repeat) ->
