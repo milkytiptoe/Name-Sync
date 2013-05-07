@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan X Name Sync
-// @version      4.1.1
+// @version      4.1.2
 // @namespace    milky
 // @description  Enables names on 4chan's forced anon boards. Requires 4chan X.
 // @author       milkytiptoe
@@ -11,12 +11,12 @@
 // @run-at       document-start
 // @updateURL    https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.meta.js
 // @downloadURL  https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js
-// @icon         http://www.milkyis.me/namesync/logo.png
+// @icon         http://www.namesync.org/namesync/logo.png
 // ==/UserScript==
 
 /*
-  4chan X Name Sync v4.1.1
-  http://www.milkyis.me/
+  4chan X Name Sync v4.1.2
+  http://www.namesync.org/
   
   Developers: milkytiptoe and ihavenoface
   
@@ -34,8 +34,8 @@
   d = document;
 
   g = {
-    NAMESPACE: "NameSync.",
-    VERSION: '4.1.1',
+    NAMESPACE: 'NameSync.',
+    VERSION: '4.1.2',
     threads: [],
     board: null
   };
@@ -54,6 +54,99 @@
     return root.querySelector(selector);
   };
 
+  $.el = function(tag, properties) {
+    var el;
+
+    el = d.createElement(tag);
+    if (properties) {
+      $.extend(el, properties);
+    }
+    return el;
+  };
+
+  $.tn = function(text) {
+    return d.createTextNode(text);
+  };
+
+  $.id = function(id) {
+    return d.getElementById(id);
+  };
+
+  $.event = function(type, detail) {
+    return d.dispatchEvent(new CustomEvent(type, detail));
+  };
+
+  $.on = function(el, type, handler) {
+    return el.addEventListener(type, handler, false);
+  };
+
+  $.off = function(el, type, handler) {
+    return el.removeEventListener(type, handler, false);
+  };
+
+  $.addClass = function(el, className) {
+    return el.classList.add(className);
+  };
+
+  $.add = function(parent, children) {
+    return parent.appendChild($.nodes(children));
+  };
+
+  $.rm = function(el) {
+    return el.parentNode.removeChild(el);
+  };
+
+  $.prepend = function(parent, children) {
+    return parent.insertBefore($.nodes(children), parent.firstChild);
+  };
+
+  $.after = function(root, el) {
+    return root.parentNode.insertBefore($.nodes(el), root.nextSibling);
+  };
+
+  $.before = function(root, el) {
+    return root.parentNode.insertBefore($.nodes(el), root);
+  };
+
+  $.nodes = function(nodes) {
+    var frag, node, _i, _len;
+
+    if (!(nodes instanceof Array)) {
+      return nodes;
+    }
+    frag = d.createDocumentFragment();
+    for (_i = 0, _len = nodes.length; _i < _len; _i++) {
+      node = nodes[_i];
+      frag.appendChild(node);
+    }
+    return frag;
+  };
+
+  $.ajax = function(file, type, data, callbacks) {
+    var r, url;
+
+    r = new XMLHttpRequest();
+    if (file === 'qp') {
+      r.overrideMimeType('application/json');
+    }
+    url = "http://www.namesync.org/namesync/" + file + ".php";
+    if (type === 'GET') {
+      url += "?" + data;
+    }
+    r.open(type, url, true);
+    r.setRequestHeader('X-Requested-With', 'NameSync3');
+    if (file === 'qp') {
+      r.setRequestHeader('If-Modified-Since', Sync.lastModified);
+    }
+    if (type === 'POST') {
+      r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    }
+    $.extend(r, callbacks);
+    r.withCredentials = true;
+    r.send(data);
+    return r;
+  };
+
   $.extend = function(object, properties) {
     var key, val;
 
@@ -63,91 +156,17 @@
     }
   };
 
-  $.extend($, {
-    el: function(tag, properties) {
-      var el;
+  $.get = function(name) {
+    return localStorage.getItem("" + g.NAMESPACE + name);
+  };
 
-      el = d.createElement(tag);
-      if (properties) {
-        $.extend(el, properties);
-      }
-      return el;
-    },
-    tn: function(text) {
-      return d.createTextNode(text);
-    },
-    id: function(id) {
-      return d.getElementById(id);
-    },
-    event: function(type, detail) {
-      return d.dispatchEvent(new CustomEvent(type, detail));
-    },
-    on: function(el, type, handler) {
-      return el.addEventListener(type, handler, false);
-    },
-    off: function(el, type, handler) {
-      return el.removeEventListener(type, handler, false);
-    },
-    addClass: function(el, className) {
-      return el.classList.add(className);
-    },
-    add: function(parent, children) {
-      return parent.appendChild($.nodes(children));
-    },
-    rm: function(el) {
-      return el.parentNode.removeChild(el);
-    },
-    prepend: function(parent, children) {
-      return parent.insertBefore($.nodes(children), parent.firstChild);
-    },
-    after: function(root, el) {
-      return root.parentNode.insertBefore($.nodes(el), root.nextSibling);
-    },
-    before: function(root, el) {
-      return root.parentNode.insertBefore($.nodes(el), root);
-    },
-    nodes: function(nodes) {
-      var frag, node, _i, _len;
-
-      if (!(nodes instanceof Array)) {
-        return nodes;
-      }
-      frag = d.createDocumentFragment();
-      for (_i = 0, _len = nodes.length; _i < _len; _i++) {
-        node = nodes[_i];
-        frag.appendChild(node);
-      }
-      return frag;
-    },
-    ajax: function(file, type, data, callbacks) {
-      var r, url;
-
-      r = new XMLHttpRequest();
-      if (file === 'qp') {
-        r.overrideMimeType('application/json');
-      }
-      url = "http://www.milkyis.me/namesync/" + file + ".php";
-      if (type === 'GET') {
-        url += "?" + data;
-      }
-      r.open(type, url, true);
-      r.setRequestHeader('X-Requested-With', 'NameSync3');
-      if (file === 'qp') {
-        r.setRequestHeader('If-Modified-Since', Sync.lastModified);
-      }
-      if (type === 'POST') {
-        r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-      }
-      $.extend(r, callbacks);
-      r.withCredentials = true;
-      r.send(data);
-      return r;
-    }
-  });
+  $.set = function(name, value) {
+    return localStorage.setItem("" + g.NAMESPACE + name, value);
+  };
 
   CSS = {
     init: function() {
-      var css, el;
+      var css;
 
       css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n#bgimage {\n  bottom: 0px;\n  right: 0px;\n  position: absolute;\n}";
       if (Set['Hide IDs']) {
@@ -156,10 +175,9 @@
       if (Set['Filter']) {
         css += ".sync-filtered {\n  display: none !important;\n}";
       }
-      el = $.el('style', {
+      return $.add(d.body, $.el('style', {
         textContent: css
-      });
-      return $.add(d.body, el);
+      }));
     }
   };
 
@@ -169,10 +187,10 @@
     emails: null,
     subjects: null,
     init: function() {
-      this.names = Settings.get("FilterNames");
-      this.tripcodes = Settings.get("FilterTripcodes");
-      this.emails = Settings.get("FilterEmails");
-      return this.subjects = Settings.get("FilterSubjects");
+      this.names = $.get('FilterNames');
+      this.tripcodes = $.get('FilterTripcodes');
+      this.emails = $.get('FilterEmails');
+      return this.subjects = $.get('FilterSubjects');
     }
   };
 
@@ -317,7 +335,7 @@
       }
       if (Set["Sync on /" + g.board + "/"]) {
         clearTimeout(Sync.delay);
-        return Sync.delay = setTimeout(Sync.sync, Settings.get('Delay') || 250);
+        return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 250);
       }
     },
     load: function() {
@@ -404,8 +422,7 @@
           tripspan = $.el('span', {
             className: 'postertrip'
           });
-          $.after(namespan, tripspan);
-          $.after(namespan, $.tn(' '));
+          $.after(namespan, [$.tn(' '), tripspan]);
         }
         if (tripspan.textContent !== tripcode) {
           tripspan.textContent = tripcode;
@@ -434,15 +451,15 @@
 
   Settings = {
     main: {
-      'Sync on /b/': ['Enable sync on /b/', true],
-      'Sync on /q/': ['Enable sync on /q/', true],
-      'Sync on /soc/': ['Enable sync on /soc/', true],
-      'Hide IDs': ['Hide Unique IDs next to names', false],
-      'Hide Sage': ['Hide your fields when sage is in the email fied', false],
-      'Do Not Track': ['Opt out of name tracking by third party websites', false],
-      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields', false],
-      'Filter': ['Hide posts by sync users that match filter criteria', false],
-      'Automatic Updates': ['Check for updates automatically', true]
+      'Sync on /b/': ['Enable sync on /b/.', true],
+      'Sync on /q/': ['Enable sync on /q/.', true],
+      'Sync on /soc/': ['Enable sync on /soc/.', true],
+      'Hide IDs': ['Hide Unique IDs next to names.', false],
+      'Hide Sage': ['Hide your fields when sage is in the email fied.', false],
+      'Do Not Track': ['Opt out of name tracking by third party websites.', false],
+      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields.', false],
+      'Filter': ['Hide posts by sync users that match filter regular expressions.', false],
+      'Automatic Updates': ['Check for updates automatically.', true]
     },
     init: function() {
       var setting, stored, val, _ref;
@@ -450,7 +467,7 @@
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
-        stored = Settings.get(setting);
+        stored = $.get(setting);
         Set[setting] = stored === null ? val[1] : stored === 'true';
       }
       return $.event('AddSettingsSection', {
@@ -463,7 +480,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <div>Use a regular expression to match criteria. Exclude surrounding forward slashes.</div>\n  <div>Example: ^(?!Anonymous$) to filter all named posters.</div>\n  <br />\n  <input type=text name=FilterNames placeholder='Names'>\n  <input type=text name=FilterTripcodes placeholder='Tripcodes'>\n  <input type=text name=FilterEmails placeholder='Emails'>\n  <input type=text name=FilterSubjects placeholder='Subjects'>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.milkyis.me/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <div>Example: ^(?!Anonymous$) to filter all named posters.</div>\n  <br />\n  <input type=text name=FilterNames placeholder='Names'>\n  <input type=text name=FilterTripcodes placeholder='Tripcodes'>\n  <input type=text name=FilterEmails placeholder='Emails'>\n  <input type=text name=FilterSubjects placeholder='Subjects'>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.namesync.org/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
@@ -478,7 +495,7 @@
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
-        stored = Settings.get(setting);
+        stored = $.get(setting);
         istrue = stored === null ? val[1] : stored === 'true';
         checked = istrue ? 'checked ' : '';
         $.add(field, $.el('div', {
@@ -490,13 +507,13 @@
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         check = _ref1[_i];
         $.on(check, 'click', function() {
-          return Settings.set(this.name, this.checked);
+          return $.set(this.name, this.checked);
         });
       }
       _ref2 = $$('input[type=text], input[type=number]', section);
       for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
         text = _ref2[_j];
-        text.value = Settings.get(text.name) || '';
+        text.value = $.get(text.name) || '';
         $.on(text, 'input', function() {
           var err, regexp;
 
@@ -506,20 +523,14 @@
             } catch (_error) {
               err = _error;
               alert(err.message);
-              return this.value = Settings.get(this.name);
+              return this.value = $.get(this.name);
             }
           }
-          return Settings.set(this.name, this.value);
+          return $.set(this.name, this.value);
         });
       }
       $.on($('#syncUpdate', section), 'click', Updater.update);
       return $.on($('#syncClear', section), 'click', Sync.clear);
-    },
-    get: function(name) {
-      return localStorage.getItem("" + g.NAMESPACE + name);
-    },
-    set: function(name, value) {
-      return localStorage.setItem("" + g.NAMESPACE + name, value);
     }
   };
 
@@ -537,11 +548,8 @@
         return this.send(r.name, r.email, r.subject, r.postID, r.threadID, true);
       }
     },
-    canSync: function() {
-      return !this.disabled && g.threads.length === 1;
-    },
     sync: function(repeat) {
-      $.ajax("qp", "GET", "t=" + g.threads + "&b=" + g.board, {
+      $.ajax('qp', 'GET', "t=" + g.threads + "&b=" + g.board, {
         onloadend: function() {
           var poster, _i, _len, _ref;
 
@@ -556,7 +564,7 @@
           }
         }
       });
-      if (repeat && Sync.canSync()) {
+      if (repeat && !Sync.disabled && g.threads.length === 1) {
         return setTimeout(Sync.sync, 30000, true);
       }
     },
@@ -566,9 +574,9 @@
       postID = e.detail.postID;
       threadID = e.detail.threadID;
       if (Set['Persona Fields']) {
-        cName = Settings.get('Name') || '';
-        cEmail = Settings.get('Email') || '';
-        cSubject = Settings.get('Subject') || '';
+        cName = $.get('Name') || '';
+        cEmail = $.get('Email') || '';
+        cSubject = $.get('Subject') || '';
       } else {
         qr = $.id('qr');
         cName = $('input[data-name=name]', qr).value;
@@ -632,7 +640,7 @@
     init: function() {
       var last;
 
-      last = Settings.get('lastcheck');
+      last = $.get('lastcheck');
       if (last === null || Date.now() > last + 86400000) {
         return this.update();
       }
@@ -641,7 +649,7 @@
       $('#syncUpdate').disabled = true;
       return $.ajax('u3', 'GET', '', {
         onloadend: function() {
-          Settings.set('lastcheck', Date.now());
+          $.set('lastcheck', Date.now());
           if (this.status !== 200 || this.response === g.VERSION.replace(/\./g, '')) {
             return $('#syncUpdate').value = 'None available';
           }
@@ -649,7 +657,7 @@
             detail: {
               type: 'info',
               content: $.el('span', {
-                innerHTML: "An update for 4chan X Name Sync is available. <a href=http://www.milkyis.me/ target=_blank>Get it here</a>."
+                innerHTML: "An update for 4chan X Name Sync is available. <a href=http://www.namesync.org/ target=_blank>Get it here</a>."
               }),
               lifetime: 10
             }
