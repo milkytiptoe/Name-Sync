@@ -540,12 +540,9 @@
         return Sync.disabled = true;
       }
       if (Set["Sync on /" + g.board + "/"]) {
-        return Sync.requestSync();
+        clearTimeout(Sync.delay);
+        return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 300);
       }
-    },
-    requestSync: function() {
-      clearTimeout(Sync.delay);
-      return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 300);
     },
     sync: function(repeat) {
       $.ajax('qp', 'GET', "t=" + g.threads + "&b=" + g.board, {
