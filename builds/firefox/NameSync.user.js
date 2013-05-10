@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan X Name Sync
-// @version      4.1.2
+// @version      4.1.4
 // @namespace    milky
 // @description  Enables names on 4chan's forced anon boards. Requires 4chan X.
 // @author       milkytiptoe
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 /*
-  4chan X Name Sync v4.1.2
+  4chan X Name Sync v4.1.4
   http://www.namesync.org/
   
   Developers: milkytiptoe and ihavenoface
@@ -35,7 +35,7 @@
 
   g = {
     NAMESPACE: 'NameSync.',
-    VERSION: '4.1.2',
+    VERSION: '4.1.4',
     threads: [],
     board: null
   };
@@ -285,9 +285,7 @@
   };
 
   Names = {
-    nameByID: {},
     nameByPost: {},
-    blockedIDs: {},
     init: function() {
       this.load();
       $.event('AddCallback', {
@@ -299,10 +297,6 @@
           }
         }
       });
-      if (g.threads.length > 1) {
-        return;
-      }
-      $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
       return this.updateAllPosts();
     },
     cb: function() {
@@ -328,15 +322,6 @@
       };
       this.blockedIDs[id] = false;
       return this.updateAllPosts();
-    },
-    checkThreadUpdate: function(e) {
-      if (e.detail[404]) {
-        return Sync.disabled = true;
-      }
-      if (Set["Sync on /" + g.board + "/"]) {
-        clearTimeout(Sync.delay);
-        return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 250);
-      }
     },
     load: function() {
       var stored;
@@ -481,7 +466,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <div>Example: ^(?!Anonymous$) to filter all named posters.</div>\n  <br />\n  <input type=text name=FilterNames placeholder=Names>\n  <input type=text name=FilterTripcodes placeholder=Tripcodes>\n  <input type=text name=FilterEmails placeholder=Emails>\n  <input type=text name=FilterSubjects placeholder=Subjects>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.namesync.org/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <div>Example: ^(?!Anonymous$) to filter all named posters.</div>\n  <br />\n  <input type=text name=FilterNames placeholder=Names>\n  <input type=text name=FilterTripcodes placeholder=Tripcodes>\n  <input type=text name=FilterEmails placeholder=Emails>\n  <input type=text name=FilterSubjects placeholder=Subjects>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.namesync.org/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
@@ -540,16 +525,29 @@
     disabled: false,
     delay: null,
     init: function() {
-      var r;
-
+      if (!(g.threads.length > 1)) {
+        $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
+      }
       if (!Set['Read-only Mode']) {
         $.on(d, 'QRPostSuccessful', Sync.requestSend);
       }
-      this.sync(true);
-      if (sessionStorage["" + g.board + "-namesync-tosend"]) {
-        r = JSON.parse(sessionStorage["" + g.board + "-namesync-tosend"]);
-        return this.send(r.name, r.email, r.subject, r.postID, r.threadID, true);
+      if (g.threads.length === 1) {
+        return setTimeout(Sync.sync, 30000, true);
+      } else {
+        return this.sync();
       }
+    },
+    checkThreadUpdate: function(e) {
+      if (e.detail[404]) {
+        return Sync.disabled = true;
+      }
+      if (Set["Sync on /" + g.board + "/"]) {
+        return Sync.requestSync();
+      }
+    },
+    requestSync: function() {
+      clearTimeout(Sync.delay);
+      return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 300);
     },
     sync: function(repeat) {
       $.ajax('qp', 'GET', "t=" + g.threads + "&b=" + g.board, {
@@ -557,7 +555,7 @@
           var poster, _i, _len, _ref;
 
           if (this.status === 200) {
-            Sync.lastModified = this.getResponseHeader('Last-Modified');
+            Sync.lastModified = this.getResponseHeader('Last-Modified') || Sync.lastModified;
             _ref = JSON.parse(this.response);
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               poster = _ref[_i];
@@ -567,7 +565,7 @@
           }
         }
       });
-      if (repeat && !Sync.disabled && g.threads.length === 1) {
+      if (repeat && !Sync.disabled) {
         return setTimeout(Sync.sync, 30000, true);
       }
     },
@@ -593,35 +591,12 @@
         return Sync.send(cName, cEmail, cSubject, postID, threadID);
       }
     },
-    send: function(cName, cEmail, cSubject, postID, threadID, isLateOpSend) {
-      if (isLateOpSend && !sessionStorage["" + g.board + "-namesync-tosend"]) {
-        return;
-      }
-      if (g.threads.length > 1) {
-        isLateOpSend = true;
-        return sessionStorage["" + g.board + "-namesync-tosend"] = JSON.stringify({
-          name: cName,
-          email: cEmail,
-          subject: cSubject,
-          postID: postID,
-          threadID: threadID
-        });
-      } else {
-        return $.ajax('sp', 'POST', "p=" + postID + "&t=" + threadID + "&b=" + g.board + "&n=" + (encodeURIComponent(cName)) + "&s=" + (encodeURIComponent(cSubject)) + "&e=" + (encodeURIComponent(cEmail)) + "&dnt=" + (Set['Do Not Track'] ? '1' : '0'), {
-          onerror: function() {
-            return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
-          },
-          onloadend: function() {
-            if (this.status !== 200) {
-              return;
-            }
-            if (isLateOpSend) {
-              delete sessionStorage["" + g.board + "-namesync-tosend"];
-              return Sync.sync();
-            }
-          }
-        });
-      }
+    send: function(cName, cEmail, cSubject, postID, threadID) {
+      return $.ajax('sp', 'POST', "p=" + postID + "&t=" + threadID + "&b=" + g.board + "&n=" + (encodeURIComponent(cName)) + "&s=" + (encodeURIComponent(cSubject)) + "&e=" + (encodeURIComponent(cEmail)) + "&dnt=" + (Set['Do Not Track'] ? '1' : '0'), {
+        onerror: function() {
+          return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend);
+        }
+      });
     },
     clear: function() {
       $('#syncClear').disabled = true;

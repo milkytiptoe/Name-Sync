@@ -1,3 +1,7 @@
+4.1.4
+- Fixed OP fields sending with default 4chan X settings
+- Added 'Read-only Mode' setting to always hide your fields
+
 4.1.2
 - Update server domain name
 - Minor tweaks
