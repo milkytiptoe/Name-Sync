@@ -419,7 +419,7 @@ Sync =
       'POST'
       "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent cName}&s=#{encodeURIComponent cSubject}&e=#{encodeURIComponent cEmail}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
-        setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
+        setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID
   clear: ->
     $('#syncClear').disabled = true
     $.ajax 'rm',
