@@ -181,9 +181,7 @@ Menus =
     a
 
 Names =
-  nameByID:   {}
   nameByPost: {}
-  blockedIDs: {}
   init: ->
     @load()
     $.event 'AddCallback',
@@ -379,7 +377,10 @@ Sync =
       $.on d, 'ThreadUpdate', @checkThreadUpdate
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
-    @sync true
+    if g.threads.length is 1
+      setTimeout Sync.sync, 30000, true
+    else
+      @sync
     if sessionStorage["#{g.board}-namesync-tosend"]
       r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
@@ -400,7 +401,7 @@ Sync =
           for poster in JSON.parse @response
             Names.nameByPost[poster.p] = poster
           Names.updateAllPosts()
-    if repeat and !Sync.disabled and g.threads.length is 1
+    if repeat and !Sync.disabled
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
     postID   = e.detail.postID
