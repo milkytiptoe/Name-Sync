@@ -209,9 +209,9 @@ Names =
     @updateAllPosts()
   load: ->
     stored = sessionStorage["#{g.board}-4-names"]
-    @nameByID = if stored then JSON.parse(stored) else {}
+    @nameByID = if stored then JSON.parse stored else {}
     stored = sessionStorage["#{g.board}-blocked"]
-    @blockedIDs = if stored then JSON.parse(stored) else {}
+    @blockedIDs = if stored then JSON.parse stored else {}
   store: ->
     sessionStorage["#{g.board}-4-names"] = JSON.stringify @nameByID
     sessionStorage["#{g.board}-blocked"] = JSON.stringify @blockedIDs
