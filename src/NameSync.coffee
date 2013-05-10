@@ -381,9 +381,6 @@ Sync =
       setTimeout Sync.sync, 30000, true
     else
       @sync()
-    if sessionStorage["#{g.board}-namesync-tosend"]
-      r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
-      @send r.name, r.email, r.subject, r.postID, r.threadID, true
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     if Set["Sync on /#{g.board}/"]
@@ -420,27 +417,12 @@ Sync =
     cSubject = cSubject.trim()
     unless cName is '' and cEmail is '' and cSubject is '' or (Set['Hide Sage'] and /sage/i.test cEmail)
       Sync.send cName, cEmail, cSubject, postID, threadID
-  send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
-    return if isLateOpSend and !sessionStorage["#{g.board}-namesync-tosend"]
-    if g.threads.length > 1
-      isLateOpSend = true
-      sessionStorage["#{g.board}-namesync-tosend"] = JSON.stringify
-        name:     cName
-        email:    cEmail
-        subject:  cSubject
-        postID:   postID
-        threadID: threadID
-    else
-      $.ajax 'sp',
-        'POST'
-        "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent cName}&s=#{encodeURIComponent cSubject}&e=#{encodeURIComponent cEmail}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
-        onerror: ->
-          setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
-        onloadend: ->
-          return if @status isnt 200
-          if isLateOpSend
-            delete sessionStorage["#{g.board}-namesync-tosend"]
-            Sync.requestSync()
+  send: (cName, cEmail, cSubject, postID, threadID) ->
+    $.ajax 'sp',
+      'POST'
+      "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent cName}&s=#{encodeURIComponent cSubject}&e=#{encodeURIComponent cEmail}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
+      onerror: ->
+        setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID, isLateOpSend
   clear: ->
     $('#syncClear').disabled = true
     $.ajax 'rm',
