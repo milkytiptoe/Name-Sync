@@ -587,7 +587,7 @@
       cName = cName.trim();
       cEmail = cEmail.trim();
       cSubject = cSubject.trim();
-      if (!(cName === '' && cEmail === '' && cSubject === '' || (Set['Hide Sage'] && /sage/i.test(cEmail)))) {
+      if (!(cName === '' && cEmail === '' && cSubject === '' || Set['Hide Sage'] && /sage/i.test(cEmail))) {
         return Sync.send(cName, cEmail, cSubject, postID, threadID);
       }
     },

@@ -67,7 +67,7 @@ $.get = (name) ->
     localStorage.getItem "#{g.NAMESPACE}#{name}"
 $.set = (name, value) ->
     localStorage.setItem "#{g.NAMESPACE}#{name}", value
-  
+
 CSS =
   init: ->
     css = """
@@ -415,7 +415,7 @@ Sync =
     cName    = cName.trim()
     cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
-    unless cName is '' and cEmail is '' and cSubject is '' or (Set['Hide Sage'] and /sage/i.test cEmail)
+    unless cName is '' and cEmail is '' and cSubject is '' or Set['Hide Sage'] and /sage/i.test cEmail
       Sync.send cName, cEmail, cSubject, postID, threadID
   send: (cName, cEmail, cSubject, postID, threadID) ->
     $.ajax 'sp',
