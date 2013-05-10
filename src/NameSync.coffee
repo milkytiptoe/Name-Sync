@@ -380,7 +380,7 @@ Sync =
     if g.threads.length is 1
       setTimeout Sync.sync, 30000, true
     else
-      @sync
+      @sync()
     if sessionStorage["#{g.board}-namesync-tosend"]
       r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
