@@ -192,8 +192,6 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: Names.cb
-    return if g.threads.length > 1
-    $.on d, 'ThreadUpdate', @checkThreadUpdate
     @updateAllPosts()
   cb: ->
     Names.updatePost @nodes.post
@@ -211,11 +209,6 @@ Names =
       t: ''
     @blockedIDs[id] = false
     @updateAllPosts()
-  checkThreadUpdate: (e) ->
-    return Sync.disabled = true if e.detail[404]
-    if Set["Sync on /#{g.board}/"]
-      clearTimeout Sync.delay
-      Sync.delay = setTimeout Sync.sync, $.get('Delay') or 250
   load: ->
     stored = sessionStorage["#{g.board}-4-names"]
     @nameByID = if stored then JSON.parse(stored) else {}
@@ -334,7 +327,7 @@ Settings =
         <legend>Advanced</legend>
         <% if (type !== 'crx') { %><input id=syncUpdate type=button value='Check for update'><% } %>
         <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>
-        <div>Sync Delay: <input type=number name=Delay min=0 step=250 placeholder=250 title='Delay before downloading new names when a new post is inserted'> ms</div>
+        <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>
       </fieldset>
       <fieldset>
         <legend>About</legend>
@@ -382,12 +375,20 @@ Sync =
   disabled: false
   delay: null
   init: ->
+    $.on d, 'ThreadUpdate', @checkThreadUpdate
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
     @sync true
     if sessionStorage["#{g.board}-namesync-tosend"]
       r = JSON.parse sessionStorage["#{g.board}-namesync-tosend"]
       @send r.name, r.email, r.subject, r.postID, r.threadID, true
+  checkThreadUpdate: (e) ->
+    return Sync.disabled = true if e.detail[404]
+    if Set["Sync on /#{g.board}/"]
+      Sync.requestSync()
+  requestSync: ->
+    clearTimeout Sync.delay
+    Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
   sync: (repeat) ->
     $.ajax 'qp',
       'GET'
@@ -418,7 +419,7 @@ Sync =
     unless cName is '' and cEmail is '' and cSubject is '' or (Set['Hide Sage'] and /sage/i.test cEmail)
       Sync.send cName, cEmail, cSubject, postID, threadID
   send: (cName, cEmail, cSubject, postID, threadID, isLateOpSend) ->
-    return if isLateOpSend and not sessionStorage["#{g.board}-namesync-tosend"]
+    return if isLateOpSend and !sessionStorage["#{g.board}-namesync-tosend"]
     if g.threads.length > 1
       isLateOpSend = true
       sessionStorage["#{g.board}-namesync-tosend"] = JSON.stringify
@@ -437,7 +438,7 @@ Sync =
           return if @status isnt 200
           if isLateOpSend
             delete sessionStorage["#{g.board}-namesync-tosend"]
-            Sync.sync()
+            Sync.requestSync()
   clear: ->
     $('#syncClear').disabled = true
     $.ajax 'rm',
