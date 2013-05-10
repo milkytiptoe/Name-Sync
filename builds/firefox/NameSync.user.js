@@ -454,6 +454,7 @@
       'Sync on /b/': ['Enable sync on /b/.', true],
       'Sync on /q/': ['Enable sync on /q/.', true],
       'Sync on /soc/': ['Enable sync on /soc/.', true],
+      'Read-only Mode': ['Hide your fields.', false],
       'Hide IDs': ['Hide Unique IDs next to names.', false],
       'Hide Sage': ['Hide your fields when sage is in the email fied.', false],
       'Do Not Track': ['Opt out of name tracking by third party websites.', false],
@@ -541,7 +542,9 @@
     init: function() {
       var r;
 
-      $.on(d, 'QRPostSuccessful', Sync.requestSend);
+      if (!Set['Read-only Mode']) {
+        $.on(d, 'QRPostSuccessful', Sync.requestSend);
+      }
       this.sync(true);
       if (sessionStorage["" + g.board + "-namesync-tosend"]) {
         r = JSON.parse(sessionStorage["" + g.board + "-namesync-tosend"]);
