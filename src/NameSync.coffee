@@ -382,9 +382,8 @@ Sync =
       @sync()
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
-    if Set["Sync on /#{g.board}/"]
-      clearTimeout Sync.delay
-      Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
+    clearTimeout Sync.delay
+    Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
   sync: (repeat) ->
     $.ajax 'qp',
       'GET'
