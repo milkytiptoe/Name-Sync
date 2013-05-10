@@ -397,7 +397,7 @@ Sync =
       "t=#{g.threads}&b=#{g.board}"
       onloadend: ->
         if @status is 200
-          Sync.lastModified = @getResponseHeader 'Last-Modified'
+          Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
           for poster in JSON.parse @response
             Names.nameByPost[poster.p] = poster
           Names.updateAllPosts()
