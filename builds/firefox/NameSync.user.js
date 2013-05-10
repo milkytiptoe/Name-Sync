@@ -525,13 +525,11 @@
     disabled: false,
     delay: null,
     init: function() {
-      if (!(g.threads.length > 1)) {
-        $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
-      }
       if (!Set['Read-only Mode']) {
         $.on(d, 'QRPostSuccessful', Sync.requestSend);
       }
       if (g.threads.length === 1) {
+        $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
         return setTimeout(Sync.sync, 30000, true);
       } else {
         return this.sync();

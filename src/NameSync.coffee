@@ -373,11 +373,10 @@ Sync =
   disabled: false
   delay: null
   init: ->
-    unless g.threads.length > 1
-      $.on d, 'ThreadUpdate', @checkThreadUpdate
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
     if g.threads.length is 1
+      $.on d, 'ThreadUpdate', @checkThreadUpdate
       setTimeout Sync.sync, 30000, true
     else
       @sync()
