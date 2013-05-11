@@ -247,9 +247,13 @@ Names =
 
     if namespan.textContent isnt name
       namespan.textContent = name
-    if subject and subject isnt '' and subjectspan.textContent isnt subject
-      subjectspan.textContent = subject
-    if email and email isnt ''
+    if subject
+      if subjectspan.textContent isnt subject
+        subjectspan.textContent = subject
+    else
+      if subjectspan.textContent isnt ''
+        subjectspan.textContent = ''
+    if email
       emailspan = $ '.desktop .useremail', post
       if emailspan is null
         nameblockspan = $ '.desktop .nameBlock', post
@@ -261,7 +265,7 @@ Names =
         $.after namespan, $.tn ' '
         $.add emailspan, tripspan
       emailspan.href = "mailto:#{email}"
-    if tripcode and tripcode isnt ''
+    if tripcode
       if tripspan is null
         tripspan = $.el 'span',
           className: 'postertrip'
