@@ -223,11 +223,7 @@ Names =
     return if idspan is null
     id = idspan.textContent
     return if /^##/.test id
-    postnumspan = $ 'a[title="Quote this post"]', post
-    namespan    = $ '.desktop .name',             post
-    tripspan    = $ '.desktop .postertrip',       post
-    subjectspan = $ '.desktop .subject',          post
-    postnum     = postnumspan.textContent
+    postnum     = $('a[title="Quote this post"]', post).textContet
     oinfo       = Names.nameByPost[postnum]
     linfo       = Names.nameByID[id]
     if oinfo and !Names.blockedIDs[id]
@@ -245,14 +241,18 @@ Names =
     else
       return
 
+    namespan         = $ '.desktop .name',             post
+    tripspan         = $ '.desktop .postertrip',       post
+    subjectspantext  = $('.desktop .subject',          post).textContent  
+
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject
-      if subjectspan.textContent isnt subject
-        subjectspan.textContent = subject
+      if subjectspantext isnt subject
+        subjectspantext = subject
     else
-      if subjectspan.textContent isnt ''
-        subjectspan.textContent = ''
+      if subjectspantext isnt ''
+        subjectspantext = ''
     if email
       emailspan = $ '.desktop .useremail', post
       if emailspan is null
