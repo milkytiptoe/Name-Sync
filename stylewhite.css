@@ -39,11 +39,8 @@ img, input[type=image] {
   background: url(http://www.milkyis.me/namesync/logo.png) no-repeat top right;
 }
 #footer {
-	text-align: right;	
-	font-style: italic;
-}
-.features {
-	background: url(featuresblack.png) left top no-repeat;
+	text-align: right;
+  font-size: 0.9em;
 }
 .requirements {
 	background: url(requirementsblack.png) left top no-repeat;
