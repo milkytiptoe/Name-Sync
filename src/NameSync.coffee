@@ -269,6 +269,7 @@ Names =
       if tripspan.textContent isnt tripcode
         tripspan.textContent = tripcode
     else if tripspan
+      $.rm tripspan.previousSibling
       $.rm tripspan
 
     if Set['Filter']
