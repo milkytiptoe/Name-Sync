@@ -1,3 +1,8 @@
+4.1.5
+- Added 'Clear storage' button to settings to clear locally stored names
+- Fixed subject fields remaining on renamed posters
+- Minor tweaks
+
 4.1.4
 - Fixed OP fields sending with default 4chan X settings
 - Added 'Read-only Mode' setting to always hide your fields
