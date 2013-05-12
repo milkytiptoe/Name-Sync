@@ -201,6 +201,13 @@ Names =
       n: 'Anonymous'
     @blockedIDs[id] = false
     @updateAllPosts()
+  clear: ->
+    $('#namesClear').disabled = true
+    Names.nameByID = {}
+    Names.nameByPost = {}
+    Names.blockedIDs = {}
+    Names.store()
+    $('#namesClear').value = 'Cleared'
   load: ->
     stored = sessionStorage["#{g.board}-4-names"]
     @nameByID = if stored then JSON.parse stored else {}
@@ -238,7 +245,7 @@ Names =
     namespan          = $ '.desktop .name',       post
     tripspan          = $ '.desktop .postertrip', post
     subjectspan       = $ '.desktop .subject',    post
-    subjectspantext   = subjectspan.textContent  
+    subjectspantext   = subjectspan.textContent
 
     if namespan.textContent isnt name
       namespan.textContent = name
@@ -325,6 +332,7 @@ Settings =
         <legend>Advanced</legend>
         <% if (type !== 'crx') { %><input id=syncUpdate type=button value='Check for update'><% } %>
         <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>
+        <input id=namesClear type=button value='Clear storage' title='Clear locally stored names'>
         <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>
       </fieldset>
       <fieldset>
@@ -367,6 +375,7 @@ Settings =
 
     <% if (type !== 'crx') { %>$.on $('#syncUpdate', section), 'click', Updater.update<% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
+    $.on $('#namesClear',  section), 'click', Names.clear
 
 Sync =
   lastModified: '0'
