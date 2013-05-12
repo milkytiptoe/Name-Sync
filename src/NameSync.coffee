@@ -203,7 +203,7 @@ Names =
     @updateAllPosts()
   clear: ->
     $('#namesClear').disabled = true
-    Names.nameByID = {}
+    Names.nameByID   = {}
     Names.nameByPost = {}
     Names.blockedIDs = {}
     Names.store()
@@ -375,7 +375,7 @@ Settings =
 
     <% if (type !== 'crx') { %>$.on $('#syncUpdate', section), 'click', Updater.update<% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
-    $.on $('#namesClear',  section), 'click', Names.clear
+    $.on $('#namesClear', section), 'click', Names.clear
 
 Sync =
   lastModified: '0'
