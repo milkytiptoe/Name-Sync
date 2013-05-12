@@ -77,8 +77,11 @@ CSS =
       padding: 2px;
     }
     .section-name-sync input[type='button'] {
-      width: 130px;
-      height: 26px;
+      padding: 3px;
+      margin-bottom: 6px;
+    }
+    .section-name-sync p {
+      margin: 0 0 8px 0;
     }
     .section-name-sync ul {
       list-style: none;
@@ -323,20 +326,23 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Filter</legend>
-        <div>Example: ^(?!Anonymous$) to filter all named posters.</div>
-        <br />
-        <input type=text name=FilterNames placeholder=Names>
-        <input type=text name=FilterTripcodes placeholder=Tripcodes>
-        <input type=text name=FilterEmails placeholder=Emails>
-        <input type=text name=FilterSubjects placeholder=Subjects>
+        <p>Example: ^(?!Anonymous$) to filter all named posters.</p>
+        <div>
+          <input type=text name=FilterNames placeholder=Names>
+          <input type=text name=FilterTripcodes placeholder=Tripcodes>
+          <input type=text name=FilterEmails placeholder=Emails>
+          <input type=text name=FilterSubjects placeholder=Subjects>
+        </div>
       </fieldset>
       <fieldset>
         <legend>Advanced</legend>
-        <% if (type !== 'crx') { %>
-        <input id=syncUpdate type=button value='Check for update'>
-        <% } %>
-        <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>
-        <input id=namesClear type=button value='Clear storage' title='Clear locally stored names'>
+        <div>
+          <% if (type !== 'crx') { %>
+          <input id=syncUpdate type=button value='Check for update'>
+          <% } %>
+          <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>
+          <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>
+        </div>
         <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>
       </fieldset>
       <fieldset>
