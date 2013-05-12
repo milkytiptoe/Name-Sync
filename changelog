@@ -1,5 +1,5 @@
 4.1.5
-- Added 'Clear storage' button to settings to clear locally stored names
+- Added 'Clear name cache' button to settings to clear locally stored names
 - Fixed subject fields remaining on renamed posters
 - Minor tweaks
 
