@@ -168,7 +168,7 @@
     init: function() {
       var css;
 
-      css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  width: 130px;\n  height: 26px;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n#bgimage {\n  bottom: 0px;\n  right: 0px;\n  position: absolute;\n}";
+      css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  padding: 3px;\n  margin-bottom: 6px;\n}\n.section-name-sync p {\n  margin: 0 0 8px 0;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n#bgimage {\n  bottom: 0px;\n  right: 0px;\n  position: absolute;\n}";
       if (Set['Hide IDs']) {
         css += ".posteruid {\n  display: none;\n}";
       }
@@ -182,10 +182,6 @@
   };
 
   Filter = {
-    names: null,
-    tripcodes: null,
-    emails: null,
-    subjects: null,
     init: function() {
       this.names = $.get('FilterNames');
       this.tripcodes = $.get('FilterTripcodes');
@@ -308,8 +304,7 @@
       name = prompt('What would you like this poster to be named?', 'Anonymous');
       if (name && name.trim() !== '') {
         this.nameByID[id] = {
-          n: name,
-          t: ''
+          n: name
         };
         this.blockedIDs[id] = true;
         return this.updateAllPosts();
@@ -317,11 +312,18 @@
     },
     reset: function(id) {
       this.nameByID[id] = {
-        n: 'Anonymous',
-        t: ''
+        n: 'Anonymous'
       };
       this.blockedIDs[id] = false;
       return this.updateAllPosts();
+    },
+    clear: function() {
+      $('#namesClear').disabled = true;
+      Names.nameByID = {};
+      Names.nameByPost = {};
+      Names.blockedIDs = {};
+      Names.store();
+      return $('#namesClear').value = 'Cleared';
     },
     load: function() {
       var stored;
@@ -346,7 +348,7 @@
       return this.store();
     },
     updatePost: function(post) {
-      var email, emailspan, id, idspan, linfo, name, nameblockspan, namespan, oinfo, postnum, postnumspan, subject, subjectspan, tripcode, tripspan;
+      var email, emailspan, id, idspan, linfo, name, nameblockspan, namespan, oinfo, postnum, subject, subjectspan, subjectspantext, tripcode, tripspan;
 
       idspan = $('.hand', post);
       if (idspan === null) {
@@ -356,11 +358,7 @@
       if (/^##/.test(id)) {
         return;
       }
-      postnumspan = $('a[title="Quote this post"]', post);
-      namespan = $('.desktop .name', post);
-      tripspan = $('.desktop .postertrip', post);
-      subjectspan = $('.desktop .subject', post);
-      postnum = postnumspan.textContent;
+      postnum = $('a[title="Quote this post"]', post).textContent;
       oinfo = Names.nameByPost[postnum];
       linfo = Names.nameByID[id];
       if (oinfo && !Names.blockedIDs[id]) {
@@ -380,13 +378,23 @@
       } else {
         return;
       }
+      namespan = $('.desktop .name', post);
+      tripspan = $('.desktop .postertrip', post);
+      subjectspan = $('.desktop .subject', post);
+      subjectspantext = subjectspan.textContent;
       if (namespan.textContent !== name) {
         namespan.textContent = name;
       }
-      if (subject && subject !== '' && subjectspan.textContent !== subject) {
-        subjectspan.textContent = subject;
+      if (subject) {
+        if (subjectspantext !== subject) {
+          subjectspan.textContent = subject;
+        }
+      } else {
+        if (subjectspantext !== '') {
+          subjectspan.textContent = '';
+        }
       }
-      if (email && email !== '') {
+      if (email) {
         emailspan = $('.desktop .useremail', post);
         if (emailspan === null) {
           nameblockspan = $('.desktop .nameBlock', post);
@@ -402,7 +410,7 @@
         }
         emailspan.href = "mailto:" + email;
       }
-      if (tripcode && tripcode !== '') {
+      if (tripcode) {
         if (tripspan === null) {
           tripspan = $.el('span', {
             className: 'postertrip'
@@ -413,6 +421,7 @@
           tripspan.textContent = tripcode;
         }
       } else if (tripspan) {
+        $.rm(tripspan.previousSibling);
         $.rm(tripspan);
       }
       if (Set['Filter']) {
@@ -440,8 +449,8 @@
       'Sync on /q/': ['Enable sync on /q/.', true],
       'Sync on /soc/': ['Enable sync on /soc/.', true],
       'Read-only Mode': ['Hide your fields.', false],
-      'Hide IDs': ['Hide Unique IDs next to names.', false],
       'Hide Sage': ['Hide your fields when sage is in the email fied.', false],
+      'Hide IDs': ['Hide Unique IDs next to names.', false],
       'Do Not Track': ['Opt out of name tracking by third party websites.', false],
       'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields.', false],
       'Filter': ['Hide posts by sync users that match filter regular expressions.', false],
@@ -466,7 +475,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <div>Example: ^(?!Anonymous$) to filter all named posters.</div>\n  <br />\n  <input type=text name=FilterNames placeholder=Names>\n  <input type=text name=FilterTripcodes placeholder=Tripcodes>\n  <input type=text name=FilterEmails placeholder=Emails>\n  <input type=text name=FilterSubjects placeholder=Subjects>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <input id=syncUpdate type=button value='Check for update'>\n  <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.namesync.org/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <p>Example: ^(?!Anonymous$) to filter all named posters.</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.namesync.org/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
@@ -516,7 +525,8 @@
         });
       }
       $.on($('#syncUpdate', section), 'click', Updater.update);
-      return $.on($('#syncClear', section), 'click', Sync.clear);
+      $.on($('#syncClear', section), 'click', Sync.clear);
+      return $.on($('#namesClear', section), 'click', Names.clear);
     }
   };
 
