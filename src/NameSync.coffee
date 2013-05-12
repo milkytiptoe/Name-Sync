@@ -300,7 +300,9 @@ Settings =
     'Do Not Track':      ['Opt out of name tracking by third party websites.', false]
     'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields.', false]
     'Filter':            ['Hide posts by sync users that match filter regular expressions.', false]
-    <% if (type !== 'crx') { %>'Automatic Updates': ['Check for updates automatically.', true]<% } %>
+    <% if (type !== 'crx') { %>
+    'Automatic Updates': ['Check for updates automatically.', true]
+    <% } %>
   init: ->
     for setting, val of Settings.main
       stored = $.get setting
@@ -330,7 +332,9 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Advanced</legend>
-        <% if (type !== 'crx') { %><input id=syncUpdate type=button value='Check for update'><% } %>
+        <% if (type !== 'crx') { %>
+        <input id=syncUpdate type=button value='Check for update'>
+        <% } %>
         <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>
         <input id=namesClear type=button value='Clear storage' title='Clear locally stored names'>
         <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>
@@ -373,7 +377,9 @@ Settings =
             return @value = $.get @name
         $.set @name, @value
 
-    <% if (type !== 'crx') { %>$.on $('#syncUpdate', section), 'click', Updater.update<% } %>
+    <% if (type !== 'crx') { %>
+    $.on $('#syncUpdate', section), 'click', Updater.update
+    <% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
     $.on $('#namesClear', section), 'click', Names.clear
 
