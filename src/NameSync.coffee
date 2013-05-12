@@ -110,10 +110,6 @@ CSS =
       textContent: css
 
 Filter =
-  names:     null
-  tripcodes: null
-  emails:    null
-  subjects:  null
   init: ->
     @names     = $.get 'FilterNames'
     @tripcodes = $.get 'FilterTripcodes'
@@ -198,13 +194,11 @@ Names =
     if name and name.trim() isnt ''
       @nameByID[id] =
         n: name
-        t: ''
       @blockedIDs[id] = true
       @updateAllPosts()
   reset: (id) ->
     @nameByID[id] =
       n: 'Anonymous'
-      t: ''
     @blockedIDs[id] = false
     @updateAllPosts()
   load: ->
