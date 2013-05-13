@@ -464,7 +464,7 @@ Updater =
       ''
       onloadend: ->
         $.set 'lastcheck', Date.now()
-        if @status isnt 200 or @response is g.VERSION.replace /\./g, ''
+        if @status isnt 200 or @response is g.VERSION
           return $('#syncUpdate').value = 'None available'
         $.event 'CreateNotification',
           detail:
