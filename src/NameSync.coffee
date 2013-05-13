@@ -52,7 +52,7 @@ $.ajax = (file, type, data, callbacks) ->
     url = "<%= meta.page %>namesync/#{file}.php"
     url += "?#{data}" if type is 'GET'
     r.open type, url, true
-    r.setRequestHeader 'X-Requested-With', 'NameSync3'
+    r.setRequestHeader 'X-Requested-With', 'NameSync<%= version %>'
     r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
     r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' if type is 'POST'
     $.extend r, callbacks
