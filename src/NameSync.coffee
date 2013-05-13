@@ -294,22 +294,22 @@ Names =
 
 Settings =
   main:
-    'Sync on /b/':       ['Enable sync on /b/.', true]
-    'Sync on /q/':       ['Enable sync on /q/.', true]
-    'Sync on /soc/':     ['Enable sync on /soc/.', true]
-    'Read-only Mode':    ['Hide your fields.', false]
-    'Hide Sage':         ['Hide your fields when sage is in the email fied.', false]
-    'Hide IDs':          ['Hide Unique IDs next to names.', false]
-    'Do Not Track':      ['Opt out of name tracking by third party websites.', false]
-    'Persona Fields':    ['Share persona fields instead of the 4chan X quick reply fields.', false]
-    'Filter':            ['Hide posts by sync users that match filter regular expressions.', false]
+    'Sync on /b/':       [true,  'Enable sync on /b/.']
+    'Sync on /q/':       [true,  'Enable sync on /q/.']
+    'Sync on /soc/':     [true,  'Enable sync on /soc/.']
+    'Read-only Mode':    [false, 'Share none of your fields.']
+    'Hide Sage':         [false, 'Share none of your fields when sage is in the email fied.']
+    'Hide IDs':          [false, 'Hide Unique IDs next to names.']
+    'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
+    'Persona Fields':    [false, 'Share persona fields instead of the 4chan X quick reply fields.']
+    'Filter':            [false, 'Hide posts by sync users that match filter regular expressions.']
     <% if (type !== 'crx') { %>
-    'Automatic Updates': ['Check for updates automatically.', true]
+    'Automatic Updates': [true,  'Check for updates automatically.']
     <% } %>
   init: ->
     for setting, val of Settings.main
       stored = $.get setting
-      Set[setting] = if stored is null then val[1] else stored is 'true'
+      Set[setting] = if stored is null then val[0] else stored is 'true'
     $.event 'AddSettingsSection',
       detail:
         title: 'Name Sync'
@@ -326,7 +326,7 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Filter</legend>
-        <p>Example: ^(?!Anonymous$) to filter all named posters.</p>
+        <p>Examples: ^(?!Anonymous$) to filter all names. !Tripcode|!Tripcode to filter multiple tripcodes.</p>
         <div>
           <input type=text name=FilterNames placeholder=Names>
           <input type=text name=FilterTripcodes placeholder=Tripcodes>
@@ -363,10 +363,10 @@ Settings =
 
     for setting, val of Settings.main
       stored  = $.get setting
-      istrue  = if stored is null then val[1] else stored is 'true'
+      istrue  = if stored is null then val[0] else stored is 'true'
       checked = if istrue then 'checked ' else ''
       $.add field, $.el 'div',
-        innerHTML: "<label><input type='checkbox' name='#{setting}' #{checked}/>#{setting}</label><span class='description'>: #{val[0]}</span>"
+        innerHTML: "<label><input type='checkbox' name='#{setting}' #{checked}/>#{setting}</label><span class='description'>: #{val[1]}</span>"
     $.prepend section, field
     for check in $$ 'input[type=checkbox]', section
       $.on check, 'click', ->
