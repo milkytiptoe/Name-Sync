@@ -433,6 +433,9 @@ Sync =
     cName    = cName.trim()
     cEmail   = cEmail.trim()
     cSubject = cSubject.trim()
+    # when a user removes their name from the QR it 'sticks' to posts instead of going back to anon, which isnt the 4chan behaviour
+    # a fix shouldnt bloat the code or increase ajax a bunch - try to fix for next update
+    # note: server converts a blank name and converts it to Anonymous so sending that value isn't necessary
     unless cName is '' and cEmail is '' and cSubject is '' or Set['Hide Sage'] and /sage/i.test cEmail
       Sync.send cName, cEmail, cSubject, postID, threadID
   send: (cName, cEmail, cSubject, postID, threadID) ->
