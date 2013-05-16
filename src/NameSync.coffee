@@ -427,7 +427,7 @@ Sync =
       currentEmail   = $.get('Email')   or ''
       currentSubject = $.get('Subject') or ''
     else
-      qr       = $.id 'qr'
+      qr             = $.id 'qr'
       currentName    = $('input[data-name=name]',  qr).value
       currentEmail   = $('input[data-name=email]', qr).value
       currentSubject = $('input[data-name=sub]',   qr).value
