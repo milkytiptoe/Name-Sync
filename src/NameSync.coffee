@@ -399,16 +399,15 @@ Sync =
       $.on d, 'QRPostSuccessful', Sync.requestSend
     if g.threads.length is 1
       $.on d, 'ThreadUpdate', @checkThreadUpdate
-      setTimeout Sync.sync, 30000, true
+      @sync true
     else
       @sync()
   checkThreadUpdate: (e) ->
-    console.log 'ThreadUpdate'
+    return unless e.detail.newPosts.length
     return Sync.disabled = true if e.detail[404]
     clearTimeout Sync.delay
     Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
   sync: (repeat) ->
-    console.log 'Sync'
     $.ajax 'qp',
       'GET'
       "t=#{g.threads}&b=#{g.board}"
