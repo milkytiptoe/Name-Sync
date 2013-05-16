@@ -393,7 +393,7 @@ Sync =
   lastModified: '0'
   disabled: false
   delay: null
-  lastName: ''
+  lastName: null
   init: ->
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
@@ -435,7 +435,7 @@ Sync =
     currentName    = currentName.trim()
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
-    unless Sync.lastName is '' and currentEmail is '' and currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
+    unless Sync.lastName is '' and currentName is '' and currentEmail is '' and currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
       Sync.lastName = currentName
       Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID) ->
