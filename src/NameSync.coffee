@@ -403,10 +403,12 @@ Sync =
     else
       @sync()
   checkThreadUpdate: (e) ->
+    console.log 'ThreadUpdate'
     return Sync.disabled = true if e.detail[404]
     clearTimeout Sync.delay
     Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
   sync: (repeat) ->
+    console.log 'Sync'
     $.ajax 'qp',
       'GET'
       "t=#{g.threads}&b=#{g.board}"
