@@ -393,6 +393,7 @@ Sync =
   lastModified: '0'
   disabled: false
   delay: null
+  lastName: ''
   init: ->
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
@@ -422,28 +423,26 @@ Sync =
     postID   = e.detail.postID
     threadID = e.detail.threadID
     if Set['Persona Fields']
-      cName    = $.get('Name')    or ''
-      cEmail   = $.get('Email')   or ''
-      cSubject = $.get('Subject') or ''
+      currentName    = $.get('Name')    or ''
+      currentEmail   = $.get('Email')   or ''
+      currentSubject = $.get('Subject') or ''
     else
       qr       = $.id 'qr'
-      cName    = $('input[data-name=name]',  qr).value
-      cEmail   = $('input[data-name=email]', qr).value
-      cSubject = $('input[data-name=sub]',   qr).value
-    cName    = cName.trim()
-    cEmail   = cEmail.trim()
-    cSubject = cSubject.trim()
-    # when a user removes their name from the QR it 'sticks' to posts instead of going back to anon, which isnt the 4chan behaviour
-    # a fix shouldnt bloat the code or increase ajax a bunch - try to fix for next update
-    # note: server converts a blank name and converts it to Anonymous so sending that value isn't necessary
-    unless cName is '' and cEmail is '' and cSubject is '' or Set['Hide Sage'] and /sage/i.test cEmail
-      Sync.send cName, cEmail, cSubject, postID, threadID
-  send: (cName, cEmail, cSubject, postID, threadID) ->
+      currentName    = $('input[data-name=name]',  qr).value
+      currentEmail   = $('input[data-name=email]', qr).value
+      currentSubject = $('input[data-name=sub]',   qr).value
+    currentName    = currentName.trim()
+    currentEmail   = currentEmail.trim()
+    currentSubject = currentSubject.trim()
+    unless Sync.lastName is '' and currentEmail is '' and currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
+      Sync.lastName = currentName
+      Sync.send currentName, currentEmail, currentSubject, postID, threadID
+  send: (name, email, subject, postID, threadID) ->
     $.ajax 'sp',
       'POST'
-      "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent cName}&s=#{encodeURIComponent cSubject}&e=#{encodeURIComponent cEmail}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
+      "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent name}&s=#{encodeURIComponent subject}&e=#{encodeURIComponent email}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
-        setTimeout Sync.send, 2000, cName, cEmail, cSubject, postID, threadID
+        setTimeout Sync.send, 2000, name, email, subject, postID, threadID
   clear: ->
     $('#syncClear').disabled = true
     $.ajax 'rm',
