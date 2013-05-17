@@ -11,5 +11,5 @@
 // @run-at       document-start
 // @updateURL    https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.meta.js
 // @downloadURL  https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js
-// @icon         http://www.namesync.org/namesync/logo.png
+// @icon         https://www.namesync.org/namesync/logo.png
 // ==/UserScript==

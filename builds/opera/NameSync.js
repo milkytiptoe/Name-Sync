@@ -11,12 +11,12 @@
 // @run-at       document-start
 // @updateURL    https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.meta.js
 // @downloadURL  https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js
-// @icon         http://www.namesync.org/namesync/logo.png
+// @icon         https://www.namesync.org/namesync/logo.png
 // ==/UserScript==
 
 /*
   4chan X Name Sync v4.1.5
-  http://www.namesync.org/
+  https://www.namesync.org/
   
   Developers: milkytiptoe and ihavenoface
   
@@ -129,12 +129,12 @@
     if (file === 'qp') {
       r.overrideMimeType('application/json');
     }
-    url = "http://www.namesync.org/namesync/" + file + ".php";
+    url = "https://www.namesync.org/namesync/" + file + ".php";
     if (type === 'GET') {
       url += "?" + data;
     }
     r.open(type, url, true);
-    r.setRequestHeader('X-Requested-With', 'NameSync3');
+    r.setRequestHeader('X-Requested-With', 'NameSync4.1.5');
     if (file === 'qp') {
       r.setRequestHeader('If-Modified-Since', Sync.lastModified);
     }
@@ -445,16 +445,16 @@
 
   Settings = {
     main: {
-      'Sync on /b/': ['Enable sync on /b/.', true],
-      'Sync on /q/': ['Enable sync on /q/.', true],
-      'Sync on /soc/': ['Enable sync on /soc/.', true],
-      'Read-only Mode': ['Hide your fields.', false],
-      'Hide Sage': ['Hide your fields when sage is in the email fied.', false],
-      'Hide IDs': ['Hide Unique IDs next to names.', false],
-      'Do Not Track': ['Opt out of name tracking by third party websites.', false],
-      'Persona Fields': ['Share persona fields instead of the 4chan X quick reply fields.', false],
-      'Filter': ['Hide posts by sync users that match filter regular expressions.', false],
-      'Automatic Updates': ['Check for updates automatically.', true]
+      'Sync on /b/': [true, 'Enable sync on /b/.'],
+      'Sync on /q/': [true, 'Enable sync on /q/.'],
+      'Sync on /soc/': [true, 'Enable sync on /soc/.'],
+      'Read-only Mode': [false, 'Share none of your fields.'],
+      'Hide Sage': [false, 'Share none of your fields when sage is in the email fied.'],
+      'Hide IDs': [false, 'Hide Unique IDs next to names.'],
+      'Do Not Track': [false, 'Opt out of name tracking by third party websites.'],
+      'Persona Fields': [false, 'Share persona fields instead of the 4chan X quick reply fields.'],
+      'Filter': [false, 'Hide posts by sync users that match filter regular expressions.'],
+      'Automatic Updates': [true, 'Check for updates automatically.']
     },
     init: function() {
       var setting, stored, val, _ref;
@@ -463,7 +463,7 @@
       for (setting in _ref) {
         val = _ref[setting];
         stored = $.get(setting);
-        Set[setting] = stored === null ? val[1] : stored === 'true';
+        Set[setting] = stored === null ? val[0] : stored === 'true';
       }
       return $.event('AddSettingsSection', {
         detail: {
@@ -475,7 +475,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <p>Example: ^(?!Anonymous$) to filter all named posters.</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='http://www.namesync.org/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <p>Examples: ^(?!Anonymous$) to filter all names. !Tripcode|!Tripcode to filter multiple tripcodes.</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='https://www.namesync.org/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
@@ -491,10 +491,10 @@
       for (setting in _ref) {
         val = _ref[setting];
         stored = $.get(setting);
-        istrue = stored === null ? val[1] : stored === 'true';
+        istrue = stored === null ? val[0] : stored === 'true';
         checked = istrue ? 'checked ' : '';
         $.add(field, $.el('div', {
-          innerHTML: "<label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[0] + "</span>"
+          innerHTML: "<label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[1] + "</span>"
         }));
       }
       $.prepend(section, field);
@@ -534,18 +534,22 @@
     lastModified: '0',
     disabled: false,
     delay: null,
+    lastName: null,
     init: function() {
       if (!Set['Read-only Mode']) {
         $.on(d, 'QRPostSuccessful', Sync.requestSend);
       }
       if (g.threads.length === 1) {
         $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
-        return setTimeout(Sync.sync, 30000, true);
+        return this.sync(true);
       } else {
         return this.sync();
       }
     },
     checkThreadUpdate: function(e) {
+      if (!e.detail.newPosts.length) {
+        return;
+      }
       if (e.detail[404]) {
         return Sync.disabled = true;
       }
@@ -557,15 +561,19 @@
         onloadend: function() {
           var poster, _i, _len, _ref;
 
-          if (this.status === 200) {
-            Sync.lastModified = this.getResponseHeader('Last-Modified') || Sync.lastModified;
-            _ref = JSON.parse(this.response);
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              poster = _ref[_i];
-              Names.nameByPost[poster.p] = poster;
-            }
-            return Names.updateAllPosts();
+          if (this.status !== 200) {
+            return;
           }
+          Sync.lastModified = this.getResponseHeader('Last-Modified') || Sync.lastModified;
+          if (!this.response) {
+            return;
+          }
+          _ref = JSON.parse(this.response);
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            poster = _ref[_i];
+            Names.nameByPost[poster.p] = poster;
+          }
+          return Names.updateAllPosts();
         }
       });
       if (repeat && !Sync.disabled) {
@@ -573,31 +581,32 @@
       }
     },
     requestSend: function(e) {
-      var cEmail, cName, cSubject, postID, qr, threadID;
+      var currentEmail, currentName, currentSubject, postID, qr, threadID;
 
       postID = e.detail.postID;
       threadID = e.detail.threadID;
       if (Set['Persona Fields']) {
-        cName = $.get('Name') || '';
-        cEmail = $.get('Email') || '';
-        cSubject = $.get('Subject') || '';
+        currentName = $.get('Name') || '';
+        currentEmail = $.get('Email') || '';
+        currentSubject = $.get('Subject') || '';
       } else {
         qr = $.id('qr');
-        cName = $('input[data-name=name]', qr).value;
-        cEmail = $('input[data-name=email]', qr).value;
-        cSubject = $('input[data-name=sub]', qr).value;
+        currentName = $('input[data-name=name]', qr).value;
+        currentEmail = $('input[data-name=email]', qr).value;
+        currentSubject = $('input[data-name=sub]', qr).value;
       }
-      cName = cName.trim();
-      cEmail = cEmail.trim();
-      cSubject = cSubject.trim();
-      if (!(cName === '' && cEmail === '' && cSubject === '' || Set['Hide Sage'] && /sage/i.test(cEmail))) {
-        return Sync.send(cName, cEmail, cSubject, postID, threadID);
+      currentName = currentName.trim();
+      currentEmail = currentEmail.trim();
+      currentSubject = currentSubject.trim();
+      if (!(!Sync.lastName && currentName === '' && currentEmail === '' && currentSubject === '' || Set['Hide Sage'] && /sage/i.test(currentEmail))) {
+        Sync.lastName = currentName;
+        return Sync.send(currentName, currentEmail, currentSubject, postID, threadID);
       }
     },
-    send: function(cName, cEmail, cSubject, postID, threadID) {
-      return $.ajax('sp', 'POST', "p=" + postID + "&t=" + threadID + "&b=" + g.board + "&n=" + (encodeURIComponent(cName)) + "&s=" + (encodeURIComponent(cSubject)) + "&e=" + (encodeURIComponent(cEmail)) + "&dnt=" + (Set['Do Not Track'] ? '1' : '0'), {
+    send: function(name, email, subject, postID, threadID) {
+      return $.ajax('sp', 'POST', "p=" + postID + "&t=" + threadID + "&b=" + g.board + "&n=" + (encodeURIComponent(name)) + "&s=" + (encodeURIComponent(subject)) + "&e=" + (encodeURIComponent(email)) + "&dnt=" + (Set['Do Not Track'] ? '1' : '0'), {
         onerror: function() {
-          return setTimeout(Sync.send, 2000, cName, cEmail, cSubject, postID, threadID);
+          return setTimeout(Sync.send, 2000, name, email, subject, postID, threadID);
         }
       });
     },
@@ -631,14 +640,14 @@
       return $.ajax('u3', 'GET', '', {
         onloadend: function() {
           $.set('lastcheck', Date.now());
-          if (this.status !== 200 || this.response === g.VERSION.replace(/\./g, '')) {
+          if (this.status !== 200 || this.response === g.VERSION) {
             return $('#syncUpdate').value = 'None available';
           }
           $.event('CreateNotification', {
             detail: {
               type: 'info',
               content: $.el('span', {
-                innerHTML: "An update for 4chan X Name Sync is available. <a href=http://www.namesync.org/ target=_blank>Get it here</a>."
+                innerHTML: "An update for 4chan X Name Sync is available. <a href=https://www.namesync.org/ target=_blank>Get it here</a>."
               }),
               lifetime: 10
             }
