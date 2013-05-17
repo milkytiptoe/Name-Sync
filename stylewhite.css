@@ -10,8 +10,8 @@ body {
 	background: white;
 }
 a {
-	color: black;
-	text-decoration: underline;	
+	color: blue;
+	text-decoration: none;	
 }
 h1 {
 	font-size: 1.4em;
@@ -36,7 +36,7 @@ img, input[type=image] {
 }
 #header {
 	margin: 12px 0 12px 0;
-  background: url(http://www.milkyis.me/namesync/logo.png) no-repeat top right;
+  background: url(http://www.namesync.org/namesync/logo.png) no-repeat top right;
 }
 #footer {
 	text-align: right;
