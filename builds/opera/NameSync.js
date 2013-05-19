@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan X Name Sync
-// @version      4.2.0
+// @version      4.2.1
 // @namespace    milky
 // @description  Enables names on 4chan's forced anon boards. Requires 4chan X.
 // @author       milkytiptoe
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 /*
-  4chan X Name Sync v4.2.0
+  4chan X Name Sync v4.2.1
   https://www.namesync.org/
   
   Developers: milkytiptoe and ihavenoface
@@ -37,7 +37,7 @@
 
   g = {
     NAMESPACE: 'NameSync.',
-    VERSION: '4.2.0',
+    VERSION: '4.2.1',
     include: ['b', 'q', 'soc'],
     threads: []
   };
@@ -140,7 +140,7 @@
       url += "?" + data;
     }
     r.open(type, url, true);
-    r.setRequestHeader('X-Requested-With', 'NameSync4.2.0');
+    r.setRequestHeader('X-Requested-With', 'NameSync4.2.1');
     if (file === 'qp') {
       r.setRequestHeader('If-Modified-Since', Sync.lastModified);
     }
