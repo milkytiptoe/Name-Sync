@@ -12,61 +12,67 @@ $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
 $ = (selector, root = d.body) ->
   root.querySelector selector
+$.session = {}
+$.local   = {}
 
 $.el = (tag, properties) ->
-    el = d.createElement tag
-    $.extend el, properties if properties
-    el
+  el = d.createElement tag
+  $.extend el, properties if properties
+  el
 $.tn = (text) ->
-    d.createTextNode text
+  d.createTextNode text
 $.id = (id) ->
-    d.getElementById id
+  d.getElementById id
 $.event = (type, detail) ->
-    d.dispatchEvent new CustomEvent type, detail
+  d.dispatchEvent new CustomEvent type, detail
 $.on = (el, type, handler) ->
-    el.addEventListener type, handler, false
+  el.addEventListener type, handler, false
 $.off = (el, type, handler) ->
-    el.removeEventListener type, handler, false
+  el.removeEventListener type, handler, false
 $.addClass = (el, className) ->
-    el.classList.add className
+  el.classList.add className
 $.add = (parent, children) ->
-    parent.appendChild $.nodes children
+  parent.appendChild $.nodes children
 $.rm = (el) ->
-    el.parentNode.removeChild el
+  el.parentNode.removeChild el
 $.prepend = (parent, children) ->
-    parent.insertBefore $.nodes(children), parent.firstChild
+  parent.insertBefore $.nodes(children), parent.firstChild
 $.after = (root, el) ->
-    root.parentNode.insertBefore $.nodes(el), root.nextSibling
+  root.parentNode.insertBefore $.nodes(el), root.nextSibling
 $.before = (root, el) ->
-    root.parentNode.insertBefore $.nodes(el), root
+  root.parentNode.insertBefore $.nodes(el), root
 $.nodes = (nodes) ->
-    unless nodes instanceof Array
-      return nodes
-    frag = d.createDocumentFragment()
-    for node in nodes
-      frag.appendChild node
-    frag
+  unless nodes instanceof Array
+    return nodes
+  frag = d.createDocumentFragment()
+  for node in nodes
+    frag.appendChild node
+  frag
 $.ajax = (file, type, data, callbacks) ->
-    r = new XMLHttpRequest()
-    r.overrideMimeType 'application/json' if file is 'qp'
-    url = "<%= meta.page %>namesync/#{file}.php"
-    url += "?#{data}" if type is 'GET'
-    r.open type, url, true
-    r.setRequestHeader 'X-Requested-With', 'NameSync<%= version %>'
-    r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
-    r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' if type is 'POST'
-    $.extend r, callbacks
-    r.withCredentials = true
-    r.send data
-    r
+  r = new XMLHttpRequest()
+  r.overrideMimeType 'application/json' if file is 'qp'
+  url = "<%= meta.page %>namesync/#{file}.php"
+  url += "?#{data}" if type is 'GET'
+  r.open type, url, true
+  r.setRequestHeader 'X-Requested-With', 'NameSync<%= version %>'
+  r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
+  r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' if type is 'POST'
+  $.extend r, callbacks
+  r.withCredentials = true
+  r.send data
+  r
 $.extend = (object, properties) ->
   for key, val of properties
     object[key] = val
   return
-$.get = (name) ->
-    localStorage.getItem "#{g.NAMESPACE}#{name}"
-$.set = (name, value) ->
-    localStorage.setItem "#{g.NAMESPACE}#{name}", value
+$.local.get = (name) ->
+  localStorage.getItem "#{g.NAMESPACE}#{name}"
+$.local.set = (name, value) ->
+  localStorage.setItem "#{g.NAMESPACE}#{name}", value
+$.session.get = (name) ->
+  sessionStorage["#{name}"]
+$.session.set = (name, value) ->
+  sessionStorage["#{name}"] = value
 
 CSS =
   init: ->
