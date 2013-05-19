@@ -60,7 +60,7 @@ img, input[type=image] {
 .donate {
 	background: url(donateblack.png) left top no-repeat;
 }
-#firefox, #chrome, #opera {
+#firefox, #chrome, #opera, #chanx {
   background-repeat: no-repeat;
   background-size: 19px;
   padding-left: 22px;
@@ -73,6 +73,9 @@ img, input[type=image] {
 }
 #opera {
   background-image: url(opera.svg);
+}
+#chanx {
+  background-image: url(4chanx.png);
 }
 ul {
   padding-left: 20px;
