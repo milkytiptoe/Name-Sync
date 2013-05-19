@@ -9,8 +9,7 @@
     "includes": [
       "*://boards.4chan.org/b/*",
       "*://boards.4chan.org/q/*",
-      "*://boards.4chan.org/soc/*",
-      "*://www.4chan.org/frames"
+      "*://boards.4chan.org/soc/*"
     ],
     "authors": [
       "milkytiptoe",
