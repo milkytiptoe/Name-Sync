@@ -440,9 +440,8 @@ Sync =
     currentName    = currentName.trim()
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
-    unless !$.session.get("#{g.board}-#{g.threads[0]}-last-name") and currentName is '' and currentEmail is '' and currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
-      if g.threads.length is 1
-        $.session.set "#{g.board}-#{g.threads[0]}-last-name", currentName
+    unless !$.session.get("#{g.board}-#{threadID}-last-name") and currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
+      $.session.set "#{g.board}-#{threadID}-last-name", currentName
       Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID) ->
     $.ajax 'sp',
