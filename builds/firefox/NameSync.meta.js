@@ -8,6 +8,7 @@
 // @include      *://boards.4chan.org/b/*
 // @include      *://boards.4chan.org/q/*
 // @include      *://boards.4chan.org/soc/*
+// @include      *://www.4chan.org/frames
 // @run-at       document-start
 // @updateURL    https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.meta.js
 // @downloadURL  https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js

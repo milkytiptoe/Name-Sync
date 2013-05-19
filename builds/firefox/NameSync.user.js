@@ -8,6 +8,7 @@
 // @include      *://boards.4chan.org/b/*
 // @include      *://boards.4chan.org/q/*
 // @include      *://boards.4chan.org/soc/*
+// @include      *://www.4chan.org/frames
 // @run-at       document-start
 // @updateURL    https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.meta.js
 // @downloadURL  https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js
@@ -27,7 +28,8 @@
 */
 
 (function() {
-  var $, $$, CSS, Filter, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
+  var $, $$, CSS, Filter, Main, Menus, Names, Set, Settings, Sync, Updater, d, g,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   Set = {};
 
@@ -36,8 +38,8 @@
   g = {
     NAMESPACE: 'NameSync.',
     VERSION: '4.2.0',
-    threads: [],
-    board: null
+    include: ['b', 'q', 'soc'],
+    threads: []
   };
 
   $$ = function(selector, root) {
@@ -53,6 +55,10 @@
     }
     return root.querySelector(selector);
   };
+
+  $.session = {};
+
+  $.local = {};
 
   $.el = function(tag, properties) {
     var el;
@@ -156,12 +162,20 @@
     }
   };
 
-  $.get = function(name) {
+  $.local.get = function(name) {
     return localStorage.getItem("" + g.NAMESPACE + name);
   };
 
-  $.set = function(name, value) {
+  $.local.set = function(name, value) {
     return localStorage.setItem("" + g.NAMESPACE + name, value);
+  };
+
+  $.session.get = function(name) {
+    return sessionStorage["" + name];
+  };
+
+  $.session.set = function(name, value) {
+    return sessionStorage["" + name] = value;
   };
 
   CSS = {
@@ -183,16 +197,16 @@
 
   Filter = {
     init: function() {
-      this.names = $.get('FilterNames');
-      this.tripcodes = $.get('FilterTripcodes');
-      this.emails = $.get('FilterEmails');
-      return this.subjects = $.get('FilterSubjects');
+      this.names = $.local.get('FilterNames');
+      this.tripcodes = $.local.get('FilterTripcodes');
+      this.emails = $.local.get('FilterEmails');
+      return this.subjects = $.local.get('FilterSubjects');
     }
   };
 
   Main = {
     init: function() {
-      var path, thread, _i, _len, _ref;
+      var path, thread, _i, _len, _ref, _ref1;
 
       $.off(d, '4chanXInitFinished', Main.init);
       path = location.pathname.slice(1).split('/');
@@ -200,9 +214,12 @@
         return;
       }
       g.board = path[0];
-      _ref = $$('.thread');
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        thread = _ref[_i];
+      if (_ref = g.board, __indexOf.call(g.include, _ref) < 0) {
+        return;
+      }
+      _ref1 = $$('.thread');
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        thread = _ref1[_i];
         g.threads.push(thread.id.slice(1));
       }
       Settings.init();
@@ -328,14 +345,14 @@
     load: function() {
       var stored;
 
-      stored = sessionStorage["" + g.board + "-4-names"];
+      stored = $.session.get("" + g.board + "-cached");
       this.nameByID = stored ? JSON.parse(stored) : {};
-      stored = sessionStorage["" + g.board + "-blocked"];
+      stored = $.session.get("" + g.board + "-blocked");
       return this.blockedIDs = stored ? JSON.parse(stored) : {};
     },
     store: function() {
-      sessionStorage["" + g.board + "-4-names"] = JSON.stringify(this.nameByID);
-      return sessionStorage["" + g.board + "-blocked"] = JSON.stringify(this.blockedIDs);
+      $.session.set("" + g.board + "-cached", JSON.stringify(this.nameByID));
+      return $.session.set("" + g.board + "-blocked", JSON.stringify(this.blockedIDs));
     },
     updateAllPosts: function() {
       var post, _i, _len, _ref;
@@ -462,7 +479,7 @@
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
-        stored = $.get(setting);
+        stored = $.local.get(setting);
         Set[setting] = stored === null ? val[0] : stored === 'true';
       }
       return $.event('AddSettingsSection', {
@@ -490,7 +507,7 @@
       _ref = Settings.main;
       for (setting in _ref) {
         val = _ref[setting];
-        stored = $.get(setting);
+        stored = $.local.get(setting);
         istrue = stored === null ? val[0] : stored === 'true';
         checked = istrue ? 'checked ' : '';
         $.add(field, $.el('div', {
@@ -502,13 +519,13 @@
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         check = _ref1[_i];
         $.on(check, 'click', function() {
-          return $.set(this.name, this.checked);
+          return $.local.set(this.name, this.checked);
         });
       }
       _ref2 = $$('input[type=text], input[type=number]', section);
       for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
         text = _ref2[_j];
-        text.value = $.get(text.name) || '';
+        text.value = $.local.get(text.name) || '';
         $.on(text, 'input', function() {
           var err, regexp;
 
@@ -518,10 +535,10 @@
             } catch (_error) {
               err = _error;
               alert(err.message);
-              return this.value = $.get(this.name);
+              return this.value = $.local.get(this.name);
             }
           }
-          return $.set(this.name, this.value);
+          return $.local.set(this.name, this.value);
         });
       }
       $.on($('#syncUpdate', section), 'click', Updater.update);
@@ -534,7 +551,6 @@
     lastModified: '0',
     disabled: false,
     delay: null,
-    lastName: null,
     init: function() {
       if (!Set['Read-only Mode']) {
         $.on(d, 'QRPostSuccessful', Sync.requestSend);
@@ -554,7 +570,7 @@
         return Sync.disabled = true;
       }
       clearTimeout(Sync.delay);
-      return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 300);
+      return Sync.delay = setTimeout(Sync.sync, $.local.get('Delay') || 300);
     },
     sync: function(repeat) {
       $.ajax('qp', 'GET', "t=" + g.threads + "&b=" + g.board, {
@@ -586,9 +602,9 @@
       postID = e.detail.postID;
       threadID = e.detail.threadID;
       if (Set['Persona Fields']) {
-        currentName = $.get('Name') || '';
-        currentEmail = $.get('Email') || '';
-        currentSubject = $.get('Subject') || '';
+        currentName = $.local.get('Name') || '';
+        currentEmail = $.local.get('Email') || '';
+        currentSubject = $.local.get('Subject') || '';
       } else {
         qr = $.id('qr');
         currentName = $('input[data-name=name]', qr).value;
@@ -598,10 +614,11 @@
       currentName = currentName.trim();
       currentEmail = currentEmail.trim();
       currentSubject = currentSubject.trim();
-      if (!(!Sync.lastName && currentName === '' && currentEmail === '' && currentSubject === '' || Set['Hide Sage'] && /sage/i.test(currentEmail))) {
-        Sync.lastName = currentName;
-        return Sync.send(currentName, currentEmail, currentSubject, postID, threadID);
+      if (!$.session.get("" + g.board + "-" + threadID + "-last-name") && currentName + currentEmail + currentSubject === '' || Set['Hide Sage'] && /sage/i.test(currentEmail)) {
+        return;
       }
+      $.session.set("" + g.board + "-" + threadID + "-last-name", currentName);
+      return Sync.send(currentName, currentEmail, currentSubject, postID, threadID);
     },
     send: function(name, email, subject, postID, threadID) {
       return $.ajax('sp', 'POST', "p=" + postID + "&t=" + threadID + "&b=" + g.board + "&n=" + (encodeURIComponent(name)) + "&s=" + (encodeURIComponent(subject)) + "&e=" + (encodeURIComponent(email)) + "&dnt=" + (Set['Do Not Track'] ? '1' : '0'), {
@@ -630,7 +647,7 @@
     init: function() {
       var last;
 
-      last = $.get('lastcheck');
+      last = $.local.get('lastcheck');
       if (last === null || Date.now() > last + 86400000) {
         return this.update();
       }
@@ -639,7 +656,7 @@
       $('#syncUpdate').disabled = true;
       return $.ajax('u3', 'GET', '', {
         onloadend: function() {
-          $.set('lastcheck', Date.now());
+          $.local.set('lastcheck', Date.now());
           if (this.status !== 200 || this.response === g.VERSION) {
             return $('#syncUpdate').value = 'None available';
           }
