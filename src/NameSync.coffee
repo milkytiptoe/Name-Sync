@@ -440,7 +440,7 @@ Sync =
     currentName    = currentName.trim()
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
-    unless !$.session.get("#{g.board}-#{threadID}-last-name") and currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
+    if $.session.get("#{g.board}-#{threadID}-last-name") or currentName+currentEmail+currentSubject isnt '' or Set['Hide Sage'] and /sage/i.test currentEmail
       $.session.set "#{g.board}-#{threadID}-last-name", currentName
       Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID) ->
