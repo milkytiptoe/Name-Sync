@@ -305,7 +305,7 @@ Settings =
     'Sync on /q/':       [true,  'Enable sync on /q/.']
     'Sync on /soc/':     [true,  'Enable sync on /soc/.']
     'Read-only Mode':    [false, 'Share none of your fields.']
-    'Hide Sage':         [false, 'Share none of your fields when sage is in the email fied.']
+    'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
     'Persona Fields':    [false, 'Share persona fields instead of the 4chan X quick reply fields.']
