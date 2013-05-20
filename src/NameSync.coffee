@@ -70,9 +70,9 @@ $.local.get = (name) ->
 $.local.set = (name, value) ->
   localStorage.setItem "#{g.NAMESPACE}#{name}", value
 $.session.get = (name) ->
-  sessionStorage["#{name}"]
+  sessionStorage.getItem "#{name}"
 $.session.set = (name, value) ->
-  sessionStorage["#{name}"] = value
+  sessionStorage.setItem "#{name}", value
 
 CSS =
   init: ->
