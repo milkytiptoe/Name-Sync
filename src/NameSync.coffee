@@ -333,7 +333,7 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>Filter</legend>
-        <p>Examples: ^(?!Anonymous$) to filter all names. !Tripcode|!Tripcode to filter multiple tripcodes.</p>
+        <p>Examples: ^(?!Anonymous$) to filter all names. !tripcode|!tripcode to filter multiple tripcodes.</p>
         <div>
           <input type=text name=FilterNames placeholder=Names>
           <input type=text name=FilterTripcodes placeholder=Tripcodes>
@@ -418,9 +418,8 @@ Sync =
       'GET'
       "t=#{g.threads}&b=#{g.board}"
       onloadend: ->
-        return if @status isnt 200
+        return unless @status is 200 and @response
         Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
-        return if !@response
         for poster in JSON.parse @response
           Names.nameByPost[poster.p] = poster
         Names.updateAllPosts()
