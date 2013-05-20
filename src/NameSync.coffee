@@ -198,7 +198,7 @@ Names =
           cb: Names.cb
     @updateAllPosts()
   cb: ->
-    Names.updatePost @nodes.post if g.board is @board.toString()
+    Names.updatePost @nodes.post if g.board is @board.ID
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
     if name and name.trim() isnt ''
