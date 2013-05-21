@@ -5,7 +5,6 @@ d   = document
 g   =
   NAMESPACE: 'NameSync.'
   VERSION:   '<%= version %>'
-  include:   ['b', 'q', 'soc']
   threads:   []
 
 $$ = (selector, root = d.body) ->
@@ -147,7 +146,6 @@ Main =
     path = location.pathname.slice(1).split '/'
     return if path[1] is 'catalog'
     g.board = path[0]
-    return unless g.board in g.include
     for thread in $$ '.thread'
       g.threads.push thread.id[1..]
 
