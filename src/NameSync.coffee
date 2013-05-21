@@ -83,11 +83,12 @@ Config =
     'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
-    'Persona Fields':    [false, 'Share persona fields instead of the 4chan X quick reply fields.']
-    'Filter':            [false, 'Hide posts by sync users that match filter regular expressions.']
     <% if (type !== 'crx') { %>
     'Automatic Updates': [true,  'Check for updates automatically.']
     <% } %>
+  other:
+    'Persona Fields':    [false]
+    'Filter':            [false]
 
 CSS =
   init: ->
@@ -109,7 +110,7 @@ CSS =
       margin: 0;
       padding: 8px;
     }
-    .section-name-sync label {
+    .section-name-sync div label {
       text-decoration: underline;
     }
     #bgimage {
@@ -316,8 +317,7 @@ Names =
 
 Settings =
   init: ->
-    # to-do: use 4chan x's flatten
-    for setting, val of Config.main
+    for setting, val of Config.main and Config.other
       stored = $.local.get setting
       Set[setting] = if stored is null then val[0] else stored is 'true'
     $.event 'AddSettingsSection',
@@ -325,10 +325,12 @@ Settings =
         title: 'Name Sync'
         open:  Settings.open
   open: (section) ->
-    # to-do: move filter/persona toggles beside legend
     section.innerHTML = """
       <fieldset>
-        <legend>Persona</legend>
+        <legend>
+          <label><input type='checkbox' name='Persona Fields' #{if $.local.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
+        </legend>
+        <p>Share these fields instead of the 4chan X quick reply fields</p>
         <div>
           <input type=text name=Name placeholder=Name>
           <input type=text name=Email placeholder=Email>
@@ -336,7 +338,9 @@ Settings =
         </div>
       </fieldset>
       <fieldset>
-        <legend>Filter</legend>
+        <legend>
+          <label><input type='checkbox' name='Filter' #{if $.local.get('Filter') is 'true' then 'checked' else ''}> Filter</label>
+        </legend>
         <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>
         <div>
           <input type=text name=FilterNames placeholder=Names>
@@ -375,7 +379,7 @@ Settings =
     for setting, val of Config.main
       stored  = $.local.get setting
       istrue  = if stored is null then val[0] else stored is 'true'
-      checked = if istrue then 'checked ' else ''
+      checked = if istrue then 'checked' else ''
       $.add field, $.el 'div',
         innerHTML: "<label><input type='checkbox' name='#{setting}' #{checked}>#{setting}</label><span class='description'>: #{val[1]}</span>"
     $.prepend section, field
