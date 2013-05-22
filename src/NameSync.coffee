@@ -231,7 +231,7 @@ Names =
       el.disabled = true
   load: ->
     expiry = $.get "#{g.board}-expires"
-    return @clear if !expiry or Date.now() > expiry
+    return @clear() if !expiry or Date.now() > expiry
     stored = $.get "#{g.board}-cached"
     @nameByID = if stored then JSON.parse stored else {}
     stored = $.get "#{g.board}-blocked"
