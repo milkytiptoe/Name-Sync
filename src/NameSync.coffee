@@ -315,9 +315,10 @@ Names =
 
 Settings =
   init: ->
-    for setting, val of Config.main and Config.other
-      stored = $.local.get setting
-      Set[setting] = if stored is null then val[0] else stored is 'true'
+    for section in Object.keys Config
+      for setting, val of Config[section]
+        stored = $.local.get setting
+        Set[setting] = if stored is null then val[0] else stored is 'true'
     $.event 'AddSettingsSection',
       detail:
         title: 'Name Sync'
