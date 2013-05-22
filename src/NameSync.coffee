@@ -220,19 +220,23 @@ Names =
     @blockedIDs[id] = false
     @updateAllPosts()
   clear: ->
-    $('#namesClear').disabled = true
     Names.nameByID   = {}
     Names.nameByPost = {}
     Names.blockedIDs = {}
     Names.store()
-    $('#namesClear').value = 'Cleared'
+    $.set "#{g.board}-expires", Date.now() + 86400000
+    el = $ '#namesClear'
+    if el
+      el.value = 'Cleared'
+      el.disabled = true
   load: ->
+    expiry = $.get "#{g.board}-expires"
+    return @clear if !expiry or Date.now() > expiry
     stored = $.get "#{g.board}-cached"
     @nameByID = if stored then JSON.parse stored else {}
     stored = $.get "#{g.board}-blocked"
     @blockedIDs = if stored then JSON.parse stored else {}
   store: ->
-    # might hit the localStorage limit?
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
