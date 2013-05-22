@@ -11,8 +11,6 @@ $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
 $ = (selector, root = d.body) ->
   root.querySelector selector
-$.session = {}
-$.local   = {}
 
 $.el = (tag, properties) ->
   el = d.createElement tag
@@ -64,14 +62,10 @@ $.extend = (object, properties) ->
   for key, val of properties
     object[key] = val
   return
-$.local.get = (name) ->
+$.get = (name) ->
   localStorage.getItem "#{g.NAMESPACE}#{name}"
-$.local.set = (name, value) ->
+$.set = (name, value) ->
   localStorage.setItem "#{g.NAMESPACE}#{name}", value
-$.session.get = (name) ->
-  sessionStorage.getItem "#{name}"
-$.session.set = (name, value) ->
-  sessionStorage.setItem "#{name}", value
 
 Config =
   main:
@@ -135,10 +129,10 @@ CSS =
 
 Filter =
   init: ->
-    @names     = $.local.get 'FilterNames'
-    @tripcodes = $.local.get 'FilterTripcodes'
-    @emails    = $.local.get 'FilterEmails'
-    @subjects  = $.local.get 'FilterSubjects'
+    @names     = $.get 'FilterNames'
+    @tripcodes = $.get 'FilterTripcodes'
+    @emails    = $.get 'FilterEmails'
+    @subjects  = $.get 'FilterSubjects'
 
 Main =
   init: ->
@@ -233,13 +227,14 @@ Names =
     Names.store()
     $('#namesClear').value = 'Cleared'
   load: ->
-    stored = $.session.get "#{g.board}-cached"
+    stored = $.get "#{g.board}-cached"
     @nameByID = if stored then JSON.parse stored else {}
-    stored = $.session.get "#{g.board}-blocked"
+    stored = $.get "#{g.board}-blocked"
     @blockedIDs = if stored then JSON.parse stored else {}
   store: ->
-    $.session.set "#{g.board}-cached",  JSON.stringify @nameByID
-    $.session.set "#{g.board}-blocked", JSON.stringify @blockedIDs
+    # might hit the localStorage limit?
+    $.set "#{g.board}-cached",  JSON.stringify @nameByID
+    $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
     @updatePost post for post in $$ '.thread .post'
     @store()
@@ -317,7 +312,7 @@ Settings =
   init: ->
     for section in Object.keys Config
       for setting, val of Config[section]
-        stored = $.local.get setting
+        stored = $.get setting
         Set[setting] = if stored is null then val[0] else stored is 'true'
     $.event 'AddSettingsSection',
       detail:
@@ -327,7 +322,7 @@ Settings =
     section.innerHTML = """
       <fieldset>
         <legend>
-          <label><input type='checkbox' name='Persona Fields' #{if $.local.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
+          <label><input type='checkbox' name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
         </legend>
         <p>Share these fields instead of the 4chan X quick reply fields</p>
         <div>
@@ -338,7 +333,7 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>
-          <label><input type='checkbox' name='Filter' #{if $.local.get('Filter') is 'true' then 'checked' else ''}> Filter</label>
+          <label><input type='checkbox' name='Filter' #{if $.get('Filter') is 'true' then 'checked' else ''}> Filter</label>
         </legend>
         <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>
         <div>
@@ -376,7 +371,7 @@ Settings =
       textContent: 'Main'
 
     for setting, val of Config.main
-      stored  = $.local.get setting
+      stored  = $.get setting
       istrue  = if stored is null then val[0] else stored is 'true'
       checked = if istrue then 'checked' else ''
       $.add field, $.el 'div',
@@ -384,18 +379,18 @@ Settings =
     $.prepend section, field
     for check in $$ 'input[type=checkbox]', section
       $.on check, 'click', ->
-        $.local.set @name, @checked
+        $.set @name, @checked
 
     for text in $$ 'input[type=text], input[type=number]', section
-      text.value = $.local.get(text.name) or ''
+      text.value = $.get(text.name) or ''
       $.on text, 'input', ->
         if /^Filter/.test @name
           try
             regexp = RegExp @value
           catch err
             alert err.message
-            return @value = $.local.get @name
-        $.local.set @name, @value
+            return @value = $.get @name
+        $.set @name, @value
 
     <% if (type !== 'crx') { %>
     $.on $('#syncUpdate', section), 'click', Updater.update
@@ -419,7 +414,7 @@ Sync =
     return unless e.detail.newPosts.length
     return Sync.disabled = true if e.detail[404]
     clearTimeout Sync.delay
-    Sync.delay = setTimeout Sync.sync, $.local.get('Delay') or 300
+    Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
   sync: (repeat) ->
     $.ajax 'qp',
       'GET'
@@ -436,9 +431,9 @@ Sync =
     postID   = e.detail.postID
     threadID = e.detail.threadID
     if Set['Persona Fields']
-      currentName    = $.local.get('Name')    or ''
-      currentEmail   = $.local.get('Email')   or ''
-      currentSubject = $.local.get('Subject') or ''
+      currentName    = $.get('Name')    or ''
+      currentEmail   = $.get('Email')   or ''
+      currentSubject = $.get('Subject') or ''
     else
       qr             = $.id 'qr'
       currentName    = $('input[data-name=name]',  qr).value
@@ -447,8 +442,8 @@ Sync =
     currentName    = currentName.trim()
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
-    return if !$.session.get("#{g.board}-#{threadID}-last-name") and currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
-    $.session.set "#{g.board}-#{threadID}-last-name", currentName
+    return if !$.get("#{g.board}-#{threadID}-last-name") and currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
+    $.set "#{g.board}-#{threadID}-last-name", currentName
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID) ->
     $.ajax 'sp',
@@ -470,18 +465,20 @@ Sync =
 <% if (type !== 'crx') { %>
 Updater =
   init: ->
-    last = $.local.get 'lastcheck'
+    last = $.get 'lastcheck'
     if last is null or Date.now() > last + 86400000
       @update()
   update: ->
-    $('#syncUpdate').disabled = true
+    el = $ '#syncUpdate'
+    el.disabled = true if el
     $.ajax 'u3',
       'GET'
       ''
       onloadend: ->
-        $.local.set 'lastcheck', Date.now()
+        $.set 'lastcheck', Date.now()
         if @status isnt 200 or @response is g.VERSION
-          return $('#syncUpdate').value = 'None available'
+          el.value = 'None available' if el
+          return
         $.event 'CreateNotification',
           detail:
             type: 'info'
