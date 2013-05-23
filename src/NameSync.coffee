@@ -117,6 +117,9 @@ CSS =
       right: 0px;
       position: absolute;
     }
+    #menu a[data-type=name] {
+      display: none;
+    }
     """
     if Set['Hide IDs']
       css += """
@@ -139,6 +142,14 @@ Filter =
     @tripcodes = $.get 'FilterTripcodes'
     @emails    = $.get 'FilterEmails'
     @subjects  = $.get 'FilterSubjects'
+  filter: (id) ->
+    stored = Names.nameByID[id]
+    name = if stored then Names.nameByID[id].n else 'Anonymous'
+    stored = $.get 'FilterNames'
+    $.set 'FilterNames', if stored then "#{stored}|#{name}" else name
+    $.event 'OpenSettings',
+      detail: 'Name Sync'
+    $('input[name=FilterNames]').focus()
 
 Main =
   init: ->
@@ -177,6 +188,13 @@ Menus =
       el: @makeSubEntry 'Change', ->
         Names.change Menus.uid
         $.event 'CloseMenu'
+    subEntries.push
+      el: @makeSubEntry 'Filter', ->
+        Filter.filter Menus.uid
+        $.event 'CloseMenu'
+      open: ->
+        stored = Names.nameByID[Menus.uid]
+        !stored or stored.n
     subEntries.push
       el: @makeSubEntry 'Reset', ->
         Names.reset Menus.uid
