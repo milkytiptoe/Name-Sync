@@ -230,7 +230,6 @@ Names =
     @updateAllPosts()
   clear: ->
     Names.nameByID   = {}
-    Names.nameByPost = {}
     Names.blockedIDs = {}
     Names.store()
     el = $ '#namesClear'
@@ -239,10 +238,10 @@ Names =
       el.disabled = true
   loadBlocked: (synced) ->
     stored = synced or $.get "#{g.board}-blocked"
-    @blockedIDs = if stored then JSON.parse stored else {}
+    Names.blockedIDs = if stored then JSON.parse stored else {}
   loadCached: (synced) ->
     stored = synced or $.get "#{g.board}-cached"
-    @nameByID = if stored then JSON.parse stored else {}
+    Names.nameByID = if stored then JSON.parse stored else {}
   store: ->
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
