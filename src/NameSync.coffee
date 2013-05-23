@@ -205,8 +205,12 @@ Names =
   init: ->
     $.sync "#{g.board}-blocked", @loadBlocked
     $.sync "#{g.board}-cached",  @loadCached
-    @loadBlocked()
-    @loadCached()
+    expiry = $.get "#{g.board}-expires"
+    if !expiry or Date.now() > expiry
+      @clear()
+    else
+      @loadBlocked()
+      @loadCached()
     $.event 'AddCallback',
       detail:
         type: 'Post'
@@ -236,6 +240,7 @@ Names =
     if el
       el.value = 'Cleared'
       el.disabled = true
+    $.set "#{g.board}-expires", Date.now() + 86400000
   loadBlocked: (synced) ->
     stored = synced or $.get "#{g.board}-blocked"
     Names.blockedIDs = if stored then JSON.parse stored else {}
