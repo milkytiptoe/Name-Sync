@@ -66,7 +66,7 @@ $.syncing = {}
 $.sync = do ->
   $.on window, 'storage', (e) ->
     if cb = $.syncing[e.key]
-      cb JSON.parse e.newValue
+      cb e.newValue
   (key, cb) -> $.syncing[g.NAMESPACE + key] = cb
 $.get = (name) ->
   localStorage.getItem "#{g.NAMESPACE}#{name}"
@@ -203,9 +203,10 @@ Menus =
 Names =
   nameByPost: {}
   init: ->
-    $.sync "#{g.board}-cached",  @load
-    $.sync "#{g.board}-blocked", @load
-    @load()
+    $.sync "#{g.board}-blocked", @loadBlocked
+    $.sync "#{g.board}-cached",  @loadCached
+    @loadBlocked()
+    @loadCached()
     $.event 'AddCallback',
       detail:
         type: 'Post'
@@ -232,18 +233,16 @@ Names =
     Names.nameByPost = {}
     Names.blockedIDs = {}
     Names.store()
-    # $.set "#{g.board}-expires", Date.now() + 86400000
     el = $ '#namesClear'
     if el
       el.value = 'Cleared'
       el.disabled = true
-  load: ->
-    stored = $.get "#{g.board}-cached"
-    @nameByID = if stored then JSON.parse stored else {}
-    stored = $.get "#{g.board}-blocked"
+  loadBlocked: (synced) ->
+    stored = synced or $.get "#{g.board}-blocked"
     @blockedIDs = if stored then JSON.parse stored else {}
-    # expiry = $.get "#{g.board}-expires"
-    # return @clear() if !expiry or Date.now() > expiry
+  loadCached: (synced) ->
+    stored = synced or $.get "#{g.board}-cached"
+    @nameByID = if stored then JSON.parse stored else {}
   store: ->
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
