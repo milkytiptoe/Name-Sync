@@ -62,6 +62,12 @@ $.extend = (object, properties) ->
   for key, val of properties
     object[key] = val
   return
+$.syncing = {}
+$.sync = do ->
+  $.on window, 'storage', (e) ->
+    if cb = $.syncing[e.key]
+      cb JSON.parse e.newValue
+  (key, cb) -> $.syncing[g.NAMESPACE + key] = cb
 $.get = (name) ->
   localStorage.getItem "#{g.NAMESPACE}#{name}"
 $.set = (name, value) ->
