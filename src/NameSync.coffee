@@ -144,7 +144,7 @@ Filter =
     @subjects  = $.get 'FilterSubjects'
   filter: (id) ->
     stored = Names.nameByID[id]
-    name = if stored then Names.nameByID[id].n else 'Anonymous'
+    name = if stored then Names.nameByID[id].n.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&' else 'Anonymous'
     stored = $.get 'FilterNames'
     $.set 'FilterNames', if stored then "#{stored}|#{name}" else name
     $.event 'OpenSettings',
