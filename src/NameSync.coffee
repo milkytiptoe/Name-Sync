@@ -20,7 +20,7 @@ $.tn = (text) ->
   d.createTextNode text
 $.id = (id) ->
   d.getElementById id
-$.event = (type, detail) ->
+$.event = (type, detail = {}) ->
   d.dispatchEvent new CustomEvent type, detail
 $.on = (el, type, handler) ->
   el.addEventListener type, handler, false
@@ -517,7 +517,8 @@ Updater =
             content: $.el 'span',
               innerHTML: "An update for 4chan X Name Sync is available.<% if (type === 'userscript') { %> <a href=<%= meta.builds %>firefox/NameSync.user.js target=_blank>Install now</a>. <% } else { %> <a href=<%= meta.page %> target=_blank>Get it here</a>.<% } %>"
             lifetime: 10
-        $('#fourchanx-settings .close').click()
+        el = $ '#fourchanx-settings .close'
+        el.click() if el
 <% } %>
 
 $.on d, '4chanXInitFinished', Main.init
