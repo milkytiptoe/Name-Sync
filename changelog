@@ -1,3 +1,9 @@
+4.3.0
+- Fixed cross-thread name loading
+- Name cache automatically clears itself daily
+- Added Filter menu item to 4chan X Name menu
+- Minor fixes and tweaks
+
 4.2.2
 - Now runs on 4chan.org/frames in Chrome as well
 
