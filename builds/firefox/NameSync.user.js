@@ -27,8 +27,7 @@
 */
 
 (function() {
-  var $, $$, CSS, Filter, Main, Menus, Names, Set, Settings, Sync, Updater, d, g,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var $, $$, CSS, Config, Filter, Main, Menus, Names, Set, Settings, Sync, Updater, d, g;
 
   Set = {};
 
@@ -37,7 +36,6 @@
   g = {
     NAMESPACE: 'NameSync.',
     VERSION: '4.2.2',
-    include: ['b', 'q', 'soc'],
     threads: []
   };
 
@@ -54,10 +52,6 @@
     }
     return root.querySelector(selector);
   };
-
-  $.session = {};
-
-  $.local = {};
 
   $.el = function(tag, properties) {
     var el;
@@ -161,27 +155,51 @@
     }
   };
 
-  $.local.get = function(name) {
+  $.syncing = {};
+
+  $.sync = (function() {
+    $.on(window, 'storage', function(e) {
+      var cb;
+
+      if (cb = $.syncing[e.key]) {
+        return cb(e.newValue);
+      }
+    });
+    return function(key, cb) {
+      return $.syncing[g.NAMESPACE + key] = cb;
+    };
+  })();
+
+  $.get = function(name) {
     return localStorage.getItem("" + g.NAMESPACE + name);
   };
 
-  $.local.set = function(name, value) {
+  $.set = function(name, value) {
     return localStorage.setItem("" + g.NAMESPACE + name, value);
   };
 
-  $.session.get = function(name) {
-    return sessionStorage["" + name];
-  };
-
-  $.session.set = function(name, value) {
-    return sessionStorage["" + name] = value;
+  Config = {
+    main: {
+      'Sync on /b/': [true, 'Enable sync on /b/.'],
+      'Sync on /q/': [true, 'Enable sync on /q/.'],
+      'Sync on /soc/': [true, 'Enable sync on /soc/.'],
+      'Read-only Mode': [false, 'Share none of your fields.'],
+      'Hide Sage': [false, 'Share none of your fields when sage is in the email field.'],
+      'Hide IDs': [false, 'Hide Unique IDs next to names.'],
+      'Do Not Track': [false, 'Opt out of name tracking by third party websites.'],
+      'Automatic Updates': [true, 'Check for updates automatically.']
+    },
+    other: {
+      'Persona Fields': [false],
+      'Filter': [false]
+    }
   };
 
   CSS = {
     init: function() {
       var css;
 
-      css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  padding: 3px;\n  margin-bottom: 6px;\n}\n.section-name-sync p {\n  margin: 0 0 8px 0;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync label {\n  text-decoration: underline;\n}\n#bgimage {\n  bottom: 0px;\n  right: 0px;\n  position: absolute;\n}";
+      css = ".section-name-sync input[type='text'] {\n  border: 1px solid #CCC;\n  width: 148px;\n  padding: 2px;\n}\n.section-name-sync input[type='button'] {\n  padding: 3px;\n  margin-bottom: 6px;\n}\n.section-name-sync p {\n  margin: 0 0 8px 0;\n}\n.section-name-sync ul {\n  list-style: none;\n  margin: 0;\n  padding: 8px;\n}\n.section-name-sync div label {\n  text-decoration: underline;\n}\n#bgimage {\n  bottom: 0px;\n  right: 0px;\n  position: absolute;\n}\n#menu a[data-type=name] {\n  display: none;\n}";
       if (Set['Hide IDs']) {
         css += ".posteruid {\n  display: none;\n}";
       }
@@ -196,16 +214,28 @@
 
   Filter = {
     init: function() {
-      this.names = $.local.get('FilterNames');
-      this.tripcodes = $.local.get('FilterTripcodes');
-      this.emails = $.local.get('FilterEmails');
-      return this.subjects = $.local.get('FilterSubjects');
+      this.names = $.get('FilterNames');
+      this.tripcodes = $.get('FilterTripcodes');
+      this.emails = $.get('FilterEmails');
+      return this.subjects = $.get('FilterSubjects');
+    },
+    filter: function(id) {
+      var name, stored;
+
+      stored = Names.nameByID[id];
+      name = stored ? Names.nameByID[id].n.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&') : 'Anonymous';
+      stored = $.get('FilterNames');
+      $.set('FilterNames', stored ? "" + stored + "|" + name : name);
+      $.event('OpenSettings', {
+        detail: 'Name Sync'
+      });
+      return $('input[name=FilterNames]').focus();
     }
   };
 
   Main = {
     init: function() {
-      var path, thread, _i, _len, _ref, _ref1;
+      var path, thread, _i, _len, _ref;
 
       $.off(d, '4chanXInitFinished', Main.init);
       path = location.pathname.slice(1).split('/');
@@ -213,12 +243,9 @@
         return;
       }
       g.board = path[0];
-      if (_ref = g.board, __indexOf.call(g.include, _ref) < 0) {
-        return;
-      }
-      _ref1 = $$('.thread');
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        thread = _ref1[_i];
+      _ref = $$('.thread');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        thread = _ref[_i];
         g.threads.push(thread.id.slice(1));
       }
       Settings.init();
@@ -261,6 +288,17 @@
         })
       });
       subEntries.push({
+        el: this.makeSubEntry('Filter', function() {
+          Filter.filter(Menus.uid);
+          return $.event('CloseMenu');
+        }),
+        open: function() {
+          var stored;
+
+          return !(stored = Names.nameByID[Menus.uid]) || stored.n;
+        }
+      });
+      subEntries.push({
         el: this.makeSubEntry('Reset', function() {
           Names.reset(Menus.uid);
           return $.event('CloseMenu');
@@ -299,7 +337,17 @@
   Names = {
     nameByPost: {},
     init: function() {
-      this.load();
+      var expiry;
+
+      $.sync("" + g.board + "-blocked", this.loadBlocked);
+      $.sync("" + g.board + "-cached", this.loadCached);
+      expiry = $.get("" + g.board + "-expires");
+      if (!expiry || Date.now() > expiry) {
+        this.clear();
+      } else {
+        this.loadBlocked();
+        this.loadCached();
+      }
       $.event('AddCallback', {
         detail: {
           type: 'Post',
@@ -312,7 +360,9 @@
       return this.updateAllPosts();
     },
     cb: function() {
-      return Names.updatePost(this.nodes.post);
+      if (g.board === this.board.ID) {
+        return Names.updatePost(this.nodes.post);
+      }
     },
     change: function(id) {
       var name;
@@ -334,24 +384,33 @@
       return this.updateAllPosts();
     },
     clear: function() {
-      $('#namesClear').disabled = true;
+      var el;
+
       Names.nameByID = {};
-      Names.nameByPost = {};
       Names.blockedIDs = {};
       Names.store();
-      return $('#namesClear').value = 'Cleared';
+      el = $('#namesClear');
+      if (el) {
+        el.value = 'Cleared';
+        el.disabled = true;
+      }
+      return $.set("" + g.board + "-expires", Date.now() + 86400000);
     },
-    load: function() {
+    loadBlocked: function(synced) {
       var stored;
 
-      stored = $.session.get("" + g.board + "-cached");
-      this.nameByID = stored ? JSON.parse(stored) : {};
-      stored = $.session.get("" + g.board + "-blocked");
-      return this.blockedIDs = stored ? JSON.parse(stored) : {};
+      stored = synced || $.get("" + g.board + "-blocked");
+      return Names.blockedIDs = stored ? JSON.parse(stored) : {};
+    },
+    loadCached: function(synced) {
+      var stored;
+
+      stored = synced || $.get("" + g.board + "-cached");
+      return Names.nameByID = stored ? JSON.parse(stored) : {};
     },
     store: function() {
-      $.session.set("" + g.board + "-cached", JSON.stringify(this.nameByID));
-      return $.session.set("" + g.board + "-blocked", JSON.stringify(this.blockedIDs));
+      $.set("" + g.board + "-cached", JSON.stringify(this.nameByID));
+      return $.set("" + g.board + "-blocked", JSON.stringify(this.blockedIDs));
     },
     updateAllPosts: function() {
       var post, _i, _len, _ref;
@@ -460,26 +519,18 @@
   };
 
   Settings = {
-    main: {
-      'Sync on /b/': [true, 'Enable sync on /b/.'],
-      'Sync on /q/': [true, 'Enable sync on /q/.'],
-      'Sync on /soc/': [true, 'Enable sync on /soc/.'],
-      'Read-only Mode': [false, 'Share none of your fields.'],
-      'Hide Sage': [false, 'Share none of your fields when sage is in the email fied.'],
-      'Hide IDs': [false, 'Hide Unique IDs next to names.'],
-      'Do Not Track': [false, 'Opt out of name tracking by third party websites.'],
-      'Persona Fields': [false, 'Share persona fields instead of the 4chan X quick reply fields.'],
-      'Filter': [false, 'Hide posts by sync users that match filter regular expressions.'],
-      'Automatic Updates': [true, 'Check for updates automatically.']
-    },
     init: function() {
-      var setting, stored, val, _ref;
+      var section, setting, stored, val, _i, _len, _ref, _ref1;
 
-      _ref = Settings.main;
-      for (setting in _ref) {
-        val = _ref[setting];
-        stored = $.local.get(setting);
-        Set[setting] = stored === null ? val[0] : stored === 'true';
+      _ref = Object.keys(Config);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        section = _ref[_i];
+        _ref1 = Config[section];
+        for (setting in _ref1) {
+          val = _ref1[setting];
+          stored = $.get(setting);
+          Set[setting] = stored === null ? val[0] : stored === 'true';
+        }
       }
       return $.event('AddSettingsSection', {
         detail: {
@@ -491,7 +542,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>Persona</legend>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Filter</legend>\n  <p>Examples: ^(?!Anonymous$) to filter all names. !Tripcode|!Tripcode to filter multiple tripcodes.</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='https://www.namesync.org/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Persona Fields' " + ($.get('Persona Fields') === 'true' ? 'checked' : '') + "> Persona</label>\n  </legend>\n  <p>Share these fields instead of the 4chan X quick reply fields</p>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Filter' " + ($.get('Filter') === 'true' ? 'checked' : '') + "> Filter</label>\n  </legend>\n  <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='https://www.namesync.org/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
@@ -503,14 +554,14 @@
       $.add(field, $.el('legend', {
         textContent: 'Main'
       }));
-      _ref = Settings.main;
+      _ref = Config.main;
       for (setting in _ref) {
         val = _ref[setting];
-        stored = $.local.get(setting);
+        stored = $.get(setting);
         istrue = stored === null ? val[0] : stored === 'true';
-        checked = istrue ? 'checked ' : '';
+        checked = istrue ? 'checked' : '';
         $.add(field, $.el('div', {
-          innerHTML: "<label><input type='checkbox' name='" + setting + "' " + checked + "/>" + setting + "</label><span class='description'>: " + val[1] + "</span>"
+          innerHTML: "<label><input type='checkbox' name='" + setting + "' " + checked + ">" + setting + "</label><span class='description'>: " + val[1] + "</span>"
         }));
       }
       $.prepend(section, field);
@@ -518,13 +569,13 @@
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         check = _ref1[_i];
         $.on(check, 'click', function() {
-          return $.local.set(this.name, this.checked);
+          return $.set(this.name, this.checked);
         });
       }
       _ref2 = $$('input[type=text], input[type=number]', section);
       for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
         text = _ref2[_j];
-        text.value = $.local.get(text.name) || '';
+        text.value = $.get(text.name) || '';
         $.on(text, 'input', function() {
           var err, regexp;
 
@@ -534,10 +585,10 @@
             } catch (_error) {
               err = _error;
               alert(err.message);
-              return this.value = $.local.get(this.name);
+              return this.value = $.get(this.name);
             }
           }
-          return $.local.set(this.name, this.value);
+          return $.set(this.name, this.value);
         });
       }
       $.on($('#syncUpdate', section), 'click', Updater.update);
@@ -569,20 +620,17 @@
         return Sync.disabled = true;
       }
       clearTimeout(Sync.delay);
-      return Sync.delay = setTimeout(Sync.sync, $.local.get('Delay') || 300);
+      return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 300);
     },
     sync: function(repeat) {
       $.ajax('qp', 'GET', "t=" + g.threads + "&b=" + g.board, {
         onloadend: function() {
           var poster, _i, _len, _ref;
 
-          if (this.status !== 200) {
+          if (!(this.status === 200 && this.response)) {
             return;
           }
           Sync.lastModified = this.getResponseHeader('Last-Modified') || Sync.lastModified;
-          if (!this.response) {
-            return;
-          }
           _ref = JSON.parse(this.response);
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             poster = _ref[_i];
@@ -601,9 +649,9 @@
       postID = e.detail.postID;
       threadID = e.detail.threadID;
       if (Set['Persona Fields']) {
-        currentName = $.local.get('Name') || '';
-        currentEmail = $.local.get('Email') || '';
-        currentSubject = $.local.get('Subject') || '';
+        currentName = $.get('Name') || '';
+        currentEmail = $.get('Email') || '';
+        currentSubject = $.get('Subject') || '';
       } else {
         qr = $.id('qr');
         currentName = $('input[data-name=name]', qr).value;
@@ -613,10 +661,10 @@
       currentName = currentName.trim();
       currentEmail = currentEmail.trim();
       currentSubject = currentSubject.trim();
-      if (!$.session.get("" + g.board + "-" + threadID + "-last-name") && currentName + currentEmail + currentSubject === '' || Set['Hide Sage'] && /sage/i.test(currentEmail)) {
+      if (!$.get("" + g.board + "-" + threadID + "-last-name") && currentName + currentEmail + currentSubject === '' || Set['Hide Sage'] && /sage/i.test(currentEmail)) {
         return;
       }
-      $.session.set("" + g.board + "-" + threadID + "-last-name", currentName);
+      $.set("" + g.board + "-" + threadID + "-last-name", currentName);
       return Sync.send(currentName, currentEmail, currentSubject, postID, threadID);
     },
     send: function(name, email, subject, postID, threadID) {
@@ -646,18 +694,26 @@
     init: function() {
       var last;
 
-      last = $.local.get('lastcheck');
+      last = $.get('lastcheck');
       if (last === null || Date.now() > last + 86400000) {
         return this.update();
       }
     },
     update: function() {
-      $('#syncUpdate').disabled = true;
+      var el;
+
+      el = $('#syncUpdate');
+      if (el) {
+        el.disabled = true;
+      }
       return $.ajax('u3', 'GET', '', {
         onloadend: function() {
-          $.local.set('lastcheck', Date.now());
+          $.set('lastcheck', Date.now());
           if (this.status !== 200 || this.response === g.VERSION) {
-            return $('#syncUpdate').value = 'None available';
+            if (el) {
+              el.value = 'None available';
+            }
+            return;
           }
           $.event('CreateNotification', {
             detail: {
