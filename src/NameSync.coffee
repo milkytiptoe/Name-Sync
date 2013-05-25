@@ -281,8 +281,8 @@ Names =
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
-    for post in @posts
-      Names.updatePost.call post
+    for post of @posts
+      Names.updatePost.call @posts[post]
     Names.store()
   updatePost: ->
     return unless g.board is @board.ID and @info.uniqueID and !@info.capcode
