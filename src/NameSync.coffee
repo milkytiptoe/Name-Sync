@@ -187,8 +187,7 @@ Main =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            if !@isClone and !@info.capcode and @info.uniqueID
-              Names.posts.push @
+            Names.posts.push @ unless @isClone
 
 Menus =
   uid: null
@@ -236,7 +235,7 @@ Menus =
 
 Names =
   nameByPost: {}
-  posts:     []
+  posts:      []
   init: ->
     $.sync "#{g.board}-blocked", @loadBlocked
     $.sync "#{g.board}-cached",  @loadCached
@@ -246,6 +245,13 @@ Names =
     else
       @loadBlocked()
       @loadCached()
+    $.event 'AddCallback',
+      detail:
+        type: 'Post'
+        callback:
+          name: '4chan X Name Sync'
+          cb: ->
+            Names.updatePost.call @ if g.board is @board.ID
     @updateAllPosts()
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
@@ -282,7 +288,8 @@ Names =
       Names.updatePost.call post
     Names.store()
   updatePost: ->
-    return unless g.board is @board.ID
+    return if @info.capcode
+
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
     if oinfo and !Names.blockedIDs[@info.uniqueID]
