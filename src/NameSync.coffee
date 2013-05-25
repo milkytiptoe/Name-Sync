@@ -233,10 +233,9 @@ Names =
         type: 'Post'
         callback:
           name: '4chan X Name Sync'
-          cb: Names.cb
+          cb: ->
+            Names.updatePost @nodes.post if g.board is @board.ID
     @updateAllPosts()
-  cb: ->
-    Names.updatePost @nodes.post if g.board is @board.ID
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
     if name and name.trim() isnt ''
@@ -389,9 +388,9 @@ Settings =
       <fieldset>
         <legend>About</legend>
         <div>4chan X Name Sync v#{g.VERSION}</div>
-        <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>
+        <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Web page</a></div>
         <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>
-        <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>
+        <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></div>
       </fieldset>
       <img id=bgimage src='<%= meta.page %>namesync/bg.png' />
     """
