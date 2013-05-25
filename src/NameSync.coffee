@@ -68,6 +68,14 @@ $.sync = do ->
     if cb = $.syncing[e.key]
       cb e.newValue
   (key, cb) -> $.syncing[g.NAMESPACE + key] = cb
+$.ready = (fc) ->
+  if d.readyState in ['interactive', 'complete']
+    fc()
+    return
+  cb = ->
+    $.off d, 'DOMContentLoaded', cb
+    fc()
+  $.on d, 'DOMContentLoaded', cb
 $.get = (name) ->
   localStorage.getItem "#{g.NAMESPACE}#{name}"
 $.set = (name, value) ->
@@ -172,6 +180,21 @@ Main =
     if Set['Automatic Updates']
       Updater.init()
     <% } %>
+  ready: ->
+    # Some callbacks need to be established before 4chan X is finished initializing
+    $.event 'AddCallback',
+      detail:
+        type: 'Post'
+        callback:
+          name: '4chan X Name Sync'
+          cb: Names.updatePost
+    $.event 'AddCallback',
+      detail:
+        type: 'Thread'
+        callback:
+          name: '4chan X Name Sync'
+          cb: ->
+            console.log 'Thread Callback Called'
 
 Menus =
   uid: null
@@ -228,19 +251,6 @@ Names =
     else
       @loadBlocked()
       @loadCached()
-    $.event 'AddCallback',
-      detail:
-        type: 'Post'
-        callback:
-          name: '4chan X Name Sync'
-          cb: Names.updatePost
-    $.event 'AddCallback',
-      detail:
-        type: 'Thread'
-        callback:
-          name: '4chan X Name Sync'
-          cb: ->
-            console.log 'Thread Callback Called'
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
     if name and name.trim() isnt ''
@@ -521,4 +531,5 @@ Updater =
         el.click() if el
 <% } %>
 
+$.ready Main.ready
 $.on d, '4chanXInitFinished', Main.init
