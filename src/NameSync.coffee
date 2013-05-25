@@ -188,12 +188,6 @@ Main =
         callback:
           name: '4chan X Name Sync'
           cb: Names.updatePost
-    $.event 'AddCallback',
-      detail:
-        type: 'Thread'
-        callback:
-          name: '4chan X Name Sync'
-          cb: Names.updateAllPosts
 
 Menus =
   uid: null
@@ -285,6 +279,7 @@ Names =
       Names.updatePost.call @posts[post]
     Names.store()
   updatePost: ->
+    console.log 'New post logged'
     return unless g.board is @board.ID and @info.uniqueID and !@info.capcode
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
