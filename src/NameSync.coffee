@@ -187,7 +187,7 @@ Main =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            Names.posts.push @
+            Names.posts = @thread.posts
 
 Menus =
   uid: null
@@ -235,7 +235,7 @@ Menus =
 
 Names =
   nameByPost: {}
-  posts:      []
+  posts:      {}
   init: ->
     $.sync "#{g.board}-blocked", @loadBlocked
     $.sync "#{g.board}-cached",  @loadCached
@@ -284,11 +284,13 @@ Names =
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
-    for post in @posts
-      Names.updatePost.call post
+    for post of @posts
+      Names.updatePost.call @posts[post]
+      for clone of @posts[post].clones
+        Names.updatePost.call @posts[post].clones[clone]
     Names.store()
   updatePost: ->
-    return if @info.capcode or @isClone and g.board isnt @board.ID
+    return if @info.capcode or g.board isnt @board.ID
 
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
