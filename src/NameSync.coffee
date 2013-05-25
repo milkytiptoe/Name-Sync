@@ -233,8 +233,7 @@ Names =
         type: 'Post'
         callback:
           name: '4chan X Name Sync'
-          cb: ->
-            Names.updatePost @nodes.post if g.board is @board.ID
+          cb: Names.updatePost
     @updateAllPosts()
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
@@ -267,21 +266,18 @@ Names =
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
-    @updatePost post for post in $$ '.thread .post'
+    # @updatePost post for post in $$ '.thread .post'
     @store()
-  updatePost: (post) ->
-    idspan = $ '.hand', post
-    return if idspan is null
-    id = idspan.textContent
-    return if /^##/.test id
-    postnum     = $('a[title="Quote this post"]', post).textContent
-    oinfo       = Names.nameByPost[postnum]
-    linfo       = Names.nameByID[id]
-    if oinfo and !Names.blockedIDs[id]
-      name      = oinfo.n
-      tripcode  = oinfo.t
-      if !/Heaven/.test id
-        Names.nameByID[id] =
+  updatePost: ->
+    return unless g.board is @board.ID and @info.uniqueID and !@info.capcode
+
+    oinfo = Names.nameByPost[@ID]
+    linfo = Names.nameByID[@info.uniqueID]
+    if oinfo and !Names.blockedIDs[@info.uniqueID]
+      name     = oinfo.n
+      tripcode = oinfo.t
+      unless /Heaven/.test @info.uniqueID
+        Names.nameByID[@info.uniqueID] =
           n: name
           t: tripcode
       email   = oinfo.e
@@ -292,11 +288,10 @@ Names =
     else
       return
 
-    namespan          = $ '.desktop .name',       post
-    tripspan          = $ '.desktop .postertrip', post
-    subjectspan       = $ '.desktop .subject',    post
+    namespan          = @nodes.name
+    tripspan          = $ '.desktop .postertrip', @nodes.post
+    subjectspan       = @nodes.subject
     subjectspantext   = subjectspan.textContent
-
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject
@@ -306,9 +301,9 @@ Names =
       if subjectspantext isnt ''
         subjectspan.textContent = ''
     if email
-      emailspan = $ '.desktop .useremail', post
+      emailspan = $ '.desktop .useremail', @nodes.post
       if emailspan is null
-        nameblockspan = $ '.desktop .nameBlock', post
+        nameblockspan = $ '.desktop .nameBlock', @nodes.post
         emailspan = $.el 'a',
           className: 'useremail'
         $.before namespan, emailspan
@@ -330,14 +325,14 @@ Names =
 
     if Set['Filter']
       if Filter.names and RegExp(Filter.names).test name
-        return $.addClass post.parentNode, 'sync-filtered'
+        return $.addClass @nodes.post.parentNode, 'sync-filtered'
       if Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test tripcode
-        return $.addClass post.parentNode, 'sync-filtered'
+        return $.addClass @nodes.post.parentNode, 'sync-filtered'
       if oinfo
         if Filter.subjects and subject and RegExp(Filter.subjects).test subject
-          return $.addClass post.parentNode, 'sync-filtered'
+          return $.addClass @nodes.post.parentNode, 'sync-filtered'
         if Filter.emails and email and RegExp(Filter.emails).test email
-          $.addClass post.parentNode, 'sync-filtered'
+          $.addClass @nodes.post.parentNode, 'sync-filtered'
 
 Settings =
   init: ->
