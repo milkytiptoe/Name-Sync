@@ -187,7 +187,7 @@ Main =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            Names.posts.push @ unless @isClone
+            Names.posts.push @
 
 Menus =
   uid: null
@@ -251,7 +251,7 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            Names.updatePost.call @ if g.board is @board.ID
+            Names.updatePost.call @
     @updateAllPosts()
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
@@ -288,7 +288,7 @@ Names =
       Names.updatePost.call post
     Names.store()
   updatePost: ->
-    return if @info.capcode
+    return if @info.capcode or @isClone and g.board isnt @board.ID
 
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
