@@ -181,7 +181,7 @@ Main =
       Updater.init()
     <% } %>
   ready: ->
-    # Some callbacks need to be established before 4chan X is finished initializing
+    # Some 4chan X callbacks need to be established before 4chan X is finished initializing
     $.event 'AddCallback',
       detail:
         type: 'Post'
@@ -193,8 +193,7 @@ Main =
         type: 'Thread'
         callback:
           name: '4chan X Name Sync'
-          cb: ->
-            console.log 'Thread Callback Called'
+          cb: Names.updateAllPosts
 
 Menus =
   uid: null
@@ -257,12 +256,12 @@ Names =
       @nameByID[id] =
         n: name
       @blockedIDs[id] = true
-      @updateAllPosts()
+      # @updateAllPosts()
   reset: (id) ->
     @nameByID[id] =
       n: 'Anonymous'
     @blockedIDs[id] = false
-    @updateAllPosts()
+    # @updateAllPosts()
   clear: ->
     Names.nameByID   = {}
     Names.blockedIDs = {}
@@ -282,11 +281,11 @@ Names =
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
-    # @updatePost post for post in $$ '.thread .post'
-    @store()
+    for post in @posts
+      Names.updatePost.call post
+    Names.store()
   updatePost: ->
     return unless g.board is @board.ID and @info.uniqueID and !@info.capcode
-
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
     if oinfo and !Names.blockedIDs[@info.uniqueID]
@@ -466,7 +465,7 @@ Sync =
         Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
         for poster in JSON.parse @response
           Names.nameByPost[poster.p] = poster
-        Names.updateAllPosts()
+        # Names.updateAllPosts()
     if repeat and !Sync.disabled
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
