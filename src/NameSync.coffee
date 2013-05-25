@@ -234,7 +234,13 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: Names.updatePost
-    @updateAllPosts()
+    $.event 'AddCallback',
+      detail:
+        type: 'Thread'
+        callback:
+          name: '4chan X Name Sync'
+          cb: ->
+            console.log 'Thread Callback Called'
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
     if name and name.trim() isnt ''
