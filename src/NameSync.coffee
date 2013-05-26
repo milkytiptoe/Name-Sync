@@ -311,9 +311,9 @@ Names =
     else
       return
 
-    namespan          = @nodes.name
-    subjectspan       = @nodes.subject
-    tripspan          = $ '.postertrip', @nodes.info
+    namespan    = @nodes.name
+    subjectspan = @nodes.subject
+    tripspan    = $ '.postertrip', @nodes.info
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject
