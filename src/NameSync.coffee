@@ -312,21 +312,20 @@ Names =
       return
 
     namespan          = @nodes.name
-    tripspan          = $ '.desktop .postertrip', @nodes.post
     subjectspan       = @nodes.subject
-    subjectspantext   = subjectspan.textContent
+    tripspan          = $ '.postertrip', @nodes.info
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject
-      if subjectspantext isnt subject
+      if subjectspan.textContent isnt subject
         subjectspan.textContent = subject
     else
-      if subjectspantext isnt ''
+      if subjectspan.textContent isnt ''
         subjectspan.textContent = ''
     if email
-      emailspan = $ '.desktop .useremail', @nodes.post
+      emailspan = $ '.useremail', @nodes.info
       if emailspan is null
-        nameblockspan = $ '.desktop .nameBlock', @nodes.post
+        nameblockspan = $ '.nameBlock', @nodes.info
         emailspan = $.el 'a',
           className: 'useremail'
         $.before namespan, emailspan
