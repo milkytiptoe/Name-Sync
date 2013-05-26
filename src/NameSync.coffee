@@ -187,7 +187,7 @@ Main =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            Names.threads = @board.threads
+            Names.threads = @board.threads if !g.board or g.board is @board.ID
 
 Menus =
   uid: null
@@ -251,7 +251,7 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            Names.updatePost.call @
+            Names.updatePost.call @ if g.board is @board.ID
     @updateAllPosts()
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
@@ -292,7 +292,7 @@ Names =
           Names.updatePost.call @threads[thread].posts[post].clones[clone]
     Names.store()
   updatePost: ->
-    return if @info.capcode or g.board isnt @board.ID
+    return if @info.capcode
 
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
@@ -345,16 +345,8 @@ Names =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
-    if Set['Filter']
-      if Filter.names and RegExp(Filter.names).test name
-        return $.addClass @nodes.post.parentNode, 'sync-filtered'
-      if Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test tripcode
-        return $.addClass @nodes.post.parentNode, 'sync-filtered'
-      if oinfo
-        if Filter.subjects and subject and RegExp(Filter.subjects).test subject
-          return $.addClass @nodes.post.parentNode, 'sync-filtered'
-        if Filter.emails and email and RegExp(Filter.emails).test email
-          $.addClass @nodes.post.parentNode, 'sync-filtered'
+    if Set['Filter'] and Filter.names and RegExp(Filter.names).test(name) or Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test(tripcode) or Filter.subjects and subject and RegExp(Filter.subjects).test(subject) or Filter.emails and email and RegExp(Filter.emails).test(email)
+      $.addClass @nodes.post.parentNode, 'sync-filtered'
 
 Settings =
   init: ->
