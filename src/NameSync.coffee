@@ -315,7 +315,6 @@ Names =
     subjectspan   = @nodes.subject
     tripspan      = $ '.postertrip', @nodes.info
     emailspan     = $ '.useremail',  @nodes.info
-    nameblockspan = $ '.nameBlock',  @nodes.info
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject
@@ -335,7 +334,7 @@ Names =
         $.add emailspan, tripspan
       emailspan.href = "mailto:#{email}"
     else if emailspan
-      $.prepend nameblockspan, namespan
+      $.before emailspan, namespan
       $.rm emailspan
     if tripcode
       if tripspan is null
