@@ -460,7 +460,7 @@
     updatePost: function() {
       var email, emailspan, linfo, name, namespan, oinfo, subject, subjectspan, tripcode, tripspan;
 
-      if (this.info.capcode) {
+      if (!this.info || this.info.capcode) {
         return;
       }
       oinfo = Names.nameByPost[this.ID];
