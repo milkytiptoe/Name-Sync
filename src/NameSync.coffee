@@ -197,7 +197,7 @@ Menus =
         type: 'header'
         el: @makeSubEntry '4chan X Name Sync Settings', ->
           $.event 'OpenSettings',
-          detail: 'Name Sync'
+            detail: 'Name Sync'
         order: 112
     subEntries = []
     subEntries.push

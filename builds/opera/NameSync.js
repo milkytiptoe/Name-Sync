@@ -72,6 +72,9 @@
   };
 
   $.event = function(type, detail) {
+    if (detail == null) {
+      detail = {};
+    }
     return d.dispatchEvent(new CustomEvent(type, detail));
   };
 
@@ -170,6 +173,20 @@
     };
   })();
 
+  $.ready = function(fc) {
+    var cb, _ref;
+
+    if ((_ref = d.readyState) === 'interactive' || _ref === 'complete') {
+      fc();
+      return;
+    }
+    cb = function() {
+      $.off(d, 'DOMContentLoaded', cb);
+      return fc();
+    };
+    return $.on(d, 'DOMContentLoaded', cb);
+  };
+
   $.get = function(name) {
     return localStorage.getItem("" + g.NAMESPACE + name);
   };
@@ -261,6 +278,21 @@
       if (Set['Automatic Updates']) {
         return Updater.init();
       }
+    },
+    ready: function() {
+      return $.event('AddCallback', {
+        detail: {
+          type: 'Post',
+          callback: {
+            name: '4chan X Name Sync',
+            cb: function() {
+              if (!g.board || g.board === this.board.ID) {
+                return Names.threads = this.board.threads;
+              }
+            }
+          }
+        }
+      });
     }
   };
 
@@ -336,6 +368,7 @@
 
   Names = {
     nameByPost: {},
+    threads: {},
     init: function() {
       var expiry;
 
@@ -353,16 +386,15 @@
           type: 'Post',
           callback: {
             name: '4chan X Name Sync',
-            cb: Names.cb
+            cb: function() {
+              if (g.board === this.board.ID) {
+                return Names.updatePost.call(this);
+              }
+            }
           }
         }
       });
       return this.updateAllPosts();
-    },
-    cb: function() {
-      if (g.board === this.board.ID) {
-        return Names.updatePost(this.nodes.post);
-      }
     },
     change: function(id) {
       var name;
@@ -413,34 +445,31 @@
       return $.set("" + g.board + "-blocked", JSON.stringify(this.blockedIDs));
     },
     updateAllPosts: function() {
-      var post, _i, _len, _ref;
+      var clone, post, thread;
 
-      _ref = $$('.thread .post');
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        post = _ref[_i];
-        this.updatePost(post);
+      for (thread in this.threads) {
+        for (post in this.threads[thread].posts) {
+          Names.updatePost.call(this.threads[thread].posts[post]);
+          for (clone in this.threads[thread].posts[post].clones) {
+            Names.updatePost.call(this.threads[thread].posts[post].clones[clone]);
+          }
+        }
       }
-      return this.store();
+      return Names.store();
     },
-    updatePost: function(post) {
-      var email, emailspan, id, idspan, linfo, name, nameblockspan, namespan, oinfo, postnum, subject, subjectspan, subjectspantext, tripcode, tripspan;
+    updatePost: function() {
+      var email, emailspan, linfo, name, namespan, oinfo, subject, subjectspan, tripcode, tripspan;
 
-      idspan = $('.hand', post);
-      if (idspan === null) {
+      if (this.info.capcode) {
         return;
       }
-      id = idspan.textContent;
-      if (/^##/.test(id)) {
-        return;
-      }
-      postnum = $('a[title="Quote this post"]', post).textContent;
-      oinfo = Names.nameByPost[postnum];
-      linfo = Names.nameByID[id];
-      if (oinfo && !Names.blockedIDs[id]) {
+      oinfo = Names.nameByPost[this.ID];
+      linfo = Names.nameByID[this.info.uniqueID];
+      if (oinfo && !Names.blockedIDs[this.info.uniqueID]) {
         name = oinfo.n;
         tripcode = oinfo.t;
-        if (!/Heaven/.test(id)) {
-          Names.nameByID[id] = {
+        if (!/Heaven/.test(this.info.uniqueID)) {
+          Names.nameByID[this.info.uniqueID] = {
             n: name,
             t: tripcode
           };
@@ -453,26 +482,24 @@
       } else {
         return;
       }
-      namespan = $('.desktop .name', post);
-      tripspan = $('.desktop .postertrip', post);
-      subjectspan = $('.desktop .subject', post);
-      subjectspantext = subjectspan.textContent;
+      namespan = this.nodes.name;
+      subjectspan = this.nodes.subject;
+      tripspan = $('.postertrip', this.nodes.info);
+      emailspan = $('.useremail', this.nodes.info);
       if (namespan.textContent !== name) {
         namespan.textContent = name;
       }
       if (subject) {
-        if (subjectspantext !== subject) {
+        if (subjectspan.textContent !== subject) {
           subjectspan.textContent = subject;
         }
       } else {
-        if (subjectspantext !== '') {
+        if (subjectspan.textContent !== '') {
           subjectspan.textContent = '';
         }
       }
       if (email) {
-        emailspan = $('.desktop .useremail', post);
         if (emailspan === null) {
-          nameblockspan = $('.desktop .nameBlock', post);
           emailspan = $.el('a', {
             className: 'useremail'
           });
@@ -484,6 +511,9 @@
           $.add(emailspan, tripspan);
         }
         emailspan.href = "mailto:" + email;
+      } else if (emailspan) {
+        $.before(emailspan, namespan);
+        $.rm(emailspan);
       }
       if (tripcode) {
         if (tripspan === null) {
@@ -499,21 +529,8 @@
         $.rm(tripspan.previousSibling);
         $.rm(tripspan);
       }
-      if (Set['Filter']) {
-        if (Filter.names && RegExp(Filter.names).test(name)) {
-          return $.addClass(post.parentNode, 'sync-filtered');
-        }
-        if (Filter.tripcodes && tripcode && RegExp(Filter.tripcodes).test(tripcode)) {
-          return $.addClass(post.parentNode, 'sync-filtered');
-        }
-        if (oinfo) {
-          if (Filter.subjects && subject && RegExp(Filter.subjects).test(subject)) {
-            return $.addClass(post.parentNode, 'sync-filtered');
-          }
-          if (Filter.emails && email && RegExp(Filter.emails).test(email)) {
-            return $.addClass(post.parentNode, 'sync-filtered');
-          }
-        }
+      if (Set['Filter'] && Filter.names && RegExp(Filter.names).test(name) || Filter.tripcodes && tripcode && RegExp(Filter.tripcodes).test(tripcode) || Filter.subjects && subject && RegExp(Filter.subjects).test(subject) || Filter.emails && email && RegExp(Filter.emails).test(email)) {
+        return $.addClass(this.nodes.post.parentNode, 'sync-filtered');
       }
     }
   };
@@ -542,7 +559,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Persona Fields' " + ($.get('Persona Fields') === 'true' ? 'checked' : '') + "> Persona</label>\n  </legend>\n  <p>Share these fields instead of the 4chan X quick reply fields</p>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Filter' " + ($.get('Filter') === 'true' ? 'checked' : '') + "> Filter</label>\n  </legend>\n  <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Visit web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>View changelog</a></div>\n</fieldset>\n<img id=bgimage src='https://www.namesync.org/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Persona Fields' " + ($.get('Persona Fields') === 'true' ? 'checked' : '') + "> Persona</label>\n  </legend>\n  <p>Share these fields instead of the 4chan X quick reply fields</p>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Filter' " + ($.get('Filter') === 'true' ? 'checked' : '') + "> Filter</label>\n  </legend>\n  <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></div>\n</fieldset>\n<img id=bgimage src='https://www.namesync.org/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
@@ -724,11 +741,16 @@
               lifetime: 10
             }
           });
-          return $('#fourchanx-settings .close').click();
+          el = $('#fourchanx-settings .close');
+          if (el) {
+            return el.click();
+          }
         }
       });
     }
   };
+
+  $.ready(Main.ready);
 
   $.on(d, '4chanXInitFinished', Main.init);
 
