@@ -292,7 +292,7 @@ Names =
           Names.updatePost.call @threads[thread].posts[post].clones[clone]
     Names.store()
   updatePost: ->
-    return if @info.capcode
+    return if !@info or @info.capcode
 
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
