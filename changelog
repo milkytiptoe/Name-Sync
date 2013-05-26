@@ -1,3 +1,8 @@
+4.4.0
+- Fixed email fields remaining on renamed posters
+- Fixed Opera crashing when using 4chan X Name menu
+- Improved performance
+
 4.3.0
 - Fixed cross-thread name loading
 - Name cache automatically clears itself daily
