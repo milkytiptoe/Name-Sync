@@ -453,8 +453,8 @@ Sync =
     else
       @sync()
   checkThreadUpdate: (e) ->
-    return unless e.detail.newPosts.length
     return Sync.disabled = true if e.detail[404]
+    return unless e.detail.newPosts.length
     clearTimeout Sync.delay
     Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
   sync: (repeat) ->
