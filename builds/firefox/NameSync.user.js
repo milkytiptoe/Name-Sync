@@ -630,11 +630,11 @@
       }
     },
     checkThreadUpdate: function(e) {
-      if (!e.detail.newPosts.length) {
-        return;
-      }
       if (e.detail[404]) {
         return Sync.disabled = true;
+      }
+      if (!e.detail.newPosts.length) {
+        return;
       }
       clearTimeout(Sync.delay);
       return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 300);
