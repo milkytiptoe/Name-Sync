@@ -1,6 +1,6 @@
 {
   "name": "NameSync",
-  "version": "4.4.1",
+  "version": "4.4.2",
   "description": "Enables names on 4chan's forced anon boards. Requires 4chan X.",
   "meta": {
     "name": "4chan X Name Sync",
