@@ -43,22 +43,22 @@ img, input[type=image] {
   font-size: 0.9em;
 }
 .requirements {
-	background: url(requirementsblack.png) left top no-repeat;
+	background: url(../img/requirements.png) left top no-repeat;
 }
 .install {
-	background: url(installblack.png) left top no-repeat;
+	background: url(../img/install.png) left top no-repeat;
 }
 .support {
-	background: url(supportblack.png) left top no-repeat;
+	background: url(../img/support.png) left top no-repeat;
 }
 .info {
-	background: url(infoblack.png) left top no-repeat;
+	background: url(../img/info.png) left top no-repeat;
 }
 .contact {
-	background: url(contactblack.png) left top no-repeat;
+	background: url(../img/contact.png) left top no-repeat;
 }
 .donate {
-	background: url(donateblack.png) left top no-repeat;
+	background: url(../img/donate.png) left top no-repeat;
 }
 #firefox, #chrome, #opera, #chanx {
   background-repeat: no-repeat;
@@ -66,16 +66,16 @@ img, input[type=image] {
   padding-left: 22px;
 }
 #firefox {
-  background-image: url(firefox.svg);
+  background-image: url(../img/firefox.svg);
 }
 #chrome {
-  background-image: url(chrome.svg);
+  background-image: url(../img/chrome.svg);
 }
 #opera {
-  background-image: url(opera.svg);
+  background-image: url(../img/opera.svg);
 }
 #chanx {
-  background-image: url(4chanx.png);
+  background-image: url(../img/4chanx.png);
 }
 ul {
   padding-left: 20px;
