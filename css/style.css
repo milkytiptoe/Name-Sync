@@ -48,15 +48,6 @@ img, input[type=image] {
 .install {
 	background: url(../img/install.png) left top no-repeat;
 }
-.support {
-	background: url(../img/support.png) left top no-repeat;
-}
-.info {
-	background: url(../img/info.png) left top no-repeat;
-}
-.contact {
-	background: url(../img/contact.png) left top no-repeat;
-}
 .donate {
 	background: url(../img/donate.png) left top no-repeat;
 }
