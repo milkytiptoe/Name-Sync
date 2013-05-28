@@ -27,54 +27,47 @@ img, input[type=image] {
 .content-block {
 	min-height: 48px;
 	clear: both;
-	padding-left: 60px;
+	padding-left: 54px;
 	margin: 6px 0 12px 0;
 }
 #wrapper {
 	margin: auto;
 	width: 650px;
 }
-#header {
-	margin: 12px 0 12px 0;
-  background: url(http://www.namesync.org/namesync/logo.png) no-repeat top right;
-}
 #footer {
-	text-align: right;
+  margin-top: 20px;
+	text-align: center;
   font-size: 0.9em;
 }
-.requirements {
-	background: url(../img/requirements.png) left top no-repeat;
+#header {
+	margin: 12px 0 12px 0;
+  padding-left: 54px !important;
+  background: url(http://www.namesync.org/namesync/logo.png) no-repeat top left;
 }
-.install {
-	background: url(../img/install.png) left top no-repeat;
+form {
+  float: right;
 }
-.donate {
-	background: url(../img/donate.png) left top no-repeat;
-}
-#firefox, #chrome, #opera, #chanx {
+#gecko, #webkit, #presto, #chanx {
   background-repeat: no-repeat;
   background-size: 19px;
   padding-left: 22px;
+  display: none;
 }
-#firefox {
+#chanx {
+  display: block;
+}
+#gecko {
   background-image: url(../img/firefox.svg);
 }
-#chrome {
+#webkit {
   background-image: url(../img/chrome.svg);
 }
-#opera {
+#presto {
   background-image: url(../img/opera.svg);
 }
 #chanx {
   background-image: url(../img/4chanx.png);
 }
-ul {
-  padding-left: 20px;
-}
-.features ul {
-  list-style: none;
-  padding: 0;
-}
 p {
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
