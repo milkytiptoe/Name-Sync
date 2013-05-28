@@ -42,7 +42,7 @@ img, input[type=image] {
 #header {
 	margin: 12px 0 12px 0;
   padding-left: 54px !important;
-  background: url(http://www.namesync.org/namesync/logo.png) no-repeat top left;
+  background: url(https://www.namesync.org/namesync/logo.png) no-repeat top left;
 }
 form {
   float: right;
