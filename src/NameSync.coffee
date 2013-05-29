@@ -251,13 +251,14 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: ->
+            return unless g.board is @board.ID
             unless @isClone or @isHidden
               that = @nodes.post.parentNode
               that.style.visibility = 'hidden'
               setTimeout ->
                 that.style.visibility = 'visible'
               , Sync.ms + Sync.delay
-            Names.updatePost.call @ if g.board is @board.ID
+            Names.updatePost.call @
     @updateAllPosts()
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
