@@ -251,8 +251,8 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            return unless g.board is @board.ID
-            unless @isClone or @isHidden
+            return unless @board.ID is g.board
+            if !@isClone and !@isHidden and @thread.ID is g.thread
               that = @nodes.post.parentNode
               that.style.visibility = 'hidden'
               setTimeout ->
