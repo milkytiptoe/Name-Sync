@@ -452,7 +452,7 @@ Sync =
   delay: 300
   ms: 0
   init: ->
-    @delay = parseInt $.get('Delay') or @delay
+    @delay = (parseInt $.get 'Delay') or @delay
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
     if g.threads.length is 1
