@@ -166,7 +166,7 @@ Main =
     return if path[1] is 'catalog'
     g.board = path[0]
     for thread in $$ '.thread'
-      g.threads.push thread.id[1..]
+      g.threads.push +thread.id[1..]
 
     Settings.init()
     if Set['Filter']
@@ -252,7 +252,7 @@ Names =
           name: '4chan X Name Sync'
           cb: ->
             return unless @board.ID is g.board
-            if !@isClone and !@isHidden and @thread.ID is g.thread
+            if !@isClone and !@isHidden and g.threads.length is 1 and @thread.ID is g.threads[0]
               that = @nodes.post.parentNode
               that.style.visibility = 'hidden'
               setTimeout ->
