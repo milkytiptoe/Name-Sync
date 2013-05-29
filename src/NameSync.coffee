@@ -400,8 +400,9 @@ Settings =
         <legend>About</legend>
         <div>4chan X Name Sync v#{g.VERSION}</div>
         <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Web page</a></div>
-        <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>
         <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></div>
+        <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>
+        <div><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcodes</a></div>
       </fieldset>
       <img id=bgimage src='<%= meta.page %>namesync/bg.png' />
     """
