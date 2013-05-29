@@ -90,7 +90,6 @@ Config =
     'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
-    'Post Delay':        [true, 'Hide posts while fields are attempted to be updated on them.']
     <% if (type !== 'crx') { %>
     'Automatic Updates': [true,  'Check for updates automatically.']
     <% } %>
@@ -167,7 +166,7 @@ Main =
     return if path[1] is 'catalog'
     g.board = path[0]
     for thread in $$ '.thread'
-      g.threads.push +thread.id[1..]
+      g.threads.push thread.id[1..]
 
     Settings.init()
     if Set['Filter']
@@ -252,16 +251,7 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            return unless @board.ID is g.board
-            if Set['Post Delay'] and !@isClone and !@isHidden and g.threads.length is 1 and @thread.ID is g.threads[0]
-              that = @nodes.post.parentNode
-              that.style.visibility = 'hidden'
-              # How long should we wait for non-sync posters and (shit) proxy users?
-              setTimeout ->
-                if that.style.visibility is 'hidden'
-                  that.style.visibility = 'visible'
-              , 2000
-            Names.updatePost.call @
+            Names.updatePost.call @ if g.board is @board.ID
     @updateAllPosts()
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
@@ -356,10 +346,6 @@ Names =
     else if tripspan
       $.rm tripspan.previousSibling
       $.rm tripspan
-
-    # If this post has fields loaded already, show it
-    if Set['Post Delay'] and oinfo and @nodes.post.parentNode.style.visibility is 'hidden'
-      @nodes.post.parentNode.style.visibility = 'visible'
 
     if Set['Filter'] and Filter.names and RegExp(Filter.names).test(name) or Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test(tripcode) or Filter.subjects and subject and RegExp(Filter.subjects).test(subject) or Filter.emails and email and RegExp(Filter.emails).test(email)
       $.addClass @nodes.post.parentNode, 'sync-filtered'
@@ -457,9 +443,8 @@ Settings =
 Sync =
   lastModified: '0'
   disabled: false
-  delay: 300
+  delay: null
   init: ->
-    @delay = (parseInt $.get 'Delay') or @delay
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
     if g.threads.length is 1
@@ -470,10 +455,9 @@ Sync =
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     return unless e.detail.newPosts.length
-    clearTimeout Sync.handle
-    Sync.handle = setTimeout Sync.sync, Sync.delay
+    clearTimeout Sync.delay
+    Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
   sync: (repeat) ->
-    start = Date.now()
     $.ajax 'qp',
       'GET'
       "t=#{g.threads}&b=#{g.board}"
