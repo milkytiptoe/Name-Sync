@@ -90,7 +90,7 @@ Config =
     'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
-    'Post Delay':        [true, 'Hide posts until sync loads fields on them.']
+    'Post Delay':        [true, 'Hide posts until fields are loaded on them.']
     <% if (type !== 'crx') { %>
     'Automatic Updates': [true,  'Check for updates automatically.']
     <% } %>
@@ -256,9 +256,11 @@ Names =
             if Set['Post Delay'] and !@isClone and !@isHidden and g.threads.length is 1 and @thread.ID is g.threads[0]
               that = @nodes.post.parentNode
               that.style.visibility = 'hidden'
+              # How long should we wait for non-sync posters and (shit) proxy users?
               setTimeout ->
-                that.style.visibility = 'visible'
-              , Sync.ms + Sync.delay
+                if that.style.visibility is 'hidden'
+                  that.style.visibility = 'visible'
+              , 2000
             Names.updatePost.call @
     @updateAllPosts()
   change: (id) ->
@@ -354,6 +356,10 @@ Names =
     else if tripspan
       $.rm tripspan.previousSibling
       $.rm tripspan
+
+    # If this post has fields loaded already, show it
+    if Set['Post Delay'] and oinfo and @nodes.post.parentNode.style.visibility is 'hidden'
+      @nodes.post.parentNode.style.visibility = 'visible'
 
     if Set['Filter'] and Filter.names and RegExp(Filter.names).test(name) or Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test(tripcode) or Filter.subjects and subject and RegExp(Filter.subjects).test(subject) or Filter.emails and email and RegExp(Filter.emails).test(email)
       $.addClass @nodes.post.parentNode, 'sync-filtered'
