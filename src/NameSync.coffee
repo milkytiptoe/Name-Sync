@@ -90,7 +90,7 @@ Config =
     'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
-    'Post Delay':        [true, 'Hide posts until fields are loaded on them.']
+    'Post Delay':        [true, 'Hide posts while fields are attempted to be updated on them.']
     <% if (type !== 'crx') { %>
     'Automatic Updates': [true,  'Check for updates automatically.']
     <% } %>
@@ -458,7 +458,6 @@ Sync =
   lastModified: '0'
   disabled: false
   delay: 300
-  ms: 0
   init: ->
     @delay = (parseInt $.get 'Delay') or @delay
     unless Set['Read-only Mode']
@@ -484,7 +483,6 @@ Sync =
         for poster in JSON.parse @response
           Names.nameByPost[poster.p] = poster
         Names.updateAllPosts()
-        Sync.ms = Date.now() - start
     if repeat and !Sync.disabled
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
