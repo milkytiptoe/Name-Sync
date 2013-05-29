@@ -90,6 +90,7 @@ Config =
     'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
+    'Post Delay':        [true, 'Hide posts until sync loads fields on them.']
     <% if (type !== 'crx') { %>
     'Automatic Updates': [true,  'Check for updates automatically.']
     <% } %>
@@ -252,7 +253,7 @@ Names =
           name: '4chan X Name Sync'
           cb: ->
             return unless @board.ID is g.board
-            if !@isClone and !@isHidden and g.threads.length is 1 and @thread.ID is g.threads[0]
+            if Set['Post Delay'] and !@isClone and !@isHidden and g.threads.length is 1 and @thread.ID is g.threads[0]
               that = @nodes.post.parentNode
               that.style.visibility = 'hidden'
               setTimeout ->
