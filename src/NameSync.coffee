@@ -473,11 +473,11 @@ Sync =
       "t=#{g.threads}&b=#{g.board}"
       onloadend: ->
         return unless @status is 200 and @response
-        Sync.ms = Date.now() - start
         Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
         for poster in JSON.parse @response
           Names.nameByPost[poster.p] = poster
         Names.updateAllPosts()
+        Sync.ms = Date.now() - start
     if repeat and !Sync.disabled
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
