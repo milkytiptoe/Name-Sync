@@ -251,6 +251,12 @@ Names =
         callback:
           name: '4chan X Name Sync'
           cb: ->
+            unless @isClone or @isHidden
+              that = @nodes.post.parentNode
+              that.style.visibility = 'hidden'
+              setTimeout ->
+                that.style.visibility = 'visible'
+              , Sync.ms + Sync.delay
             Names.updatePost.call @ if g.board is @board.ID
     @updateAllPosts()
   change: (id) ->
@@ -443,8 +449,10 @@ Settings =
 Sync =
   lastModified: '0'
   disabled: false
-  delay: null
+  delay: 300
+  ms: 0
   init: ->
+    @delay = parseInt $.get('Delay') or @delay
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
     if g.threads.length is 1
@@ -455,14 +463,16 @@ Sync =
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     return unless e.detail.newPosts.length
-    clearTimeout Sync.delay
-    Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
+    clearTimeout Sync.handle
+    Sync.handle = setTimeout Sync.sync, Sync.delay
   sync: (repeat) ->
+    start = Date.now()
     $.ajax 'qp',
       'GET'
       "t=#{g.threads}&b=#{g.board}"
       onloadend: ->
         return unless @status is 200 and @response
+        Sync.ms = Date.now() - start
         Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
         for poster in JSON.parse @response
           Names.nameByPost[poster.p] = poster
