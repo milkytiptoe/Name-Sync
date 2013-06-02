@@ -433,11 +433,13 @@ Settings =
 Sync =
   lastModified: '0'
   disabled: false
-  delay: null
+  threads: []
   init: ->
+    for thread of g.threads
+      @threads.push g.threads[thread].ID
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
-    if Object.keys(g.threads).length is 1
+    if @threads.length is 1
       $.on d, 'ThreadUpdate', @checkThreadUpdate
       @sync true
     else
@@ -450,7 +452,7 @@ Sync =
   sync: (repeat) ->
     $.ajax 'qp',
       'GET'
-      "t=#{Object.keys g.threads}&b=#{g.board}"
+      "t=#{Sync.threads}&b=#{g.board}"
       onloadend: ->
         return unless @status is 200 and @response
         Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
