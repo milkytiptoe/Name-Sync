@@ -435,6 +435,7 @@ Sync =
   disabled: false
   threads: []
   init: ->
+    @delay = (parseInt $.get 'Delay') or 300
     for thread of g.threads
       @threads.push g.threads[thread].ID
     unless Set['Read-only Mode']
@@ -447,8 +448,8 @@ Sync =
   checkThreadUpdate: (e) ->
     return Sync.disabled = true if e.detail[404]
     return unless e.detail.newPosts.length
-    clearTimeout Sync.delay
-    Sync.delay = setTimeout Sync.sync, $.get('Delay') or 300
+    clearTimeout Sync.handle
+    Sync.handle = setTimeout Sync.sync, Sync.delay
   sync: (repeat) ->
     $.ajax 'qp',
       'GET'
