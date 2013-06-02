@@ -5,7 +5,6 @@ d   = document
 g   =
   NAMESPACE: 'NameSync.'
   VERSION:   '<%= version %>'
-  threads:   []
 
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
@@ -162,12 +161,7 @@ Filter =
 Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
-    path = location.pathname.slice(1).split '/'
-    return if path[1] is 'catalog'
-    g.board = path[0]
-    for thread in $$ '.thread'
-      g.threads.push thread.id[1..]
-
+    return if location.pathname.slice(1).split('/')[1] is 'catalog'
     Settings.init()
     if Set['Filter']
       Filter.init()
@@ -187,7 +181,9 @@ Main =
         callback:
           name: '4chan X Name Sync'
           cb: ->
-            Names.threads = @board.threads if !g.board or g.board is @board.ID
+            g.board = @board.ID if !g.board
+            g.threads = @board.threads if g.board is @board.ID
+            Names.updatePost.call @ if g.board is @board.ID and Names.nameByID
 
 Menus =
   uid: null
@@ -245,13 +241,6 @@ Names =
     else
       @loadBlocked()
       @loadCached()
-    $.event 'AddCallback',
-      detail:
-        type: 'Post'
-        callback:
-          name: '4chan X Name Sync'
-          cb: ->
-            Names.updatePost.call @ if g.board is @board.ID
     @updateAllPosts()
   change: (id) ->
     name = prompt 'What would you like this poster to be named?', 'Anonymous'
@@ -285,11 +274,11 @@ Names =
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
     # SANIC
-    for thread of @threads
-      for post of @threads[thread].posts
-        Names.updatePost.call @threads[thread].posts[post]
-        for clone of @threads[thread].posts[post].clones
-          Names.updatePost.call @threads[thread].posts[post].clones[clone]
+    for thread of g.threads
+      for post of g.threads[thread].posts
+        Names.updatePost.call g.threads[thread].posts[post]
+        for clone of g.threads[thread].posts[post].clones
+          Names.updatePost.call g.threads[thread].posts[post].clones[clone]
     Names.store()
   updatePost: ->
     return if !@info or @info.capcode
@@ -448,7 +437,7 @@ Sync =
   init: ->
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
-    if g.threads.length is 1
+    if Object.keys(g.threads).length is 1
       $.on d, 'ThreadUpdate', @checkThreadUpdate
       @sync true
     else
@@ -461,7 +450,7 @@ Sync =
   sync: (repeat) ->
     $.ajax 'qp',
       'GET'
-      "t=#{g.threads}&b=#{g.board}"
+      "t=#{Object.keys g.threads}&b=#{g.board}"
       onloadend: ->
         return unless @status is 200 and @response
         Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
