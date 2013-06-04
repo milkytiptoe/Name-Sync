@@ -11,7 +11,7 @@
 // @run-at       document-start
 // @updateURL    https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.meta.js
 // @downloadURL  https://github.com/milkytiptoe/Name-Sync/raw/master/builds/firefox/NameSync.user.js
-// @icon         https://www.namesync.org/namesync/logo.png
+// @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAACGlJREFUWMPFl1uMXVUZx39r7bX3PufM5cxMp51Op9OZQktb6E0rTcGUimAUNGIi2MRg1CfBB0wUiAbwwWAMvhhM0EQhUSkSqIqJBW+ERpDSIlOBMkxpufQ605nOTOfMnMucvfdanw9nn9MztCJv7uTLWitrr/X9v/u3lIjw//w0/+dPbbtr70JEHsSmTBILRjy0p7DiAIVzgkOMs26jCNcqpVYLGHEypRRDWvEinpz2xGB8iGMh1Ir8dER2LsYFmsm+HKLO8zMfBqUTwVoZ8LTauTSfu7GvK3fp4nzY0xr6vucpYusolOLZM+cqYyem5oZmitETovQzoJKGpCI4J/0Ci4BXPxQABSTWtWulvrW2P3/HppWLuvs6cxhPY0WwUvvHaIVvdHtgdHs1StYcPjXz5RdGxp8/PV3+fuh7/1BALHSXenK/V75+RZx880MBiBK3sbsj/OX2db1bVy5tI06Ec6UY+z7HrS0FhSIbelwx0MX6gc5rnj00tmffm+PfK0b2sa5VHY995uoVV+45cPy5aiIo9QEARCBxbvslPfknr924bGk2MJydreKkxkSpiwMWEQqVmJlSTFvGcMPm5a2L2zIPvDh85tu3XL96sMX3iK3gUs39VwDWyob+RW2P7li/bKmIYroY1Q6omqSkg9SXqralVGNJoRxx6GTMmr58btNg58pS1TFZjFBKnb8DMAtcMrV5R0vmoW2rlg4kVoiSpHYovVmkJqmnNb6nUBoSJ0RWQAStVAOsc453x0u0hB5RInTkDApZCCAOS006BJ3o29b2LdkeGE25mpzfSE3je5r2rA8iVBOLALnAY1HgU6lapktVRASla4IlIlQiS2vG4FxdP+eFNnI+UkhEevo683cszmcpzltAGip1Ai2hh1bw+vGp4rGJ4kulavyaiESB8Xp7OrIf3zTYdVl/V46T0xWi+LyjiQhxIriLZF3jrGrIaJy5ZXlnW59zQmxdA6cIZAKP0nzMgaPjB8YLle+GxnteK+1EQSW2vD062/7WqZm7P7G+954rL13CyOlZrEgKXrDaXRA9AEalMEWEloz/+bZMwHzkaK4RxtNUo4T9R8aeK1SSLwXGTGmtank81aj1xOvMhWsW57OMnqtQiWzD4ZwInnY422SBehj6rhYI1smqjmy41vMU1rmFKLVi+PTMZLEU3ekHHVOJnUGJxXiZWr6wsj6fC3d9elP/pp58hqlilcElOTxVC1kRCH2PKElw4sKFUaC9Wg1QsrgSSe6dM8WiE7EL6oOm9cyM262Ctn977COnfoNf7aWSuR8lUxilv66Vyr50dPxA4kI8nRNVu7ORUxWoauJCR9fhlGVt56p79tTnWWvdCutEL4gTAELl6eHTxj4xG6ghPAVBqZ3I3IfVW1QSFHNVHRAnQsCriWd3Vx2Z5hSFAFopMsZbqN1c/LUaEiVSicu4JKpHclNFAEEGE5JA+RmljW+UzL6aje+txK33i8vsKOlojE57D74M98Q6+ZwoPGCBLbXCV8LLwFBTLSgDENtk6+UDq/YM9gxqa50VBBGHiEXEYl1M6GfUqckzre+dPb7PdWU/WylUK4f/8EPIP8MVnzyDp99g3mW/um3d2gc6Wz0Sa5scWXG2UOblI2P3Cgw1peJaTxInzt8wuKlty+plnCuOoZVXU5w4EhezqK2fiUKFkbMj/5wbj28dfUMVTuyPQabI5J+lulWD7w0O9HXfvmV1H9aVcU2GDANDoTzmnJX9nlYX9gMK5USczFZOqenie2jlp+azLGq/hOOT0zz0+JN/Pbq/vLNwRBWi8vnbrcDpMbfksnWdj1y/5YpBz1iSWKGVTs2rEFGMTs6OBh5DvtEXAhBAa002DGnJtKCVSZsRRybIkSfLsiVL+obLx24iL/t0zJSLgZCOlmVc85EN/Xd/8bqPXd7VKpSqRTJB2GASGI+xc3OMz87+zvPVDLo5x/g1dWhbQxqYgMAPGgAAitUTtGV7ufMrO9ffsOP4r4ZeOzp64uTZMZc4WbY8v2TzhhX961b0aNwclWp5AXOAXNZn+PV3Zg4+XdoVTSp0Uw02cxMWBKri8LRH4PsERqOUh1J1VflEyRRO5tg4uEh9dPX2vsTSJ1i0siRxifJ8ASuWsIm5ILSEGY5NT/LME8d/PXFQhkB0c3SYV3ZVsJGQW47WOxW+Dz1daxCxFEon0DpogAChHE1BdQqldJrlBEFhjME0tReCI+dnqIjj8acOvXFkb/QzoAOwQAVIauW4UrNHUsX3lNDbtYbDpybJBiG9XRmmi8fQ2lykg5cFeWLhliMbZonRPPzbZyf+8vDEfcSUgDy1uJcUhK3f7AR0e66N8bmEu3704L58e0vu/jtv37xy6VYmZ48QJWUUGpRGXcBU0lwHxvNpy7YzPlfkp7v+Prb7wWP3Jud4C+hMmZuUPEBMXZTARx+dPKIeefxPLxx4tHAbutA+cebHP/jOHTd/6trNWwh0keL8BFFcxIpt9GK1HlETmAyZoIWqhRfeHOHnv9j7r/27Cz9xZUaA1lTiuuoa1BCl+xJz4/KrvLsOPVX9hi1TTg8F+dXcdN3NK2/9wg07Ltu06lK627MYT2omFIcTIXaWiUKB199+l6f/dvDdvX88+dT0iPwZodSk7gown2qhPncNACZQOUAnkUjqLJlUVRbozvWzbWB95urVa5eu7V3W1d6SCzNaoUrl+ero6PTs0ZHxt44Pz79cOsFBYDo1rU0ZNVMFqNYjoQFAp/nAxeIDQQogTOf1wuIB7RjyGDKAR8I8CUWgmP5j0jEC4pRZMyXN1bYBoJ6QbNzY89LL/JTqQN7/eFKptPV+O0kpTscoHe3FngAf9DKyKVWbmDRTc3tbdyr3Pvqfb///AET7FixiTTBtAAAAAElFTkSuQmCC
 // ==/UserScript==
 
 /*
@@ -35,8 +35,7 @@
 
   g = {
     NAMESPACE: 'NameSync.',
-    VERSION: '4.4.2',
-    threads: []
+    VERSION: '4.4.2'
   };
 
   $$ = function(selector, root) {
@@ -252,18 +251,9 @@
 
   Main = {
     init: function() {
-      var path, thread, _i, _len, _ref;
-
       $.off(d, '4chanXInitFinished', Main.init);
-      path = location.pathname.slice(1).split('/');
-      if (path[1] === 'catalog') {
+      if (location.pathname.slice(1).split('/')[1] === 'catalog') {
         return;
-      }
-      g.board = path[0];
-      _ref = $$('.thread');
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        thread = _ref[_i];
-        g.threads.push(thread.id.slice(1));
       }
       Settings.init();
       if (Set['Filter']) {
@@ -286,8 +276,14 @@
           callback: {
             name: '4chan X Name Sync',
             cb: function() {
-              if (!g.board || g.board === this.board.ID) {
-                return Names.threads = this.board.threads;
+              if (!g.board) {
+                g.board = this.board.ID;
+              }
+              if (g.board === this.board.ID) {
+                g.threads = this.board.threads;
+              }
+              if (g.board === this.board.ID && Names.nameByID) {
+                return Names.updatePost.call(this);
               }
             }
           }
@@ -381,19 +377,6 @@
         this.loadBlocked();
         this.loadCached();
       }
-      $.event('AddCallback', {
-        detail: {
-          type: 'Post',
-          callback: {
-            name: '4chan X Name Sync',
-            cb: function() {
-              if (g.board === this.board.ID) {
-                return Names.updatePost.call(this);
-              }
-            }
-          }
-        }
-      });
       return this.updateAllPosts();
     },
     change: function(id) {
@@ -447,11 +430,11 @@
     updateAllPosts: function() {
       var clone, post, thread;
 
-      for (thread in this.threads) {
-        for (post in this.threads[thread].posts) {
-          Names.updatePost.call(this.threads[thread].posts[post]);
-          for (clone in this.threads[thread].posts[post].clones) {
-            Names.updatePost.call(this.threads[thread].posts[post].clones[clone]);
+      for (thread in g.threads) {
+        for (post in g.threads[thread].posts) {
+          Names.updatePost.call(g.threads[thread].posts[post]);
+          for (clone in g.threads[thread].posts[post].clones) {
+            Names.updatePost.call(g.threads[thread].posts[post].clones[clone]);
           }
         }
       }
@@ -559,7 +542,7 @@
     open: function(section) {
       var bgimage, check, checked, field, istrue, setting, stored, text, val, _i, _j, _len, _len1, _ref, _ref1, _ref2;
 
-      section.innerHTML = "<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Persona Fields' " + ($.get('Persona Fields') === 'true' ? 'checked' : '') + "> Persona</label>\n  </legend>\n  <p>Share these fields instead of the 4chan X quick reply fields</p>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Filter' " + ($.get('Filter') === 'true' ? 'checked' : '') + "> Filter</label>\n  </legend>\n  <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Web page</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></div>\n</fieldset>\n<img id=bgimage src='https://www.namesync.org/namesync/bg.png' />";
+      section.innerHTML = "<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Persona Fields' " + ($.get('Persona Fields') === 'true' ? 'checked' : '') + "> Persona</label>\n  </legend>\n  <p>Share these fields instead of the 4chan X quick reply fields</p>\n  <div>\n    <input type=text name=Name placeholder=Name>\n    <input type=text name=Email placeholder=Email>\n    <input type=text name=Subject placeholder=Subject>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>\n    <label><input type='checkbox' name='Filter' " + ($.get('Filter') === 'true' ? 'checked' : '') + "> Filter</label>\n  </legend>\n  <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>\n  <div>\n    <input type=text name=FilterNames placeholder=Names>\n    <input type=text name=FilterTripcodes placeholder=Tripcodes>\n    <input type=text name=FilterEmails placeholder=Emails>\n    <input type=text name=FilterSubjects placeholder=Subjects>\n  </div>\n</fieldset>\n<fieldset>\n  <legend>Advanced</legend>\n  <div>\n    \n    <input id=syncUpdate type=button value='Check for update'>\n    \n    <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>\n    <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>\n  </div>\n  <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>\n</fieldset>\n<fieldset>\n  <legend>About</legend>\n  <div>4chan X Name Sync v" + g.VERSION + "</div>\n  <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Web page</a></div>\n  <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></div>\n  <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>\n  <div><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcodes</a></div>\n</fieldset>\n<img id=bgimage src='https://www.namesync.org/namesync/bg.png' />";
       bgimage = $('#bgimage', section);
       bgimage.ondragstart = function() {
         return false;
@@ -617,12 +600,18 @@
   Sync = {
     lastModified: '0',
     disabled: false,
-    delay: null,
+    threads: [],
     init: function() {
+      var thread;
+
+      this.delay = (parseInt($.get('Delay'))) || 300;
+      for (thread in g.threads) {
+        this.threads.push(g.threads[thread].ID);
+      }
       if (!Set['Read-only Mode']) {
         $.on(d, 'QRPostSuccessful', Sync.requestSend);
       }
-      if (g.threads.length === 1) {
+      if (this.threads.length === 1) {
         $.on(d, 'ThreadUpdate', this.checkThreadUpdate);
         return this.sync(true);
       } else {
@@ -636,11 +625,11 @@
       if (!e.detail.newPosts.length) {
         return;
       }
-      clearTimeout(Sync.delay);
-      return Sync.delay = setTimeout(Sync.sync, $.get('Delay') || 300);
+      clearTimeout(Sync.handle);
+      return Sync.handle = setTimeout(Sync.sync, Sync.delay);
     },
     sync: function(repeat) {
-      $.ajax('qp', 'GET', "t=" + g.threads + "&b=" + g.board, {
+      $.ajax('qp', 'GET', "t=" + Sync.threads + "&b=" + g.board, {
         onloadend: function() {
           var poster, _i, _len, _ref;
 
@@ -736,7 +725,7 @@
             detail: {
               type: 'info',
               content: $.el('span', {
-                innerHTML: "An update for 4chan X Name Sync is available. <a href=https://www.namesync.org/ target=_blank>Get it here</a>."
+                innerHTML: "An update for 4chan X Name Sync is available. <a href=https://github.com/milkytiptoe/Name-Sync/raw/master/builds/opera/NameSync.js target=_blank>Save now</a>."
               }),
               lifetime: 10
             }
