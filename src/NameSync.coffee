@@ -518,7 +518,7 @@ Updater =
           detail:
             type: 'info'
             content: $.el 'span',
-              innerHTML: "An update for 4chan X Name Sync is available.<% if (type === 'userscript') { %> <a href=<%= meta.builds %>firefox/NameSync.user.js target=_blank>Install now</a>. <% } else { %> <a href=<%= meta.page %> target=_blank>Get it here</a>.<% } %>"
+              innerHTML: "An update for 4chan X Name Sync is available.<% if (type === 'userscript') { %> <a href=<%= meta.builds %>firefox/NameSync.user.js target=_blank>Install now</a>. <% } else { %> <a href=<%= meta.builds %>opera/NameSync.js target=_blank>Save now</a>.<% } %>"
             lifetime: 10
         el = $ '#fourchanx-settings .close'
         el.click() if el
