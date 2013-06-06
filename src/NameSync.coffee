@@ -288,15 +288,19 @@ Names =
     if oinfo and !Names.blockedIDs[@info.uniqueID]
       name     = oinfo.n
       tripcode = oinfo.t
+      email    = oinfo.e
+      subject  = oinfo.s
       unless /Heaven/.test @info.uniqueID
         Names.nameByID[@info.uniqueID] =
           n: name
           t: tripcode
-      email   = oinfo.e
-      subject = oinfo.s
+          e: email
+          s: subject
     else if linfo
       name     = linfo.n
       tripcode = linfo.t
+      email    = linfo.e
+      subject  = linfo.s
     else
       return
 
