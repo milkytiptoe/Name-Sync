@@ -33,13 +33,13 @@ module.exports = function(grunt) {
           'src/banner.js',
           'tmp/script.js'
         ],
-        dest: 'builds/opera/<%= pkg.name %>.js'
+        dest: 'builds/<%= pkg.name %>.js'
       },
       userscript: {
         options: { process: { data: pkg } },
         files: {
-          'builds/firefox/<%= pkg.name %>.meta.js': 'src/metadata.js',
-          'builds/firefox/<%= pkg.name %>.user.js': [
+          'builds/<%= pkg.name %>.meta.js': 'src/metadata.js',
+          'builds/<%= pkg.name %>.user.js': [
             'src/metadata.js',
             'src/banner.js',
             'tmp/script.js'
