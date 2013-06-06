@@ -5,7 +5,7 @@
   "meta": {
     "name": "4chan X Name Sync",
     "page": "https://www.namesync.org/",
-    "builds": "https://github.com/milkytiptoe/Name-Sync/raw/master/builds/",
+    "builds": "namesync/builds/",
     "includes": [
       "*://boards.4chan.org/b/*",
       "*://boards.4chan.org/q/*",
