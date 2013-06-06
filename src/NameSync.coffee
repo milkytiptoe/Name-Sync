@@ -294,13 +294,9 @@ Names =
         Names.nameByID[@info.uniqueID] =
           n: name
           t: tripcode
-          e: email
-          s: subject
     else if linfo
       name     = linfo.n
       tripcode = linfo.t
-      email    = linfo.e
-      subject  = linfo.s
     else
       return
 
