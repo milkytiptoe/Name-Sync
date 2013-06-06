@@ -359,7 +359,7 @@ Settings =
         <legend>
           <label><input type='checkbox' name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
         </legend>
-        <p>Share these fields instead of the 4chan X quick reply fields</p>
+        <p>Share these fields instead of the 4chan X quick reply fields.</p>
         <div>
           <input type=text name=Name placeholder=Name>
           <input type=text name=Email placeholder=Email>
@@ -382,12 +382,12 @@ Settings =
         <legend>Advanced</legend>
         <div>
           <% if (type !== 'crx') { %>
-          <input id=syncUpdate type=button value='Check for update'>
+          <input id=syncUpdate type=button value='Check for update' title='Check if an update is available for 4chan X Name Sync'>
           <% } %>
-          <input id=syncClear type=button value='Clear sync history' title='Clear your stored sync history from the server'>
-          <input id=namesClear type=button value='Clear name cache' title='Clear locally stored names'>
+          <input id=syncClear type=button value='Clear my sync history' title='Clear your stored sync fields from the server'>
+          <input id=namesClear type=button value='Clear sync cache' title='Clear locally cached sync fields from current and past threads on this board'>
         </div>
-        <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before downloading new names when a new post is inserted'> ms</div>
+        <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields when a new post is inserted'> ms</div>
       </fieldset>
       <fieldset>
         <legend>About</legend>
