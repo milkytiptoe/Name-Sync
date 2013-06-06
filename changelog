@@ -1,3 +1,6 @@
+4.4.4
+- Fixed cross-thread email and subject loading
+
 4.4.3
 - Minor tweaks
 
