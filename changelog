@@ -1,5 +1,9 @@
+4.4.5
+- Reverted cross-thread fix in 4.4.4 due to bugs
+
 4.4.4
 - Fixed cross-thread email and subject loading
+- Minor tweaks
 
 4.4.3
 - Minor tweaks
