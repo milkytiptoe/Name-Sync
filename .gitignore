@@ -1,4 +1,4 @@
-builds/chrome/
+builds/
 node_modules/
 tmp/
 .directory
