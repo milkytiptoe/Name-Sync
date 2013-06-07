@@ -29,7 +29,7 @@
           </p>
           <p>4chan X v3 Users:</p>
           <p id="webkit">
-            <a href="javascript:;" onclick="chrome.webstore.install()">Install 4chan X Name Sync</a>
+            <a id="chrome-install" href="https://chrome.google.com/webstore/detail/oplkokdeabkddkihcbghgmpcamnddegk">Install 4chan X Name Sync</a>
           </p>
           <p id="gecko">
             <a href="https://www.namesync.org/namesync/builds/NameSync.user.js">Install 4chan X Name Sync</a>
@@ -48,6 +48,7 @@
     <script type="text/javascript">
       var engine = /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase();
       document.getElementById(engine).style.display = "block";
+      document.getElementById("chrome-install").addEventListener('click', function(e) { e.preventDefault(); chrome.webstore.install(); });
     </script>
   </body>
 </html>
