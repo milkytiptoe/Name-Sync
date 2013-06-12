@@ -487,6 +487,9 @@ Sync =
       'POST'
       "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent name}&s=#{encodeURIComponent subject}&e=#{encodeURIComponent email}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
+        # Retrying sending can only be done on an incremental timer of 2, 4, 6, 11 then stops
+        # After 2 failed stores a notification is shown
+        # After 3 or more, there is a 60 second cooldown on the ability to retry for each
         return unless Sync.canRetry
         retryTimer = retryTimer or 0
         if retryTimer > 10000
@@ -496,6 +499,7 @@ Sync =
                 type: 'warning'
                 content: 'Sync server appears to be offline or there is a problem with your internet connection.'
                 lifetime: 8
+          if Sync.failedSends >= 3
             Sync.canRetry = false
             setTimeout ->
               Sync.canRetry = true
