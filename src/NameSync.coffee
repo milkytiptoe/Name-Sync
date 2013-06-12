@@ -497,7 +497,7 @@ Sync =
             $.event 'CreateNotification',
               detail:
                 type: 'warning'
-                content: 'Sync server appears to be offline or there is a problem with your internet connection.'
+                content: 'Connection errors with sync server. Your fields may not appear.'
                 lifetime: 8
           if Sync.failedSends >= 3
             Sync.canRetry = false
