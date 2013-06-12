@@ -436,6 +436,7 @@ Sync =
   threads: []
   init: ->
     @delay = (parseInt $.get 'Delay') or 300
+    @failedSends = 0
     for thread of g.threads
       @threads.push g.threads[thread].ID
     unless Set['Read-only Mode']
@@ -481,13 +482,19 @@ Sync =
     $.set "#{g.board}-#{threadID}-last-name", currentName
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID, retryTimer) ->
-    $.ajax 'sp',
+    $.ajax 'spp',
       'POST'
       "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent name}&s=#{encodeURIComponent subject}&e=#{encodeURIComponent email}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
-        # Only retry sending on incremented timer of seconds 2, 4, 6, 11
         retryTimer = retryTimer or 0
-        return if retryTimer > 15000
+        if retryTimer > 10000
+          if ++Sync.failedSends is 2
+            $.event 'CreateNotification',
+              detail:
+                type: 'warning'
+                content: 'Sync server appears to be offline or there is a problem with your internet connection.'
+                lifetime: 5
+          return
         retryTimer += if retryTimer < 5000 then 2000 else 5000
         setTimeout Sync.send, retryTimer, name, email, subject, postID, threadID, retryTimer
   clear: ->
