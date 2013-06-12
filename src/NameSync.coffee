@@ -487,8 +487,9 @@ Sync =
       'POST'
       "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent name}&s=#{encodeURIComponent subject}&e=#{encodeURIComponent email}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
+        return unless Sync.canRetry
         retryTimer = retryTimer or 0
-        if retryTimer > 10000 or !Sync.canRetry
+        if retryTimer > 10000
           if ++Sync.failedSends is 2
             $.event 'CreateNotification',
               detail:
