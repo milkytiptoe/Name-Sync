@@ -134,8 +134,7 @@ module.exports = function(grunt) {
     'concat:crx',
     'copy:crx',
     'clean:tmpcrx',
-    'compress:crx',
-    'crx: prod'
+    'compress:crx'
   ]);
   grunt.registerTask('build-userjs', [
     'set-build:userjs',
