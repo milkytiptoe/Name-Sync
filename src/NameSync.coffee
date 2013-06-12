@@ -437,6 +437,7 @@ Sync =
   init: ->
     @delay = (parseInt $.get 'Delay') or 300
     @failedSends = 0
+    @canRetry = true
     for thread of g.threads
       @threads.push g.threads[thread].ID
     unless Set['Read-only Mode']
@@ -487,13 +488,17 @@ Sync =
       "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent name}&s=#{encodeURIComponent subject}&e=#{encodeURIComponent email}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
         retryTimer = retryTimer or 0
-        if retryTimer > 10000
+        if retryTimer > 10000 or !Sync.canRetry
           if ++Sync.failedSends is 2
             $.event 'CreateNotification',
               detail:
                 type: 'warning'
                 content: 'Sync server appears to be offline or there is a problem with your internet connection.'
-                lifetime: 5
+                lifetime: 8
+            Sync.canRetry = false
+            setTimeout ->
+              Sync.canRetry = true
+            , 60000
           return
         retryTimer += if retryTimer < 5000 then 2000 else 5000
         setTimeout Sync.send, retryTimer, name, email, subject, postID, threadID, retryTimer
