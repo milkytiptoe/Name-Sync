@@ -4,45 +4,50 @@
 module.exports = function(grunt) {
 
   var pkg = grunt.file.readJSON('package.json');
+  var concatOptions = {
+    process: {
+      data: pkg
+    }
+  };
 
   // Project configuration.
   grunt.initConfig({
     pkg: pkg,
     concat: {
       coffee: {
-        options: { process: { data: pkg } },
+        options: concatOptions,
         src: [
-          'src/<%= pkg.name %>.coffee',
+          'src/<%= pkg.name %>.coffee'
         ],
-        dest: 'tmp/script.coffee'
+        dest: 'tmp-<%= pkg.type %>/<%= pkg.name %>.coffee'
       },
       crx: {
-        options: { process: { data: pkg } },
+        options: concatOptions,
         files: {
-          'builds/chrome/manifest.json': 'src/manifest.json',
-          'builds/chrome/<%= pkg.name %>.js': [
+          'builds/crx/manifest.json': 'src/manifest.json',
+          'builds/crx/<%= pkg.name %>.js': [
             'src/banner.js',
-            'tmp/script.js'
+            'tmp-<%= pkg.type %>/<%= pkg.name %>.js'
           ]
         }
       },
       userjs: {
-        options: { process: { data: pkg } },
+        options: concatOptions,
         src: [
           'src/metadata.js',
           'src/banner.js',
-          'tmp/script.js'
+          'tmp-<%= pkg.type %>/<%= pkg.name %>.js'
         ],
         dest: 'builds/<%= pkg.name %>.js'
       },
       userscript: {
-        options: { process: { data: pkg } },
+        options: concatOptions,
         files: {
           'builds/<%= pkg.name %>.meta.js': 'src/metadata.js',
           'builds/<%= pkg.name %>.user.js': [
             'src/metadata.js',
             'src/banner.js',
-            'tmp/script.js'
+            'tmp-<%= pkg.type %>/<%= pkg.name %>.js'
           ]
         }
       }
@@ -50,71 +55,92 @@ module.exports = function(grunt) {
     copy: {
       crx: {
         src: 'img/icon*.png',
-        dest: 'builds/chrome/',
+        dest: 'builds/crx/',
         expand: true,
         flatten: true
       }
     },
     coffee: {
       script: {
-        src:  'tmp/script.coffee',
-        dest: 'tmp/script.js'
+        src:  'tmp-<%= pkg.type %>/<%= pkg.name %>.coffee',
+        dest: 'tmp-<%= pkg.type %>/<%= pkg.name %>.js'
+      }
+    },
+    concurrent: {
+      build: ['build-crx', 'build-userjs', 'build-userscript']
+    },
+    watch: {
+      all: {
+        options: {
+          interrupt: true
+        },
+        files: [
+          'Gruntfile.js',
+          'package.json',
+          'src/*',
+          'img/*'
+        ],
+        tasks: 'build'
       }
     },
     compress: {
       crx: {
         options: {
-          archive: 'builds/chrome/<%= pkg.name %>.zip',
+          archive: 'builds/<%= pkg.name %>.zip',
           level: 9,
           pretty: true
         },
         expand: true,
         flatten: true,
-        src: 'builds/chrome/*',
+        src: 'builds/crx/*',
         dest: '/'
       }
     },
     clean: {
-      builds: 'builds/*',
-      tmp: 'tmp'
+      builds: 'builds',
+      tmpcrx: 'tmp-crx',
+      tmpuserjs: 'tmp-userjs',
+      tmpuserscript: 'tmp-userscript'
     }
   });
 
-  grunt.loadNpmTasks('grunt-bump');
+  grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-compress');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['clean', 'build']);
+  grunt.registerTask('default', ['build']);
+
   grunt.registerTask('set-build', 'Set the build type variable', function(type) {
     pkg.type = type;
     grunt.log.ok('pkg.type = %s', type);
   });
-  grunt.registerTask('build', ['build-crx', 'build-userjs', 'build-userscript']);
+  grunt.registerTask('build', ['concurrent:build']);
   grunt.registerTask('build-crx', [
     'set-build:crx',
     'concat:coffee',
     'coffee:script',
     'concat:crx',
     'copy:crx',
-    'compress:crx',
-    'clean:tmp'
+    'clean:tmpcrx',
+    'compress:crx'
   ]);
   grunt.registerTask('build-userjs', [
     'set-build:userjs',
     'concat:coffee',
     'coffee:script',
     'concat:userjs',
-    'clean:tmp'
+    'clean:tmpuserjs'
   ]);
   grunt.registerTask('build-userscript', [
     'set-build:userscript',
     'concat:coffee',
     'coffee:script',
     'concat:userscript',
-    'clean:tmp'
+    'clean:tmpuserscript'
   ]);
 
 };
