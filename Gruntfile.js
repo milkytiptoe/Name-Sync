@@ -96,6 +96,13 @@ module.exports = function(grunt) {
         dest: '/'
       }
     },
+    crx: {
+      prod: {
+        src: 'builds/crx/',
+        dest: 'builds/crx.crx',
+        privateKey: 'builds/crx.pem'
+      }
+    },
     clean: {
       builds: 'builds',
       tmpcrx: 'tmp-crx',
@@ -111,6 +118,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-crx');
 
   grunt.registerTask('default', ['build']);
 
@@ -126,7 +134,8 @@ module.exports = function(grunt) {
     'concat:crx',
     'copy:crx',
     'clean:tmpcrx',
-    'compress:crx'
+    'compress:crx',
+    'crx: prod'
   ]);
   grunt.registerTask('build-userjs', [
     'set-build:userjs',
