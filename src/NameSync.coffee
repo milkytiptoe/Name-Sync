@@ -387,8 +387,8 @@ Settings =
           <% } %>
           <input id=syncClear type=button value='Clear my sync history' title='Clear your stored sync fields from the server'>
           <input id=namesClear type=button value='Clear sync cache' title='Clear locally cached sync fields from current and past threads on this board'>
+          Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields when a new post is inserted'> ms
         </div>
-        <div>Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields when a new post is inserted'> ms</div>
       </fieldset>
       <fieldset>
         <legend>About</legend>
