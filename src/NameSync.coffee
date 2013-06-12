@@ -480,12 +480,16 @@ Sync =
     return if !$.get("#{g.board}-#{threadID}-last-name") and currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
     $.set "#{g.board}-#{threadID}-last-name", currentName
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
-  send: (name, email, subject, postID, threadID) ->
+  send: (name, email, subject, postID, threadID, retryTimer) ->
     $.ajax 'sp',
       'POST'
       "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent name}&s=#{encodeURIComponent subject}&e=#{encodeURIComponent email}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
-        setTimeout Sync.send, 2000, name, email, subject, postID, threadID
+        # Only retry sending on incremented timer of seconds 2, 4, 6, 11
+        retryTimer = retryTimer or 0
+        return if retryTimer > 15000
+        retryTimer += if retryTimer < 5000 then 2000 else 5000
+        setTimeout Sync.send, retryTimer, name, email, subject, postID, threadID, retryTimer
   clear: ->
     $('#syncClear').disabled = true
     $.ajax 'rm',
