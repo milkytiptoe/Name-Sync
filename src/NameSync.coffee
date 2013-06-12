@@ -482,7 +482,7 @@ Sync =
     $.set "#{g.board}-#{threadID}-last-name", currentName
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID, retryTimer) ->
-    $.ajax 'spp',
+    $.ajax 'sp',
       'POST'
       "p=#{postID}&t=#{threadID}&b=#{g.board}&n=#{encodeURIComponent name}&s=#{encodeURIComponent subject}&e=#{encodeURIComponent email}&dnt=#{if Set['Do Not Track'] then '1' else '0'}"
       onerror: ->
