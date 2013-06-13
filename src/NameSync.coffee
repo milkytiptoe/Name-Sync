@@ -162,11 +162,14 @@ Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
     return if location.pathname.slice(1).split('/')[1] is 'catalog'
+    # v2 runs too late on Chrome to catch it
+    <% if (type !== 'crx') { %>
     if $.id 'openSettings'
       return $.event 'CreateNotification',
         detail:
           type: 'warning'
           content: 'An older version of Name Sync was detected. Please disable it to continue using the current version.'
+    <% } %>
     Settings.init()
     if Set['Filter']
       Filter.init()
