@@ -169,8 +169,8 @@ Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
     return if location.pathname.slice(1).split('/')[1] is 'catalog'
-    # v2 runs too late on Chrome to catch it
-    <% if (type !== 'crx') { %>
+    # v2 runs too late for Chrome or Opera to catch it
+    <% if (type === 'userscript') { %>
     if $.id 'openSettings'
       return $.event 'CreateNotification',
         detail:
