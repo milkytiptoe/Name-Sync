@@ -27,6 +27,8 @@ $.off = (el, type, handler) ->
   el.removeEventListener type, handler, false
 $.addClass = (el, className) ->
   el.classList.add className
+$.hasClass = (el, className) ->
+  el.classList.contains className
 $.add = (parent, children) ->
   parent.appendChild $.nodes children
 $.rm = (el) ->
@@ -61,6 +63,11 @@ $.extend = (object, properties) ->
   for key, val of properties
     object[key] = val
   return
+$.asap = (test, cb) ->
+  if test()
+    cb()
+  else
+    setTimeout $.asap, 25, test, cb
 $.syncing = {}
 $.sync = do ->
   $.on window, 'storage', (e) ->
@@ -169,6 +176,7 @@ Main =
         detail:
           type: 'warning'
           content: 'An older version of Name Sync was detected. Please disable it to continue using the current version.'
+          lifetime: 5
     <% } %>
     Settings.init()
     if Set['Filter']
@@ -183,6 +191,9 @@ Main =
       Updater.init()
     <% } %>
   ready: ->
+    $.asap (-> d.readyState is 'complete'), ->
+      if $.hasClass d.body, 'fourchan_x'
+        alert '4chan X Name Sync is not supported by 4chan X v2. Please update to 4chan X v3.'
     $.event 'AddCallback',
       detail:
         type: 'Post'
