@@ -505,7 +505,7 @@ Sync =
             $.event 'CreateNotification',
               detail:
                 type: 'warning'
-                content: 'Connection errors with sync server. Your fields may not appear.'
+                content: 'Connection errors with sync server. Fields may not appear.'
                 lifetime: 8
           if Sync.failedSends >= 3
             Sync.canRetry = false
