@@ -201,8 +201,9 @@ Main =
           name: '4chan X Name Sync'
           cb: ->
             g.board = @board.ID if !g.board
-            g.threads = @board.threads if g.board is @board.ID
-            Names.updatePost.call @ if g.board is @board.ID and Names.nameByID
+            if g.board is @board.ID
+                g.threads = @board.threads
+                Names.updatePost.call @ if Names.nameByID
 
 Menus =
   uid: null
