@@ -97,7 +97,7 @@ Config =
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
     <% if (type !== 'crx') { %>
-    'Automatic Updates': [true,  'Check for updates automatically.']
+    'Automatic Updates': [true,  'Automatically check for 4chan X Name Sync updates.']
     <% } %>
   other:
     'Persona Fields':    [false]
@@ -410,7 +410,7 @@ Settings =
         <div>4chan X Name Sync v#{g.VERSION}</div>
         <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Web page</a></div>
         <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></div>
-        <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report an issue</a></div>
+        <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report issues</a></div>
         <div><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcodes</a></div>
       </fieldset>
       <img id=bgimage src='<%= meta.page %>namesync/bg.png' />
