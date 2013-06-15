@@ -3,7 +3,7 @@
 // @version      <%= version %>
 // @namespace    milky
 // @description  <%= description %>
-// @license      CC BY-NC 3.0; https://github.com/milkytiptoe/Name-Sync/blob/master/license
+// @license      CC BY-NC-SA 3.0; https://github.com/milkytiptoe/Name-Sync/blob/master/license
 <%=
   meta.authors.map(function(author) {
     return '// @author       ' + author
