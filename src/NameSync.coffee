@@ -163,7 +163,11 @@ Filter =
     $.set 'FilterNames', if stored then "#{stored}|#{name}" else name
     $.event 'OpenSettings',
       detail: 'Name Sync'
-    $('input[name=FilterNames]').focus()
+    el = $ 'input[name=FilterNames]'
+    el.focus()
+    <% if (type !== 'crx') { %>
+    el.setSelectionRange el.value.length, el.value.length
+    <% } %>
 
 Main =
   init: ->
