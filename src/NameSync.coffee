@@ -408,10 +408,13 @@ Settings =
       <fieldset>
         <legend>About</legend>
         <div>4chan X Name Sync v#{g.VERSION}</div>
-        <div><a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Web page</a></div>
-        <div><a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a></div>
-        <div><a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Report issues</a></div>
-        <div><a href='http://desktopthread.com/tripcode.php' target='_blank'>Test tripcodes</a></div>
+        <div>
+          <a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Website</a> |
+          <a href='https://github.com/milkytiptoe/Name-Sync/wiki/Support' target='_blank'>Support</a> |
+          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a> |
+          <a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Issues</a> |
+          <a href='http://desktopthread.com/tripcode.php' target='_blank'>Test Tripcodes</a>
+        </div>
       </fieldset>
       <img id=bgimage src='<%= meta.page %>namesync/bg.png' />
     """
