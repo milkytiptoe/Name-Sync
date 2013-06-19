@@ -229,7 +229,7 @@ Menus =
         Filter.filter Menus.uid
         $.event 'CloseMenu'
       open: ->
-        !(stored = Names.nameByID[Menus.uid]) or stored.n
+        (!(stored = Names.nameByID[Menus.uid]) or stored.n) and Set['Filter']
     subEntries.push
       el: @makeSubEntry 'Reset', ->
         Names.reset Menus.uid
