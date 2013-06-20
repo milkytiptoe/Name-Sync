@@ -415,6 +415,7 @@ Settings =
         <div>
           <a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Website</a> |
           <a href='https://github.com/milkytiptoe/Name-Sync/wiki/Support' target='_blank'>Support</a> |
+          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/license' target='_blank'>License</a> |
           <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a> |
           <a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Issues</a> |
           <a href='http://desktopthread.com/tripcode.php' target='_blank'>Test Tripcodes</a>
