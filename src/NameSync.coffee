@@ -75,7 +75,7 @@ $.sync = do ->
       cb e.newValue
   (key, cb) -> $.syncing[g.NAMESPACE + key] = cb
 $.ready = (fc) ->
-  if d.readyState in ['interactive', 'complete']
+  unless d.readyState is 'loading'
     fc()
     return
   cb = ->
