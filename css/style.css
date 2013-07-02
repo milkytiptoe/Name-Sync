@@ -1,7 +1,7 @@
 @charset "utf-8";
 * {
 	margin: 0;
-	padding: 0;	
+	padding: 0;
 }
 body {
 	color: black;
@@ -11,7 +11,7 @@ body {
 }
 a {
 	color: blue;
-	text-decoration: none;	
+	text-decoration: none;
 }
 h1 {
 	font-size: 1.4em;
@@ -47,7 +47,7 @@ img, input[type=image] {
 form {
   float: right;
 }
-#gecko, #webkit, #presto, #chanx {
+#gecko, #webkit, #presto, #chanx, #opr {
   background-repeat: no-repeat;
   background-size: 19px;
   padding-left: 22px;
@@ -62,7 +62,7 @@ form {
 #webkit {
   background-image: url(../img/chrome.svg);
 }
-#presto {
+#presto, #opr {
   background-image: url(../img/opera.svg);
 }
 #chanx {
