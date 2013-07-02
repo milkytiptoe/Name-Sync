@@ -58,6 +58,10 @@ module.exports = function(grunt) {
         dest: 'builds/crx/',
         expand: true,
         flatten: true
+      },
+      nex: {
+        src:  'builds/<%= pkg.name %>.zip',
+        dest: 'builds/<%= pkg.name %>.nex'
       }
     },
     coffee: {
@@ -133,6 +137,7 @@ module.exports = function(grunt) {
     'coffee:script',
     'concat:crx',
     'copy:crx',
+    'copy:nex',
     'clean:tmpcrx',
     'compress:crx'
   ]);
