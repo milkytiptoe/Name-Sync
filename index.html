@@ -37,8 +37,8 @@
           <p id="presto">
             <a href="https://www.namesync.org/namesync/builds/NameSync.js">Save 4chan X Name Sync</a>
           </p>
-          <p id="opr">
-            <a href="javascript:alert('Opera 15 is not yet supported.');">Install 4chan X Name Sync</a>
+          <p id="operanew">
+            <a href="https://addons.opera.com/en/extensions/details/4chan-x-name-sync/">Install 4chan X Name Sync</a>
           </p>
           <p>4chan X v2 Users:<p>
           <p>
@@ -49,7 +49,7 @@
       <div id="footer"><a href="https://github.com/milkytiptoe/Name-Sync/wiki/Support">Support</a> | <a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog">Changelog</a> | <a href="https://github.com/milkytiptoe/Name-Sync/">GitHub</a></div>
     </div>
     <script type="text/javascript">
-      var engine = /OPR/.test(navigator.userAgent) ? "opr" : /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase();
+      var engine = /OPR/.test(navigator.userAgent) ? "operanew" : /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase();
       document.getElementById(engine).style.display = "block";
       document.getElementById("chrome-install").addEventListener("click", function(e) { e.preventDefault(); chrome.webstore.install(); });
     </script>

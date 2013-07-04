@@ -47,7 +47,7 @@ img, input[type=image] {
 form {
   float: right;
 }
-#gecko, #webkit, #presto, #chanx, #opr {
+#gecko, #webkit, #presto, #chanx, #operanew {
   background-repeat: no-repeat;
   background-size: 19px;
   padding-left: 22px;
@@ -62,7 +62,7 @@ form {
 #webkit {
   background-image: url(../img/chrome.svg);
 }
-#presto, #opr {
+#presto, #operanew {
   background-image: url(../img/opera.svg);
 }
 #chanx {
