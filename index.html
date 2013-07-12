@@ -23,14 +23,14 @@
         <h2>Enables names on 4chan's forced anon boards</h2>
       </div>
       <div id="content-wrapper">
-        <div class="content-block">
+        <div id="content-block">
           <p id="chanx">
             <a href="http://4chan-x.just-believe.in/" target="_blank">Install 4chan X</a>
           </p>
           <p>4chan X v3 Users:</p>
           <p id="webkit">
             <a id="chrome-install" href="https://chrome.google.com/webstore/detail/4chan-x-name-sync/oplkokdeabkddkihcbghgmpcamnddegk">Install 4chan X Name Sync</a>
-            <p>Only Google Chrome <strong>Stable</strong> is supported at this time</p>
+
           </p>
           <p id="gecko">
             <a href="https://www.namesync.org/namesync/builds/NameSync.user.js">Install 4chan X Name Sync</a>
@@ -53,6 +53,9 @@
       var engine = /OPR/.test(navigator.userAgent) ? "operanew" : /WebKit|Presto|Gecko/.exec(navigator.userAgent)[0].toLowerCase();
       document.getElementById(engine).style.display = "block";
       document.getElementById("chrome-install").addEventListener("click", function(e) { e.preventDefault(); chrome.webstore.install(); });
+      if (engine === "webkit") {
+        document.getElementById("content-block").innerHTML += "<p>Only Google Chrome <strong>Stable</strong> is supported at this time</p>";
+      }
     </script>
   </body>
 </html>

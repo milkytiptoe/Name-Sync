@@ -24,7 +24,7 @@ h2 {
 img, input[type=image] {
   border: 0;
 }
-.content-block {
+#content-block {
 	min-height: 48px;
 	clear: both;
 	padding-left: 54px;
