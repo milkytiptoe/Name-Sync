@@ -440,7 +440,7 @@ Settings =
             return @value = $.get @name
         $.set @name, @value
 
-    <% if (type !== 'crx') { %>
+    <% if (type === 'userscript') { %>
     $.on $('#syncUpdate', section), 'click', Updater.update
     <% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
