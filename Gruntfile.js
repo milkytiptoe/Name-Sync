@@ -31,15 +31,6 @@ module.exports = function(grunt) {
           ]
         }
       },
-      userjs: {
-        options: concatOptions,
-        src: [
-          'src/metadata.js',
-          'src/banner.js',
-          'tmp-<%= pkg.type %>/<%= pkg.name %>.js'
-        ],
-        dest: 'builds/<%= pkg.name %>.js'
-      },
       userscript: {
         options: concatOptions,
         files: {
@@ -71,7 +62,7 @@ module.exports = function(grunt) {
       }
     },
     concurrent: {
-      build: ['build-crx', 'build-userjs', 'build-userscript']
+      build: ['build-crx', 'build-userscript']
     },
     watch: {
       all: {
@@ -110,7 +101,6 @@ module.exports = function(grunt) {
     clean: {
       builds: 'builds',
       tmpcrx: 'tmp-crx',
-      tmpuserjs: 'tmp-userjs',
       tmpuserscript: 'tmp-userscript'
     }
   });
@@ -137,16 +127,9 @@ module.exports = function(grunt) {
     'coffee:script',
     'concat:crx',
     'copy:crx',
+    'compress:crx',
     'copy:nex',
-    'clean:tmpcrx',
-    'compress:crx'
-  ]);
-  grunt.registerTask('build-userjs', [
-    'set-build:userjs',
-    'concat:coffee',
-    'coffee:script',
-    'concat:userjs',
-    'clean:tmpuserjs'
+    'clean:tmpcrx'
   ]);
   grunt.registerTask('build-userscript', [
     'set-build:userscript',
