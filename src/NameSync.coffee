@@ -165,7 +165,7 @@ Filter =
       detail: 'Name Sync'
     el = $ 'input[name=FilterNames]'
     el.focus()
-    <% if (type !== 'crx') { %>
+    <% if (type === 'userscript') { %>
     el.setSelectionRange el.value.length, el.value.length
     <% } %>
 
@@ -181,7 +181,7 @@ Main =
     Menus.init()
     if Set["Sync on /#{g.board}/"]
       Sync.init()
-    <% if (type !== 'crx') { %>
+    <% if (type === 'userscript') { %>
     if Set['Automatic Updates']
       Updater.init()
     <% } %>
@@ -365,7 +365,7 @@ Settings =
     section.innerHTML = """
       <fieldset>
         <legend>
-          <label><input type='checkbox' name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
+          <label><input type=checkbox name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
         </legend>
         <p>Share these fields instead of the 4chan X quick reply fields.</p>
         <div>
@@ -376,7 +376,7 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>
-          <label><input type='checkbox' name='Filter' #{if $.get('Filter') is 'true' then 'checked' else ''}> Filter</label>
+          <label><input type=checkbox name=Filter #{if $.get('Filter') is 'true' then 'checked' else ''}> Filter</label>
         </legend>
         <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>
         <div>
@@ -401,12 +401,12 @@ Settings =
         <legend>About</legend>
         <div>4chan X Name Sync v#{g.VERSION}</div>
         <div>
-          <a href='http://milkytiptoe.github.io/Name-Sync/' target='_blank'>Website</a> |
-          <a href='https://github.com/milkytiptoe/Name-Sync/wiki/Support' target='_blank'>Support</a> |
-          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/license' target='_blank'>License</a> |
-          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target='_blank'>Changelog</a> |
-          <a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target='_blank'>Issues</a> |
-          <a href='http://desktopthread.com/tripcode.php' target='_blank'>Test Tripcodes</a>
+          <a href='http://milkytiptoe.github.io/Name-Sync/' target=_blank>Website</a> |
+          <a href='https://github.com/milkytiptoe/Name-Sync/wiki/Support' target=_blank>Support</a> |
+          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/license' target=_blank>License</a> |
+          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target=_blank>Changelog</a> |
+          <a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target=_blank>Issues</a> |
+          <a href='http://desktopthread.com/tripcode.php' target=_blank>Test Tripcodes</a>
         </div>
       </fieldset>
       <img id=bgimage src='<%= meta.page %>namesync/bg.png' />
@@ -423,7 +423,7 @@ Settings =
       istrue  = if stored is null then val[0] else stored is 'true'
       checked = if istrue then 'checked' else ''
       $.add field, $.el 'div',
-        innerHTML: "<label><input type='checkbox' name='#{setting}' #{checked}>#{setting}</label><span class='description'>: #{val[1]}</span>"
+        innerHTML: "<label><input type=checkbox name='#{setting}' #{checked}>#{setting}</label><span class=description>: #{val[1]}</span>"
     $.prepend section, field
     for check in $$ 'input[type=checkbox]', section
       $.on check, 'click', ->
@@ -534,7 +534,7 @@ Sync =
         return if @status isnt 200
         $('#syncClear').value = 'Cleared'
 
-<% if (type !== 'crx') { %>
+<% if (type === 'userscript') { %>
 Updater =
   init: ->
     last = $.get 'lastcheck'
@@ -555,7 +555,7 @@ Updater =
           detail:
             type: 'info'
             content: $.el 'span',
-              innerHTML: "An update for 4chan X Name Sync is available.<% if (type === 'userscript') { %> <a href=<%= meta.page %><%= meta.builds %>NameSync.user.js target=_blank>Install now</a>. <% } else { %> <a href=<%= meta.page %><%= meta.builds %>NameSync.js target=_blank>Save now</a>.<% } %>"
+              innerHTML: "An update for 4chan X Name Sync is available. <a href='<%= meta.page %><%= meta.builds %>NameSync.user.js' target=_blank>Install now</a>."
             lifetime: 10
         el = $ '#fourchanx-settings .close'
         el.click() if el
