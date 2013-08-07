@@ -173,15 +173,6 @@ Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
     return if location.pathname.slice(1).split('/')[1] is 'catalog'
-    # v2 runs too late for Chrome or Opera to catch it
-    <% if (type === 'userscript') { %>
-    if $.id 'openSettings'
-      return $.event 'CreateNotification',
-        detail:
-          type: 'warning'
-          content: 'An older version of Name Sync was detected. Please disable it to continue using the current version.'
-          lifetime: 5
-    <% } %>
     Settings.init()
     if Set['Filter']
       Filter.init()
@@ -195,9 +186,6 @@ Main =
       Updater.init()
     <% } %>
   ready: ->
-    $.asap (-> d.readyState is 'complete'), ->
-      if $.hasClass d.body, 'fourchan_x'
-        alert '4chan X Name Sync is not supported by 4chan X v2. Please update to 4chan X v3.'
     $.event 'AddCallback',
       detail:
         type: 'Post'
@@ -244,7 +232,7 @@ Menus =
           textContent: 'Name'
         open: (post) ->
           Menus.uid = post.info.uniqueID
-          !/Heaven/.test Menus.uid
+          !post.info.capcode and !/Heaven/.test Menus.uid
         subEntries: subEntries
   makeSubEntry: (text, click) ->
     a = $.el 'a',
@@ -305,7 +293,7 @@ Names =
           Names.updatePost.call g.threads[thread].posts[post].clones[clone]
     Names.store()
   updatePost: ->
-    return if !@info or @info.capcode
+    return if @info.capcode
 
     oinfo = Names.nameByPost[@ID]
     linfo = Names.nameByID[@info.uniqueID]
