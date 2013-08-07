@@ -48,8 +48,8 @@
     <script type="text/javascript">
       var engine = /OPR/.test(navigator.userAgent) ? "opera" : /WebKit|Gecko/.exec(navigator.userAgent)[0].toLowerCase();
       document.getElementById(engine).style.display = "block";
+      document.getElementById("chrome-install").addEventListener("click", function(e) { e.preventDefault(); return chrome.webstore.install(); });
       if (engine === "webkit") {
-        document.getElementById("chrome-install").addEventListener("click", function(e) { e.preventDefault(); chrome.webstore.install(); });
         document.getElementById("content-block").innerHTML += "<p>Only Google Chrome <strong>Stable</strong> is supported at this time</p>";
       }
     </script>
