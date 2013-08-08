@@ -231,8 +231,7 @@ Menus =
           href: 'javascript:;'
           textContent: 'Name'
         open: (post) ->
-          Menus.uid = post.info.uniqueID
-          !post.info.capcode and !/Heaven/.test Menus.uid
+          (Menus.uid = post.info.uniqueID) and !/Heaven/.test Menus.uid
         subEntries: subEntries
   makeSubEntry: (text, click) ->
     a = $.el 'a',
