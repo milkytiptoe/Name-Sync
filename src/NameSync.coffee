@@ -96,7 +96,7 @@ Config =
     'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':          [false, 'Hide Unique IDs next to names.']
     'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
-    <% if (type !== 'crx') { %>
+    <% if (type === 'userscript') { %>
     'Automatic Updates': [true,  'Automatically check for 4chan X Name Sync updates.']
     <% } %>
   other:
@@ -388,7 +388,7 @@ Settings =
       <fieldset>
         <legend>Advanced</legend>
         <div>
-          <% if (type !== 'crx') { %>
+          <% if (type === 'userscript') { %>
           <input id=syncUpdate type=button value='Check for update' title='Check if an update is available for 4chan X Name Sync'>
           <% } %>
           <input id=syncClear type=button value='Clear my sync history' title='Clear your stored sync fields from the server'>
