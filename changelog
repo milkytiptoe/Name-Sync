@@ -1,9 +1,12 @@
+4.4.11
+- Fixed name menu items appearing on cross-board posts without IDs
+
 4.4.10
 - Fixed rare bug causing names to not load
 
 4.4.9
 - Dropped Opera < 15 support
-- Fixed menu appearing on 4chan staff posts
+- Fixed name menu items appearing on 4chan staff posts
 
 4.4.8
 - Minor tweaks
