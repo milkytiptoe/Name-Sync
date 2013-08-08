@@ -1,3 +1,6 @@
+4.4.10
+- Fixed rare bug causing names to not load
+
 4.4.9
 - Dropped Opera < 15 support
 - Fixed menu appearing on 4chan staff posts
