@@ -181,10 +181,6 @@ Main =
     Menus.init()
     if Set["Sync on /#{g.board}/"]
       Sync.init()
-    <% if (type === 'userscript') { %>
-    if Set['Automatic Updates']
-      Updater.init()
-    <% } %>
   ready: ->
     $.event 'AddCallback',
       detail:
@@ -388,9 +384,6 @@ Settings =
       <fieldset>
         <legend>Advanced</legend>
         <div>
-          <% if (type === 'userscript') { %>
-          <input id=syncUpdate type=button value='Check for update' title='Check if an update is available for 4chan X Name Sync'>
-          <% } %>
           <input id=syncClear type=button value='Clear my sync history' title='Clear your stored sync fields from the server'>
           <input id=namesClear type=button value='Clear sync cache' title='Clear locally cached sync fields from current and past threads on this board'>
           Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields when a new post is inserted'> ms
@@ -439,9 +432,6 @@ Settings =
             return @value = $.get @name
         $.set @name, @value
 
-    <% if (type === 'userscript') { %>
-    $.on $('#syncUpdate', section), 'click', Updater.update
-    <% } %>
     $.on $('#syncClear',  section), 'click', Sync.clear
     $.on $('#namesClear', section), 'click', Names.clear
 
@@ -532,33 +522,6 @@ Sync =
       onloadend: ->
         return if @status isnt 200
         $('#syncClear').value = 'Cleared'
-
-<% if (type === 'userscript') { %>
-Updater =
-  init: ->
-    last = $.get 'lastcheck'
-    if last is null or Date.now() > last + 86400000
-      @update()
-  update: ->
-    el = $ '#syncUpdate'
-    el.disabled = true if el
-    $.ajax 'u3',
-      'GET'
-      ''
-      onloadend: ->
-        $.set 'lastcheck', Date.now()
-        if @status isnt 200 or @response is g.VERSION
-          el.value = 'None available' if el
-          return
-        $.event 'CreateNotification',
-          detail:
-            type: 'info'
-            content: $.el 'span',
-              innerHTML: "An update for 4chan X Name Sync is available. <a href='<%= meta.page %><%= meta.builds %>NameSync.user.js' target=_blank>Install now</a>."
-            lifetime: 10
-        el = $ '#fourchanx-settings .close'
-        el.click() if el
-<% } %>
 
 $.ready Main.ready
 $.on d, '4chanXInitFinished', Main.init
