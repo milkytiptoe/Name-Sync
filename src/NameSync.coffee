@@ -89,19 +89,16 @@ $.set = (name, value) ->
 
 Config =
   main:
-    'Sync on /b/':       [true,  'Enable sync on /b/.']
-    'Sync on /q/':       [true,  'Enable sync on /q/.']
-    'Sync on /soc/':     [true,  'Enable sync on /soc/.']
-    'Read-only Mode':    [false, 'Share none of your fields.']
-    'Hide Sage':         [false, 'Share none of your fields when sage is in the email field.']
-    'Hide IDs':          [false, 'Hide Unique IDs next to names.']
-    'Do Not Track':      [false, 'Opt out of name tracking by third party websites.']
-    <% if (type === 'userscript') { %>
-    'Automatic Updates': [true,  'Automatically check for 4chan X Name Sync updates.']
-    <% } %>
+    'Sync on /b/':    [true,  'Enable sync on /b/.']
+    'Sync on /q/':    [true,  'Enable sync on /q/.']
+    'Sync on /soc/':  [true,  'Enable sync on /soc/.']
+    'Read-only Mode': [false, 'Share none of your fields.']
+    'Hide Sage':      [false, 'Share none of your fields when sage is in the email field.']
+    'Hide IDs':       [false, 'Hide Unique IDs next to names.']
+    'Do Not Track':   [false, 'Opt out of name tracking by third party websites.']
   other:
-    'Persona Fields':    [false]
-    'Filter':            [false]
+    'Persona Fields': [false]
+    'Filter':         [false]
 
 CSS =
   init: ->
