@@ -94,7 +94,7 @@ module.exports = function(grunt) {
     crx: {
       prod: {
         src: 'builds/crx/',
-        dest: 'builds/crx.crx',
+        dest: 'builds/NameSync.crx',
         privateKey: 'builds/crx.pem'
       }
     },
@@ -129,7 +129,8 @@ module.exports = function(grunt) {
     'copy:crx',
     'compress:crx',
     'copy:nex',
-    'clean:tmpcrx'
+    'clean:tmpcrx',
+    'crx:prod'
   ]);
   grunt.registerTask('build-userscript', [
     'set-build:userscript',
