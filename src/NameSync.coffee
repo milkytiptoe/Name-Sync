@@ -188,7 +188,7 @@ Main =
             g.board = @board.ID if !g.board
             if g.board is @board.ID
                 g.threads = @board.threads
-                Names.updatePost.call @ if Names.nameByID
+                Names.updatePost.call @ if Names.nameByPost
 
 Menus =
   uid: null
