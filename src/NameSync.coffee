@@ -138,9 +138,7 @@ CSS =
     if Set['Mark Sync Posts']
       css += """
     .sync-post {
-      background-image: url(data:image/png;base64,<%= grunt.file.read('img/mark.png', {encoding: 'base64'}) %>);
-      background-position: bottom right;
-      background-repeat: no-repeat;
+      background: url(data:image/png;base64,<%= grunt.file.read('img/mark.png', {encoding: 'base64'}) %>) bottom 4px right 4px no-repeat;
     }
     """
     $.add d.body, $.el 'style',
