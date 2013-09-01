@@ -1,8 +1,8 @@
-Unreleased
+4.4.13
 - Fixed local field loading on /q/ and /soc/
 - Added 'Mark Sync Posts' setting to mark posts made by sync users
 - Removed 'Hide IDs' setting, you can use your own CSS to do this
-- Restored 4chan X Filter > Name menu item and removed Sync's Name > Filter menu item, the Filter still exists in settings
+- Other minor changes
 
 4.4.12
 - Quick fix for /b/ names
