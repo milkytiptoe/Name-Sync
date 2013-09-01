@@ -327,8 +327,7 @@ Names =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
-    if Set['Mark Sync Posts'] and oinfo
-      # This will probably stack classes, need to test
+    if Set['Mark Sync Posts'] and oinfo and @ID isnt @thread.ID
       $.addClass @nodes.post, 'sync-post'
 
     if Set['Filter']
@@ -477,8 +476,7 @@ Sync =
     currentName    = currentName.trim()
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
-    return if !$.get("#{g.board}-#{threadID}-last-name") and currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
-    $.set "#{g.board}-#{threadID}-last-name", currentName
+    return if currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID, retryTimer) ->
     $.ajax 'sp',
