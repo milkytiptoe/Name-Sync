@@ -138,7 +138,9 @@ CSS =
     if Set['Mark Sync Posts']
       css += """
     .sync-post {
-
+      background-image: url(data:image/png;base64,<%= grunt.file.read('img/mark.png', {encoding: 'base64'}) %>);
+      background-position: bottom right;
+      background-repeat: no-repeat;
     }
     """
     $.add d.body, $.el 'style',
@@ -325,9 +327,9 @@ Names =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
-    if Set['Mark Sync Posts']
+    if Set['Mark Sync Posts'] and oinfo
       # This will probably stack classes, need to test
-      $.addClass @nodes.root, 'sync-post'
+      $.addClass @nodes.post, 'sync-post'
 
     if Set['Filter']
       for type of obj = {name, tripcode, subject, email}
