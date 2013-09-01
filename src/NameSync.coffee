@@ -145,6 +145,12 @@ CSS =
       display: none !important;
     }
     """
+    if Set['Mark Sync Posts']
+      css += """
+    .sync-post {
+
+    }
+    """
     $.add d.body, $.el 'style',
       textContent: css
 
@@ -334,6 +340,10 @@ Names =
     else if tripspan
       $.rm tripspan.previousSibling
       $.rm tripspan
+
+    if Set['Mark Sync Posts']
+      # This will probably stack classes, need to test
+      $.addClass @nodes.post.parentNode, 'sync-post'
 
     if Set['Filter'] and Filter.names and RegExp(Filter.names).test(name) or Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test(tripcode) or Filter.subjects and subject and RegExp(Filter.subjects).test(subject) or Filter.emails and email and RegExp(Filter.emails).test(email)
       $.addClass @nodes.post.parentNode, 'sync-filtered'
