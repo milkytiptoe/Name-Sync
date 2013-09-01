@@ -355,7 +355,7 @@ Settings =
         <legend>
           <label><input type=checkbox name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
         </legend>
-        <p>Share these fields instead of the 4chan X quick reply fields.</p>
+        <p>Share these fields instead of the 4chan X quick reply fields. Only visible to sync users.</p>
         <div>
           <input type=text name=Name placeholder=Name>
           <input type=text name=Email placeholder=Email>
