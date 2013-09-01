@@ -188,7 +188,7 @@ Main =
             g.board = @board.ID if !g.board
             if g.board is @board.ID
                 g.threads = @board.threads
-                Names.updatePost.call @ if (g.board is 'b' and Names.nameByPost) or Names.nameByID
+                Names.updatePost.call @ if g.board is 'b' and Names.nameByPost or Names.nameByID
 
 Menus =
   uid: null
@@ -292,7 +292,7 @@ Names =
       tripcode = oinfo.t
       email    = oinfo.e
       subject  = oinfo.s
-    else if g.board isnt 'b' and (linfo = Names.nameByID[@info.uniqueID])
+    else if g.board isnt 'b' and linfo = Names.nameByID[@info.uniqueID]
       name     = linfo.n
       tripcode = linfo.t
     else
