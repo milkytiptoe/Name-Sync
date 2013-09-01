@@ -366,7 +366,7 @@ Settings =
         <legend>
           <label><input type=checkbox name=Filter #{if $.get('Filter') is 'true' then 'checked' else ''}> Filter</label>
         </legend>
-        <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes</p>
+        <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes. Only applies to sync posts.</p>
         <div>
           <input type=text name=FilterNames placeholder=Names>
           <input type=text name=FilterTripcodes placeholder=Tripcodes>
