@@ -345,8 +345,13 @@ Names =
       # This will probably stack classes, need to test
       $.addClass @nodes.root, 'sync-post'
 
-    if Set['Filter'] and Filter.names and RegExp(Filter.names).test(name) or Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test(tripcode) or Filter.subjects and subject and RegExp(Filter.subjects).test(subject) or Filter.emails and email and RegExp(Filter.emails).test(email)
-      $.addClass @nodes.root, 'sync-filtered'
+    if Set['Filter']
+      for type of obj = {name, tripcode, subject, email}
+        continue if !type or !regex = Filter["#{type}s"]
+        if ///#{regex}///.test obj[type]
+          $.addClass @nodes.root, 'sync-filtered'
+          return
+      return
 
 Settings =
   init: ->
