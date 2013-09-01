@@ -288,19 +288,11 @@ Names =
     return if !@info or @info.capcode
 
     oinfo = Names.nameByPost[@ID]
-    linfo = Names.nameByID[@info.uniqueID]
-    if oinfo and !Names.blockedIDs[@info.uniqueID]
+    if oinfo
       name     = oinfo.n
       tripcode = oinfo.t
       email    = oinfo.e
       subject  = oinfo.s
-      unless /Heaven/.test @info.uniqueID
-        Names.nameByID[@info.uniqueID] =
-          n: name
-          t: tripcode
-    else if linfo
-      name     = linfo.n
-      tripcode = linfo.t
     else
       return
 
