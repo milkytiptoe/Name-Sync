@@ -128,9 +128,6 @@ CSS =
       right: 0px;
       position: absolute;
     }
-    #menu a[data-type=name] {
-      display: none;
-    }
     """
     if Set['Filter']
       css += """
@@ -206,12 +203,6 @@ Menus =
         Names.change Menus.uid
         $.event 'CloseMenu'
     subEntries.push
-      el: @makeSubEntry 'Filter', ->
-        Filter.filter Menus.uid
-        $.event 'CloseMenu'
-      open: ->
-        (!(stored = Names.nameByID[Menus.uid]) or stored.n) and Set['Filter']
-    subEntries.push
       el: @makeSubEntry 'Reset', ->
         Names.reset Menus.uid
         $.event 'CloseMenu'
@@ -224,7 +215,7 @@ Menus =
           href: 'javascript:;'
           textContent: 'Name'
         open: (post) ->
-          (Menus.uid = post.info.uniqueID) and !/Heaven/.test Menus.uid
+          Menus.uid = post.info.uniqueID
         subEntries: subEntries
   makeSubEntry: (text, click) ->
     a = $.el 'a',
