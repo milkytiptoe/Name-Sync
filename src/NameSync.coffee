@@ -94,7 +94,6 @@ Config =
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Read-only Mode':  [false, 'Share none of your fields.']
     'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
-    'Hide IDs':        [false, 'Hide Unique IDs next to names.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
     'Do Not Track':    [false, 'Opt out of name tracking by third party websites.']
   other:
@@ -130,12 +129,6 @@ CSS =
       position: absolute;
     }
     #menu a[data-type=name] {
-      display: none;
-    }
-    """
-    if Set['Hide IDs']
-      css += """
-    .posteruid {
       display: none;
     }
     """
@@ -347,8 +340,8 @@ Names =
 
     if Set['Filter']
       for type of obj = {name, tripcode, subject, email}
-        continue if !type or !regex = Filter["#{type}s"]
-        if ///#{regex}///.test obj[type]
+        continue if !(info = obj[type]) or !regex = Filter["#{type}s"]
+        if ///#{regex}///.test info
           $.addClass @nodes.root, 'sync-filtered'
           return
       return
