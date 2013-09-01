@@ -292,10 +292,9 @@ Names =
       tripcode = oinfo.t
       email    = oinfo.e
       subject  = oinfo.s
-    else unless g.board is 'b'
-      if linfo = Names.nameByID[@info.uniqueID]
-        name     = linfo.n
-        tripcode = linfo.t
+    else if g.board isnt 'b' and (linfo = Names.nameByID[@info.uniqueID])
+      name     = linfo.n
+      tripcode = linfo.t
     else
       return
 
