@@ -89,17 +89,17 @@ $.set = (name, value) ->
 
 Config =
   main:
-    'Sync on /b/':    [true,  'Enable sync on /b/.']
-    'Sync on /q/':    [true,  'Enable sync on /q/.']
-    'Sync on /soc/':  [true,  'Enable sync on /soc/.']
-    'Read-only Mode': [false, 'Share none of your fields.']
-    'Hide Sage':      [false, 'Share none of your fields when sage is in the email field.']
-    'Hide IDs':       [false, 'Hide Unique IDs next to names.']
-    'Mark Sync Posts' [false, 'Mark posts made by sync users.']
-    'Do Not Track':   [false, 'Opt out of name tracking by third party websites.']
+    'Sync on /b/':     [true,  'Enable sync on /b/.']
+    'Sync on /q/':     [true,  'Enable sync on /q/.']
+    'Sync on /soc/':   [true,  'Enable sync on /soc/.']
+    'Read-only Mode':  [false, 'Share none of your fields.']
+    'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
+    'Hide IDs':        [false, 'Hide Unique IDs next to names.']
+    'Mark Sync Posts': [false, 'Mark posts made by sync users.']
+    'Do Not Track':    [false, 'Opt out of name tracking by third party websites.']
   other:
-    'Persona Fields': [false]
-    'Filter':         [false]
+    'Persona Fields':  [false]
+    'Filter':          [false]
 
 CSS =
   init: ->
@@ -343,10 +343,10 @@ Names =
 
     if Set['Mark Sync Posts']
       # This will probably stack classes, need to test
-      $.addClass @nodes.post.parentNode, 'sync-post'
+      $.addClass @nodes.root, 'sync-post'
 
     if Set['Filter'] and Filter.names and RegExp(Filter.names).test(name) or Filter.tripcodes and tripcode and RegExp(Filter.tripcodes).test(tripcode) or Filter.subjects and subject and RegExp(Filter.subjects).test(subject) or Filter.emails and email and RegExp(Filter.emails).test(email)
-      $.addClass @nodes.post.parentNode, 'sync-filtered'
+      $.addClass @nodes.root, 'sync-filtered'
 
 Settings =
   init: ->
