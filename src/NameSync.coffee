@@ -95,6 +95,7 @@ Config =
     'Read-only Mode': [false, 'Share none of your fields.']
     'Hide Sage':      [false, 'Share none of your fields when sage is in the email field.']
     'Hide IDs':       [false, 'Hide Unique IDs next to names.']
+    'Mark Sync Posts' [false, 'Mark posts made by sync users.']
     'Do Not Track':   [false, 'Opt out of name tracking by third party websites.']
   other:
     'Persona Fields': [false]
