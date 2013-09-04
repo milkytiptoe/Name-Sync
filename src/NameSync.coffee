@@ -150,18 +150,6 @@ Filter =
     @tripcodes = $.get 'FilterTripcodes'
     @emails    = $.get 'FilterEmails'
     @subjects  = $.get 'FilterSubjects'
-  filter: (id) ->
-    stored = Names.nameByID[id]
-    name = if stored then Names.nameByID[id].n.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&' else 'Anonymous'
-    stored = $.get 'FilterNames'
-    $.set 'FilterNames', if stored then "#{stored}|#{name}" else name
-    $.event 'OpenSettings',
-      detail: 'Name Sync'
-    el = $ 'input[name=FilterNames]'
-    el.focus()
-    <% if (type === 'userscript') { %>
-    el.setSelectionRange el.value.length, el.value.length
-    <% } %>
 
 Main =
   init: ->
