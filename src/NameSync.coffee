@@ -444,6 +444,7 @@ Sync =
         for poster in JSON.parse @response
           Names.nameByPost[poster.p] = poster
         Names.updateAllPosts()
+        $.event 'NamesSynced'
     if repeat and !Sync.disabled
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
