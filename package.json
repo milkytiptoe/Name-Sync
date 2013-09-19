@@ -8,7 +8,6 @@
     "builds": "namesync/builds/",
     "includes": [
       "*://boards.4chan.org/b/*",
-      "*://boards.4chan.org/q/*",
       "*://boards.4chan.org/soc/*"
     ],
     "authors": [

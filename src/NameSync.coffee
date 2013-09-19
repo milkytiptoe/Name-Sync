@@ -90,7 +90,6 @@ $.set = (name, value) ->
 Config =
   main:
     'Sync on /b/':     [true,  'Enable sync on /b/.']
-    'Sync on /q/':     [true,  'Enable sync on /q/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Read-only Mode':  [false, 'Share none of your fields.']
     'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
