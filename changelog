@@ -1,3 +1,6 @@
+4.4.15
+- Removed /q/ from Sync
+
 4.4.14
 - Fixed 'Mark Sync Posts' css not applying under certain conditions
 
