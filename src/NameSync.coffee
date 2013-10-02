@@ -159,7 +159,9 @@ Filter =
 Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
-    return if location.pathname.slice(1).split('/')[1] is 'catalog'
+    path = location.pathname.split '/'
+    return if path[2] is 'catalog'
+    g.board = path[1]
     Settings.init()
     if Set['Filter']
       Filter.init()
