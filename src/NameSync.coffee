@@ -69,6 +69,14 @@ $.asap = (test, cb) ->
     cb()
   else
     setTimeout $.asap, 25, test, cb
+$.ready = (fc) ->
+  unless d.readyState is 'loading'
+    fc()
+    return
+  cb = ->
+    $.off d, 'DOMContentLoaded', cb
+    fc()
+  $.on d, 'DOMContentLoaded', cb
 $.get = (name) ->
   localStorage.getItem "#{g.NAMESPACE}#{name}"
 $.set = (name, value) ->
@@ -150,36 +158,18 @@ Main =
     return if path[2] is 'catalog'
     g.board = path[1]
     g.thread = if path[2] is 'res' then path[3] # null on index
-    # Settings.init()
+    Settings.init()
     # if Set['Filter']
       # Filter.init()
     # Names.init()
     # CSS.init()
-    Menus.init()
     # if Set["Sync on /#{g.board}/"]
       # Sync.init()
   ready: ->
     # Store post elements as we used to. This will be done properly later.
     for post in $$ '.thread .post'
       g.posts[post.id[1..]] = post
-
-Menus =
-  init: ->
-    el = $.el 'a',
-      href: 'javascript:;'
-      textContent: '4chan X Name Sync Settings'
-    <% if (type == 'userscript') { %>
-    $.on el, 'click', ->
-      $.event 'OpenSettings',
-        detail: 'Name Sync'
-    $.event 'AddMenuEntry',
-      detail:
-        type: 'header'
-        el: el
-        order: 112
-    <% } else { %>
-    $.prepend $('.board'), el
-    <% } %>
+    return
 
 Names =
   nameByPost: {}
@@ -189,6 +179,7 @@ Names =
     # Not so sanic
     for post of g.posts
       Names.updatePost.call g.posts[post]
+    return
   updatePost: ->
     return if !@info or @info.capcode
 
@@ -256,10 +247,25 @@ Settings =
       for setting, val of Config[section]
         stored = $.get setting
         Set[setting] = if stored is null then val[0] else stored is 'true'
+    el = $.el 'a',
+      href: 'javascript:;'
+      textContent: '4chan X Name Sync Settings'
+    <% if (type == 'userscript') { %>
+    $.on el, 'click', ->
+      $.event 'OpenSettings',
+        detail: 'Name Sync'
+    $.event 'AddMenuEntry',
+      detail:
+        type: 'header'
+        el: el
+        order: 112
     $.event 'AddSettingsSection',
       detail:
         title: 'Name Sync'
-        open:  Settings.open
+        open: Settings.open
+    <% } else { %>
+    $.prepend $('.board'), el
+    <% } %>
   open: (section) ->
     section.innerHTML = """
       <fieldset>
@@ -336,7 +342,6 @@ Settings =
         $.set @name, @value
 
     $.on $('#syncClear',  section), 'click', Sync.clear
-    $.on $('#namesClear', section), 'click', Names.clear
 
 Sync =
   lastModified: '0'
@@ -431,3 +436,4 @@ Sync =
 
 $.ready Main.ready
 $.on d, '4chanXInitFinished', Main.init
+
