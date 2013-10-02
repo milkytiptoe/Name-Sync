@@ -166,9 +166,8 @@ Main =
   ready: ->
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
-    # This doesn't pick up on quote previews because they aren't in thread elements
-    # This doesn't go past the first thread on indexes
-    # Really hate this way, will probably use X API callback for FF
+    # Doesn't pick up on quote previews
+    # Doesn't go past the first thread on indexes
     new MutationObserver (mutations) ->
       for mutation in mutations
         nodes = mutation.addedNodes
@@ -181,7 +180,9 @@ Main =
 Names =
   nameByPost: {}
   updateAllPosts: ->
-    # Cycle names instead of posts, have to test this more..
+    # Cycle names instead of posts
+    # Seems to fail updating recent posts a lot
+    # It could be doing this loop before some are considered a 'post'
     for key of Names.nameByPost
       Names.updatePost.call g.posts[key]
   updatePost: ->
