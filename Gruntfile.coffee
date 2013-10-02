@@ -13,6 +13,7 @@ module.exports = (grunt) ->
       coffee:
         src: [
           'src/<%= pkg.name %>.coffee'
+          'src/Post.coffee'
         ]
         dest: 'tmp-<%= pkg.type %>/<%= pkg.name %>.coffee'
       crx:

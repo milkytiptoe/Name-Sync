@@ -159,16 +159,15 @@ Main =
     g.board = path[1]
     g.thread = if path[2] is 'res' then path[3] # null on index
     Settings.init()
-    # if Set['Filter']
-      # Filter.init()
-    # Names.init()
+    if Set['Filter']
+      Filter.init()
+    Names.init()
     CSS.init()
     # if Set["Sync on /#{g.board}/"]
       # Sync.init()
   ready: ->
-    # Store post elements as we used to. This will be done properly later.
-    for post in $$ '.thread .post'
-      g.posts[post.id[1..]] = post
+    for post in $$ '.thread > .postContainer'
+      g.posts[post.id[2..]] = new Post post
     return
 
 Names =
@@ -188,9 +187,6 @@ Names =
       tripcode = oinfo.t
       email    = oinfo.e
       subject  = oinfo.s
-    else if g.board isnt 'b' and linfo = Names.nameByID[@info.uniqueID]
-      name     = linfo.n
-      tripcode = linfo.t
     else
       return
 
