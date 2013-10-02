@@ -1,3 +1,9 @@
+master
+- (Chrome) Settings are now linked on the page above threads
+- (Chrome) Fixed post and field updating
+- sage is now invisible to match 4chan
+- Removed 4chan X post menus
+
 4.4.15
 - Removed /q/ from Sync
 
