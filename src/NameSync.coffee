@@ -174,15 +174,15 @@ Main =
         for node in nodes
           if $.hasClass node, 'postContainer'
             g.posts[node.id[2..]] = new Post node
+            # On rare occasion, sync doesn't update new posts.
+            # This forces it. Not sure if it belongs in .ready
+            Names.updatePost g.posts[node.id[2..]]
       return
     .observe $('.thread'), { childList: true }
 
 Names =
   nameByPost: {}
   updateAllPosts: ->
-    # Cycle names instead of posts
-    # Seems to fail updating recent posts a lot
-    # It could be doing this loop before some are considered a 'post'
     for key of Names.nameByPost
       Names.updatePost.call g.posts[key]
   updatePost: ->
