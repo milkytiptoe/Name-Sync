@@ -169,7 +169,7 @@ Main =
       # Filter.init()
     # Names.init()
     # CSS.init()
-    # Menus.init()
+    Menus.init()
     # if Set["Sync on /#{g.board}/"]
       # Sync.init()
   ready: ->
@@ -178,41 +178,22 @@ Main =
       g.posts[post.id[1..]] = post
 
 Menus =
-  uid: null
   init: ->
+    el = $.el 'a',
+      href: 'javascript:;'
+      textContent: '4chan X Name Sync Settings'
+    <% if (type == 'userscript') { %>
+    $.on el, 'click', ->
+      $.event 'OpenSettings',
+        detail: 'Name Sync'
     $.event 'AddMenuEntry',
       detail:
         type: 'header'
-        el: @makeSubEntry '4chan X Name Sync Settings', ->
-          $.event 'OpenSettings',
-            detail: 'Name Sync'
+        el: el
         order: 112
-    subEntries = []
-    subEntries.push
-      el: @makeSubEntry 'Change', ->
-        Names.change Menus.uid
-        $.event 'CloseMenu'
-    subEntries.push
-      el: @makeSubEntry 'Reset', ->
-        Names.reset Menus.uid
-        $.event 'CloseMenu'
-      open: ->
-        Names.blockedIDs[Menus.uid] is true
-    $.event 'AddMenuEntry',
-      detail:
-        type: 'post'
-        el: $.el 'div',
-          href: 'javascript:;'
-          textContent: 'Name'
-        open: (post) ->
-          Menus.uid = post.info.uniqueID
-        subEntries: subEntries
-  makeSubEntry: (text, click) ->
-    a = $.el 'a',
-      href: 'javascript:;'
-      textContent: text
-    $.on a, 'click', click
-    a
+    <% } else { %>
+    $.prepend $('.board'), el
+    <% } %>
 
 Names =
   nameByPost: {}
