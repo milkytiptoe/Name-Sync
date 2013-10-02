@@ -467,7 +467,10 @@ Sync =
     currentName    = currentName.trim()
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
-    return if currentName+currentEmail+currentSubject is '' or Set['Hide Sage'] and /sage/i.test currentEmail
+    if /sage/i.test currentEmail
+      return if Set['Hide Sage']
+      currentEmail = ''
+    return if currentName+currentEmail+currentSubject is ''
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID, retryTimer) ->
     $.ajax 'sp',
