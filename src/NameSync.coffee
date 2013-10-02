@@ -168,7 +168,17 @@ Main =
   ready: ->
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
-    return
+    # This doesn't pick up on quote previews because they aren't in thread elements
+    # This doesn't go past the first thread on indexes
+    # Really hate this way, will probably use X API callback for FF
+    new MutationObserver (mutations) ->
+      for mutation in mutations
+        nodes = mutation.addedNodes
+        for node in nodes
+          # To do: Verify classes, add to g.posts
+          return
+      return
+    .observe $('.thread'), { childList: true }
 
 Names =
   nameByPost: {}
