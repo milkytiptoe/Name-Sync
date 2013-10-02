@@ -5,6 +5,7 @@ d   = document
 g   =
   NAMESPACE: 'NameSync.'
   VERSION:   '<%= version %>'
+  posts:     {}
 
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
@@ -162,25 +163,19 @@ Main =
     path = location.pathname.split '/'
     return if path[2] is 'catalog'
     g.board = path[1]
-    Settings.init()
-    if Set['Filter']
-      Filter.init()
-    Names.init()
-    CSS.init()
-    Menus.init()
-    if Set["Sync on /#{g.board}/"]
-      Sync.init()
+    g.thread = if path[2] is 'res' then path[3] # null on index
+    # Settings.init()
+    # if Set['Filter']
+      # Filter.init()
+    # Names.init()
+    # CSS.init()
+    # Menus.init()
+    # if Set["Sync on /#{g.board}/"]
+      # Sync.init()
   ready: ->
-    $.event 'AddCallback',
-      detail:
-        type: 'Post'
-        callback:
-          name: '4chan X Name Sync'
-          cb: ->
-            g.board = @board.ID if !g.board
-            if g.board is @board.ID
-                g.threads = @board.threads
-                Names.updatePost.call @ if g.board is 'b' and Names.nameByPost or Names.nameByID
+    # Store post elements as we used to. This will be done properly later.
+    for post in $$ '.thread .post'
+      g.posts[post.id[1..]] = post
 
 Menus =
   uid: null
@@ -263,13 +258,9 @@ Names =
     $.set "#{g.board}-cached",  JSON.stringify @nameByID
     $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
-    # SANIC
-    for thread of g.threads
-      for post of g.threads[thread].posts
-        Names.updatePost.call g.threads[thread].posts[post]
-        for clone of g.threads[thread].posts[post].clones
-          Names.updatePost.call g.threads[thread].posts[post].clones[clone]
-    Names.store()
+    # Not so sanic
+    for post of g.posts
+      Names.updatePost.call g.posts[post]
   updatePost: ->
     return if !@info or @info.capcode
 
