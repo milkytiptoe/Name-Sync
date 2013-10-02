@@ -4,7 +4,7 @@ class Post
   toString: -> @ID
 
   constructor: (root) ->
-    @ID    = +root.id[2..]
+    @ID    = root.id[2..]
 
     post   = $ '.post',     root
     info   = $ '.postInfo', post

@@ -157,14 +157,13 @@ Main =
     path = location.pathname.split '/'
     return if path[2] is 'catalog'
     g.board = path[1]
-    g.thread = if path[2] is 'res' then path[3] # null on index
     Settings.init()
     if Set['Filter']
       Filter.init()
     Names.init()
     CSS.init()
-    # if Set["Sync on /#{g.board}/"]
-      # Sync.init()
+    if Set["Sync on /#{g.board}/"]
+      Sync.init()
   ready: ->
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
@@ -175,8 +174,8 @@ Main =
       for mutation in mutations
         nodes = mutation.addedNodes
         for node in nodes
-          # To do: Verify classes, add to g.posts
-          return
+          if $.hasClass node, 'postContainer'
+            g.posts[node.id[2..]] = new Post node
       return
     .observe $('.thread'), { childList: true }
 
@@ -185,10 +184,9 @@ Names =
   init: ->
     @updateAllPosts()
   updateAllPosts: ->
-    # Not so sanic
-    for post of g.posts
-      Names.updatePost.call g.posts[post]
-    return
+    # Cycle names instead of posts, have to test this more..
+    for key, val of Names.nameByPost
+      Names.updatePost.call g.posts[key]
   updatePost: ->
     return if !@info or @info.capcode
 
@@ -236,7 +234,7 @@ Names =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
-    if Set['Mark Sync Posts'] and oinfo and @ID isnt @thread.ID
+    if Set['Mark Sync Posts'] and oinfo and @isReply
       $.addClass @nodes.post, 'sync-post'
 
     if Set['Filter']
@@ -361,18 +359,21 @@ Sync =
     @delay = (parseInt $.get 'Delay') or 300
     @failedSends = 0
     @canRetry = true
-    for thread of g.threads
-      @threads.push g.threads[thread].ID
+    for thread in $$ '.thread'
+      @threads.push thread.id[1..]
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
     if @threads.length is 1
-      $.on d, 'ThreadUpdate', @checkThreadUpdate
+      $.on d, 'ThreadUpdate', @threadUpdate
       @sync true
     else
       @sync()
-  checkThreadUpdate: (e) ->
+  threadUpdate: (e) ->
+    # Only Firefox can check for 404 or new posts. Chrome will be making more sync requests.
+    <% if (type == 'userscript') { %>
     return Sync.disabled = true if e.detail[404]
     return unless e.detail.newPosts.length
+    <% } %>
     clearTimeout Sync.handle
     Sync.handle = setTimeout Sync.sync, Sync.delay
   sync: (repeat) ->
