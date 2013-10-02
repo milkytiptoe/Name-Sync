@@ -162,7 +162,7 @@ Main =
     # if Set['Filter']
       # Filter.init()
     # Names.init()
-    # CSS.init()
+    CSS.init()
     # if Set["Sync on /#{g.board}/"]
       # Sync.init()
   ready: ->
@@ -265,12 +265,17 @@ Settings =
         open: Settings.open
     <% } else { %>
     $.prepend $('.board'), el
+    $.on el, 'click', ->
+      $.event 'OpenSettings'
+      sec = $ '.section-main'
+      sec.className = 'section-name-sync'
+      Settings.open sec
     <% } %>
   open: (section) ->
     section.innerHTML = """
       <fieldset>
         <legend>
-          <label><input type=checkbox name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}> Persona</label>
+          <label><input type=checkbox name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}>Persona</label>
         </legend>
         <p>Share these fields instead of the 4chan X quick reply fields. Only visible to sync users.</p>
         <div>
@@ -281,7 +286,7 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>
-          <label><input type=checkbox name=Filter #{if $.get('Filter') is 'true' then 'checked' else ''}> Filter</label>
+          <label><input type=checkbox name=Filter #{if $.get('Filter') is 'true' then 'checked' else ''}>Filter</label>
         </legend>
         <p><code>^(?!Anonymous$)</code> to filter all names <code>!tripcode|!tripcode</code> to filter multiple tripcodes. Only applies to sync posts.</p>
         <div>
@@ -295,7 +300,6 @@ Settings =
         <legend>Advanced</legend>
         <div>
           <input id=syncClear type=button value='Clear my sync history' title='Clear your stored sync fields from the server'>
-          <input id=namesClear type=button value='Clear sync cache' title='Clear locally cached sync fields from current and past threads on this board'>
           Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields when a new post is inserted'> ms
         </div>
       </fieldset>
@@ -436,4 +440,3 @@ Sync =
 
 $.ready Main.ready
 $.on d, '4chanXInitFinished', Main.init
-
