@@ -69,20 +69,6 @@ $.asap = (test, cb) ->
     cb()
   else
     setTimeout $.asap, 25, test, cb
-$.syncing = {}
-$.sync = do ->
-  $.on window, 'storage', (e) ->
-    if cb = $.syncing[e.key]
-      cb e.newValue
-  (key, cb) -> $.syncing[g.NAMESPACE + key] = cb
-$.ready = (fc) ->
-  unless d.readyState is 'loading'
-    fc()
-    return
-  cb = ->
-    $.off d, 'DOMContentLoaded', cb
-    fc()
-  $.on d, 'DOMContentLoaded', cb
 $.get = (name) ->
   localStorage.getItem "#{g.NAMESPACE}#{name}"
 $.set = (name, value) ->
@@ -197,47 +183,8 @@ Menus =
 
 Names =
   nameByPost: {}
-  threads:    {}
   init: ->
-    $.sync "#{g.board}-blocked", @loadBlocked
-    $.sync "#{g.board}-cached",  @loadCached
-    expiry = $.get "#{g.board}-expires"
-    if !expiry or Date.now() > expiry
-      @clear()
-    else
-      @loadBlocked()
-      @loadCached()
     @updateAllPosts()
-  change: (id) ->
-    name = prompt 'What would you like this poster to be named?', 'Anonymous'
-    if name and name.trim() isnt ''
-      @nameByID[id] =
-        n: name
-      @blockedIDs[id] = true
-      @updateAllPosts()
-  reset: (id) ->
-    @nameByID[id] =
-      n: 'Anonymous'
-    @blockedIDs[id] = false
-    @updateAllPosts()
-  clear: ->
-    Names.nameByID   = {}
-    Names.blockedIDs = {}
-    Names.store()
-    el = $ '#namesClear'
-    if el
-      el.value = 'Cleared'
-      el.disabled = true
-    $.set "#{g.board}-expires", Date.now() + 86400000
-  loadBlocked: (synced) ->
-    stored = synced or $.get "#{g.board}-blocked"
-    Names.blockedIDs = if stored then JSON.parse stored else {}
-  loadCached: (synced) ->
-    stored = synced or $.get "#{g.board}-cached"
-    Names.nameByID = if stored then JSON.parse stored else {}
-  store: ->
-    $.set "#{g.board}-cached",  JSON.stringify @nameByID
-    $.set "#{g.board}-blocked", JSON.stringify @blockedIDs
   updateAllPosts: ->
     # Not so sanic
     for post of g.posts
