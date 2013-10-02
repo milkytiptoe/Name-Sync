@@ -359,8 +359,10 @@ Sync =
     @canRetry = true
     for thread in $$ '.thread'
       @threads.push thread.id[1..]
+    <% if (type == 'userscript') { %>
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
+    <% } %>
     if @threads.length is 1
       $.on d, 'ThreadUpdate', @threadUpdate
       @sync true
