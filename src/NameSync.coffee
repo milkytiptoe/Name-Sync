@@ -160,7 +160,6 @@ Main =
     Settings.init()
     if Set['Filter']
       Filter.init()
-    Names.init()
     CSS.init()
     if Set["Sync on /#{g.board}/"]
       Sync.init()
@@ -181,11 +180,9 @@ Main =
 
 Names =
   nameByPost: {}
-  init: ->
-    @updateAllPosts()
   updateAllPosts: ->
     # Cycle names instead of posts, have to test this more..
-    for key, val of Names.nameByPost
+    for key of Names.nameByPost
       Names.updatePost.call g.posts[key]
   updatePost: ->
     return if !@info or @info.capcode

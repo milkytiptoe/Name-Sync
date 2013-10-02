@@ -20,9 +20,5 @@ class Post
       @nodes.subject  = subject
     if name           = $ '.name',         info
       @nodes.name     = name
-    if email          = $ '.useremail',    info
-      @nodes.email    = email
-    if tripcode       = $ '.postertrip',   info
-      @nodes.tripcode = tripcode
     if capcode        = $ '.capcode.hand', info
       @info.capcode   = capcode.textContent.replace '## ', ''
