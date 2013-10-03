@@ -255,7 +255,7 @@ Settings =
         Set[setting] = if stored is null then val[0] else stored is 'true'
     el = $.el 'a',
       href: 'javascript:;'
-      textContent: '4chan X Name Sync Settings'
+      textContent: '<% if (type == "userscript") { %>4chan X Name <% } %>Sync Settings'
     <% if (type == 'userscript') { %>
     $.on el, 'click', ->
       $.event 'OpenSettings',
