@@ -155,12 +155,12 @@ Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
     path = location.pathname.split '/'
-    return if path[2] is 'catalog'
     g.board = path[1]
     Settings.init()
+    CSS.init()
+    return if path[2] is 'catalog'
     if Set['Filter']
       Filter.init()
-    CSS.init()
     if Set["Sync on /#{g.board}/"]
       Sync.init()
   ready: ->
@@ -417,8 +417,9 @@ Sync =
         return unless Sync.canRetry
         retryTimer = retryTimer or 0
         if retryTimer > 10000
+          ++Sync.failedSends
           <% if (type == 'userscript') { %>
-          if ++Sync.failedSends is 2
+          if Sync.failedSends is 2
             $.event 'CreateNotification',
               detail:
                 type: 'warning'
