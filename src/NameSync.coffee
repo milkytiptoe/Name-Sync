@@ -417,12 +417,14 @@ Sync =
         return unless Sync.canRetry
         retryTimer = retryTimer or 0
         if retryTimer > 10000
+          <% if (type == 'userscript') { %>
           if ++Sync.failedSends is 2
             $.event 'CreateNotification',
               detail:
                 type: 'warning'
                 content: 'Connection errors with sync server. Fields may not appear.'
                 lifetime: 8
+          <% } %>
           if Sync.failedSends >= 3
             Sync.canRetry = false
             setTimeout ->
