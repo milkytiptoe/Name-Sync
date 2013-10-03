@@ -1,9 +1,8 @@
-4.5.0 (Beta) (Chrome only)
-- Settings are now linked on the page above threads
-- Fixed post and field updating
+Unreleased
+- (Chrome) Fixed sync
+- (Chrome) Settings link moved in to the header
 - sage is now invisible to match 4chan
 - Removed 4chan X post menus
-- Field sending is disabled until mayhem fixes it
 
 4.4.15
 - Removed /q/ from Sync
