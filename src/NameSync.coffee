@@ -166,18 +166,23 @@ Main =
   ready: ->
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
-    # Doesn't pick up on quote previews
-    # Doesn't go past the first thread on indexes
-    new MutationObserver (mutations) ->
-      for mutation in mutations
-        nodes = mutation.addedNodes
-        for node in nodes
-          if $.hasClass node, 'postContainer'
+    for target in $$ 'body, .thread'
+      if $.hasClass target, 'thread'
+        Sync.threads.push target.id[1..]
+      observer = new MutationObserver (mutations) ->
+        foundNode = false
+        for mutation in mutations
+          for node in mutation.addedNodes
+            unless $.hasClass node, 'postContainer'
+              continue unless node = $ '.postContainer', node
             g.posts[node.id[2..]] = new Post node
-            # Posts can be missed, cycle them all for now
-            Names.updateAllPosts()
-      return
-    .observe $('.thread'), { childList: true }
+            foundNode = true
+        if foundNode
+          # single node positive:
+          # Posts can be missed, cycle them all for now
+          Names.updateAllPosts()
+      observer.observe target, childList: true
+    return
 
 Names =
   nameByPost: {}
@@ -356,8 +361,6 @@ Sync =
     @delay = (parseInt $.get 'Delay') or 300
     @failedSends = 0
     @canRetry = true
-    for thread in $$ '.thread'
-      @threads.push thread.id[1..]
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', Sync.requestSend
     if @threads.length is 1
