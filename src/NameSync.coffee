@@ -174,9 +174,8 @@ Main =
         for node in nodes
           if $.hasClass node, 'postContainer'
             g.posts[node.id[2..]] = new Post node
-            # On rare occasion, sync doesn't update new posts.
-            # This forces it. Not sure if it belongs in .ready
-            Names.updatePost g.posts[node.id[2..]]
+            # Posts can be missed, cycle them all for now
+            Names.updateAllPosts()
       return
     .observe $('.thread'), { childList: true }
 
@@ -266,7 +265,7 @@ Settings =
         title: 'Name Sync'
         open: Settings.open
     <% } else { %>
-    $.prepend $('.board'), el
+    $.add $.id('shortcuts'), el
     $.on el, 'click', ->
       $.event 'OpenSettings'
       sec = $ '.section-main'
@@ -359,10 +358,8 @@ Sync =
     @canRetry = true
     for thread in $$ '.thread'
       @threads.push thread.id[1..]
-    <% if (type == 'userscript') { %>
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful', Sync.requestSend
-    <% } %>
     if @threads.length is 1
       $.on d, 'ThreadUpdate', @threadUpdate
       @sync true
