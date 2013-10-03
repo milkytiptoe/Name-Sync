@@ -359,7 +359,7 @@ Sync =
     for thread in $$ '.thread'
       @threads.push thread.id[1..]
     unless Set['Read-only Mode']
-      $.on d, 'QRPostSuccessful', Sync.requestSend
+      $.on d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', Sync.requestSend
     if @threads.length is 1
       $.on d, 'ThreadUpdate', @threadUpdate
       @sync true
