@@ -1,3 +1,6 @@
+4.5.2
+- (Chrome) Fixed rare bug causing names to not load
+
 4.5.1
 - (Chrome) Fixed sync
 - (Chrome) Settings link moved in to the header

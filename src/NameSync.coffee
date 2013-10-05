@@ -166,7 +166,6 @@ Main =
   ready: ->
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
-      # undefined is not a function error?
     for target in $$ 'body, .thread'
       if $.hasClass target, 'thread'
         Sync.threads.push target.id[1..]
