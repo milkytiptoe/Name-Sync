@@ -273,7 +273,7 @@ Settings =
         open: Settings.open
     <% } else { %>
     # This element doesn't always seem to be there on time?
-    $.asap (-> $.id('shortcuts') or d.readyState isnt 'loading'), ->
+    $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
       $.on el, 'click', ->
         $.event 'OpenSettings'
