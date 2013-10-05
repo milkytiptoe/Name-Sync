@@ -166,6 +166,7 @@ Main =
   ready: ->
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
+      # undefined is not a function error?
     for target in $$ 'body, .thread'
       if $.hasClass target, 'thread'
         Sync.threads.push target.id[1..]
@@ -189,6 +190,7 @@ Names =
   updateAllPosts: ->
     for key of Names.nameByPost
       Names.updatePost.call g.posts[key]
+    return
   updatePost: ->
     return if !@info or @info.capcode
 
@@ -270,12 +272,14 @@ Settings =
         title: 'Name Sync'
         open: Settings.open
     <% } else { %>
-    $.add $.id('shortcuts'), el
-    $.on el, 'click', ->
-      $.event 'OpenSettings'
-      sec = $ '.section-main'
-      sec.className = 'section-name-sync'
-      Settings.open sec
+    # This element doesn't always seem to be there on time?
+    $.asap (-> $.id('shortcuts') or d.readyState isnt 'loading'), ->
+      $.add $.id('shortcuts'), el
+      $.on el, 'click', ->
+        $.event 'OpenSettings'
+        sec = $ '.section-main'
+        sec.className = 'section-name-sync'
+        Settings.open sec
     <% } %>
   open: (section) ->
     section.innerHTML = """
