@@ -237,7 +237,7 @@ Names =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
-    if Set['Mark Sync Posts'] and and @isReply
+    if Set['Mark Sync Posts'] and @isReply
       $.addClass @nodes.post, 'sync-post'
 
     if Set['Filter']
