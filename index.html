@@ -15,37 +15,24 @@
   <body>
     <div id="wrapper">
       <div id="header">
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-          <input type="hidden" name="cmd" value="_s-xclick">
-          <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-          ">
-          <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
-          <img alt="" title="" src="https://www.paypalobjects.com/en_AU/i/scr/pixel.gif" width="1" height="1">
-        </form>
         <h1>4chan X Name Sync</h1>
         <h2>Enables names on 4chan's forced anon boards</h2>
       </div>
       <div id="content-wrapper">
         <div id="content-block">
+          <p class="step">Step 1</p>
           <p id="chanx">
             <a href="http://ihavenoface.github.io/4chan-x/" target="_blank">Install 4chan X v3</a>
           </p>
-          <p id="webkit">
-            <a id="chrome-install" href="https://chrome.google.com/webstore/detail/4chan-x-name-sync/oplkokdeabkddkihcbghgmpcamnddegk">Install 4chan X Name Sync</a>
-          </p>
-          <p id="gecko">
-            <a href="https://www.namesync.org/namesync/builds/NameSync.user.js">Install 4chan X Name Sync</a>
-          </p>
-          <p id="opera">
-            <a href="https://addons.opera.com/en/extensions/details/4chan-x-name-sync/">Install 4chan X Name Sync</a>
-          </p>
+          <p class="step">Step 2</p>
+          <p id="webkit"><a id="chrome-install" href="https://chrome.google.com/webstore/detail/4chan-x-name-sync/oplkokdeabkddkihcbghgmpcamnddegk">Install extension</a></p>
+          <p></p>
+          <p id="gecko"><a href="https://www.namesync.org/namesync/builds/NameSync.user.js">Install userscript</a></p>
+          <p></p>
+          <p id="opera"><a href="https://addons.opera.com/en/extensions/details/4chan-x-name-sync/">Install extension</a></p>
         </div>
       </div>
       <div id="footer"><a href="https://github.com/milkytiptoe/Name-Sync/wiki/Support">Support</a> | <a href="https://raw.github.com/milkytiptoe/Name-Sync/master/changelog">Changelog</a> | <a href="https://github.com/milkytiptoe/Name-Sync/">GitHub</a></div>
     </div>
-    <script type="text/javascript">
-      var engine = /OPR/.test(navigator.userAgent) ? "opera" : /WebKit|Gecko/.exec(navigator.userAgent)[0].toLowerCase();
-      document.getElementById(engine).style.display = "block";
-    </script>
   </body>
 </html>

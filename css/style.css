@@ -51,7 +51,6 @@ form {
   background-repeat: no-repeat;
   background-size: 19px;
   padding-left: 22px;
-  display: none;
 }
 #chanx {
   display: block;
@@ -70,4 +69,7 @@ form {
 }
 p {
   margin-top: 12px;
+}
+.step {
+  font-weight: bold;
 }
