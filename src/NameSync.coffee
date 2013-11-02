@@ -178,7 +178,7 @@ Main =
             g.posts[node.id[2..]] = new Post node
             foundNode = true
         if foundNode
-          # single node positive:
+          # Single node positive:
           # Posts can be missed, cycle them all for now
           Names.updateAllPosts()
       observer.observe target, childList: true
@@ -237,7 +237,7 @@ Names =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
-    if Set['Mark Sync Posts'] and oinfo and @isReply
+    if Set['Mark Sync Posts'] and and @isReply
       $.addClass @nodes.post, 'sync-post'
 
     if Set['Filter']
@@ -271,7 +271,6 @@ Settings =
         title: 'Name Sync'
         open: Settings.open
     <% } else { %>
-    # This element doesn't always seem to be there on time?
     $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
       $.on el, 'click', ->
