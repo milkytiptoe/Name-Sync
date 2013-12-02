@@ -164,6 +164,7 @@ Main =
     if Set["Sync on /#{g.board}/"]
       Sync.init()
   ready: ->
+    # 4chan X's new catalog/index hybrid breaks index sync.
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
     for target in $$ 'body, .thread'
@@ -200,6 +201,8 @@ Names =
       subject  = oinfo.s
     else
       return
+
+    return if parseInt(oinfo.time) > parseInt(@info.date) + 30
 
     namespan    = @nodes.name
     subjectspan = @nodes.subject

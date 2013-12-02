@@ -22,3 +22,5 @@ class Post
       @nodes.name     = name
     if capcode        = $ '.capcode.hand', info
       @info.capcode   = capcode.textContent.replace '## ', ''
+    if date           = $ '.dateTime',     info
+      @info.date = date.dataset.utc
