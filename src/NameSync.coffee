@@ -274,6 +274,9 @@ Settings =
         title: 'Name Sync'
         open: Settings.open
     <% } else { %>
+    # Appears before the QR shortcut meaning it needs a class for a /.
+    # The fact that it appears before it bothers me.
+    el.className = 'shortcut'
     $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
       $.on el, 'click', ->
