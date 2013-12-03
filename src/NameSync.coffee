@@ -202,8 +202,8 @@ Names =
     else
       return
 
-    # Ignore sync details made before the post or 30 seconds after it
-    return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 30
+    # Ignore sync details made before the post or 8 seconds after it
+    return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 8
 
     namespan    = @nodes.name
     subjectspan = @nodes.subject
