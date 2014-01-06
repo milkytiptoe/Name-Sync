@@ -154,36 +154,43 @@ Filter =
 Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
-    path = location.pathname.split '/'
-    g.board = path[1]
     Settings.init()
     CSS.init()
-    return if path[2] is 'catalog'
+    return if g.view is 'catalog'
     if Set['Filter']
       Filter.init()
     if Set["Sync on /#{g.board}/"]
       Sync.init()
   ready: ->
-    # 4chan X's new catalog/index hybrid breaks index sync.
+    path = location.pathname.split '/'
+    g.board = path[1]
+    g.view =
+      switch path[2]
+        when 'res'
+          'thread'
+        when 'catalog'
+          'catalog'
+        else
+          'index'
+    return if g.view isnt 'thread'
+    # Only observe changes when in a thread, index doesn't work right
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
-    for target in $$ 'body, .thread'
-      if $.hasClass target, 'thread'
-        Sync.threads.push target.id[1..]
-      observer = new MutationObserver (mutations) ->
-        foundNode = false
-        for mutation in mutations
-          for node in mutation.addedNodes
-            unless $.hasClass node, 'postContainer'
-              continue unless node = $ '.postContainer', node
-            g.posts[node.id[2..]] = new Post node
-            foundNode = true
-        if foundNode
-          # Single node positive:
-          # Posts can be missed, cycle them all for now
-          Names.updateAllPosts()
-      observer.observe target, childList: true
-    return
+    target = $ '.thread'
+    Sync.threads.push target.id[1..]
+    observer = new MutationObserver (mutations) ->
+      foundNode = false
+      for mutation in mutations
+        for node in mutation.addedNodes
+          unless $.hasClass node, 'postContainer'
+            continue unless node = $ '.postContainer', node
+          g.posts[node.id[2..]] = new Post node
+          foundNode = true
+      if foundNode
+        # Single node positive:
+        # Posts can be missed, cycle them all for now
+        Names.updateAllPosts()
+    observer.observe target, childList: true
 
 Names =
   nameByPost: {}
@@ -202,7 +209,7 @@ Names =
     else
       return
 
-    # Ignore sync details made before the post or 8 seconds after it
+    # Remove when server changed
     return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 8
 
     namespan    = @nodes.name
@@ -276,7 +283,6 @@ Settings =
         open: Settings.open
     <% } else { %>
     # Appears before the QR shortcut meaning it needs a class for a /.
-    # The fact that it appears before it bothers me.
     el.className = 'shortcut'
     $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
@@ -315,7 +321,7 @@ Settings =
         <legend>Advanced</legend>
         <div>
           <input id=syncClear type=button value='Clear my sync history' title='Clear your stored sync fields from the server'>
-          Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields when a new post is inserted'> ms
+          Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields after a thread or index update'> ms
         </div>
       </fieldset>
       <fieldset>
@@ -372,11 +378,23 @@ Sync =
     @canRetry = true
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', Sync.requestSend
-    if @threads.length is 1
+    if g.view is 'thread'
       $.on d, 'ThreadUpdate', @threadUpdate
       @sync true
     else
-      @sync()
+      setTimeout Sync.indexRefresh, Sync.delay
+      $.on d, 'IndexRefresh', ->
+        setTimeout Sync.indexRefresh, Sync.delay
+  indexRefresh: ->
+    # Rebuild posts and resync every index refresh
+    g.posts = []
+    Sync.threads = []
+    for thread in $$ '.thread'
+      Sync.threads.push thread.id[1..]
+    for post in $$ '.thread > .postContainer'
+      g.posts[post.id[2..]] = new Post post
+    clearTimeout Sync.handle
+    Sync.handle = setTimeout Sync.sync, Sync.delay
   threadUpdate: (e) ->
     # Only Firefox can check for 404 or new posts. Chrome will be making more sync requests.
     <% if (type == 'userscript') { %>
@@ -386,6 +404,7 @@ Sync =
     clearTimeout Sync.handle
     Sync.handle = setTimeout Sync.sync, Sync.delay
   sync: (repeat) ->
+    return if Sync.threads.length is 0
     $.ajax 'qp',
       'GET'
       "t=#{Sync.threads}&b=#{g.board}"
