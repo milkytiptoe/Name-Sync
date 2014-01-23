@@ -70,6 +70,9 @@ form {
 p {
   margin-top: 12px;
 }
-.step {
+.step, .notice {
   font-weight: bold;
+}
+.notice {
+  color: red;
 }
