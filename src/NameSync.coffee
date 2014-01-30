@@ -87,6 +87,7 @@ Config =
     'Sync on /b/':     [true,  'Enable sync on /b/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
+    'Unique IDs':      [true,  'Restore unique IDs on boards without them.']
     'Read-only Mode':  [false, 'Share none of your fields.']
     'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
@@ -207,6 +208,7 @@ Names =
       tripcode = oinfo.t
       email    = oinfo.e
       subject  = oinfo.s
+      uid      = oinfo.i
     else
       return
 
@@ -217,6 +219,7 @@ Names =
     subjectspan = @nodes.subject
     tripspan    = $ '.postertrip', @nodes.info
     emailspan   = $ '.useremail',  @nodes.info
+    uidspan     = $ '.posteruid',  @nodes.info
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject
@@ -238,6 +241,12 @@ Names =
     else if emailspan
       $.before emailspan, namespan
       $.rm emailspan
+    if uid and Set['Unique IDs'] and !uidspan
+      uidspan = $.el 'span',
+        className: "posteruid id_#{uid}",
+        textContent: "(ID: #{uid})"
+      after = emailspan || namespan
+      $.after after, [$.tn ' '; uidspan]
     if tripcode
       if tripspan is null
         tripspan = $.el 'span',
