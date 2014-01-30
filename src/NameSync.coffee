@@ -87,7 +87,7 @@ Config =
     'Sync on /b/':     [true,  'Enable sync on /b/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
-    'Unique IDs':      [true,  'Restore unique IDs on boards without them.']
+    'Unique IDs':      [false, 'Restore unique IDs on sync posts.']
     'Read-only Mode':  [false, 'Share none of your fields.']
     'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
@@ -241,6 +241,7 @@ Names =
     else if emailspan
       $.before emailspan, namespan
       $.rm emailspan
+    # Does not support Color IDs if it's enabled in 4chan X.
     if uid and Set['Unique IDs'] and !uidspan
       uidspan = $.el 'span',
         className: "posteruid id_#{uid}",
