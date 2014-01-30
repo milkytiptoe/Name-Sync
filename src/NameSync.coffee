@@ -246,7 +246,7 @@ Names =
       uidspan = $.el 'span',
         className: "posteruid id_#{uid}",
         textContent: "(ID: #{uid})"
-      after = emailspan || namespan
+      after = emailspan or namespan
       $.after after, [$.tn ' '; uidspan]
     if tripcode
       if tripspan is null
