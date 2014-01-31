@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         <%= meta.name %>
 // @version      <%= version %>
-// @minGMVer     1.12
-// @minFFVer     22
+// @minGMVer     1.14
+// @minFFVer     26
 // @namespace    milky
 // @description  <%= description %>
 // @license      CC BY-NC-SA 3.0; https://raw.github.com/milkytiptoe/Name-Sync/master/license
