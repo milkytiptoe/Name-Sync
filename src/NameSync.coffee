@@ -87,7 +87,7 @@ Config =
     'Sync on /b/':     [true,  'Enable sync on /b/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
-    'Unique IDs':      [true, 'Restore unique IDs on sync posts.']
+    'Unique IDs':      [true,  'Restore unique IDs on sync posts.']
     'Read-only Mode':  [false, 'Share none of your fields.']
     'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
