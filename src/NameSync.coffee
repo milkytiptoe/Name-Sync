@@ -212,8 +212,8 @@ Names =
     else
       return
 
-    # Remove when server changed
-    return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 8
+    # Ignore sync posts made after the retry timer
+    return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 11
 
     namespan    = @nodes.name
     subjectspan = @nodes.subject
@@ -346,11 +346,7 @@ Settings =
           <a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target=_blank>Issues</a>
         </div>
       </fieldset>
-      <img id=bgimage src='<%= meta.page %>namesync/bg.png' />
     """
-    bgimage = $ '#bgimage', section
-    bgimage.ondragstart = -> false
-    bgimage.oncontextmenu = -> false
     field = $.el 'fieldset'
     $.add field, $.el 'legend',
       textContent: 'Main'
@@ -443,9 +439,7 @@ Sync =
     currentName    = currentName.trim()
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
-    if /sage/i.test currentEmail
-      return if Set['Hide Sage']
-      currentEmail = ''
+    return if Set['Hide Sage'] and /sage/i.test currentEmail
     return if currentName+currentEmail+currentSubject is ''
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID, retryTimer) ->
