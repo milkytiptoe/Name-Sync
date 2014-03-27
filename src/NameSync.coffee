@@ -87,7 +87,6 @@ Config =
     'Sync on /b/':     [true,  'Enable sync on /b/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
-    'Unique IDs':      [true,  'Restore unique IDs on sync posts.']
     'Read-only Mode':  [false, 'Share none of your fields.']
     'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
@@ -118,11 +117,6 @@ CSS =
     }
     .section-name-sync div label {
       text-decoration: underline;
-    }
-    #bgimage {
-      bottom: 0px;
-      right: 0px;
-      position: absolute;
     }
     """
     if Set['Filter']
@@ -156,9 +150,9 @@ Filter =
 Main =
   init: ->
     $.off d, '4chanXInitFinished', Main.init
+    return if g.view is 'catalog'
     Settings.init()
     CSS.init()
-    return if g.view is 'catalog'
     if Set['Filter']
       Filter.init()
     if Set["Sync on /#{g.board}/"]
@@ -241,13 +235,6 @@ Names =
     else if emailspan
       $.before emailspan, namespan
       $.rm emailspan
-    # Does not support Color IDs if it's enabled in 4chan X.
-    if uid and Set['Unique IDs'] and !uidspan
-      uidspan = $.el 'span',
-        className: "posteruid id_#{uid}",
-        textContent: "(ID: #{uid})"
-      after = emailspan or namespan
-      $.after after, [$.tn ' '; uidspan]
     if tripcode
       if tripspan is null
         tripspan = $.el 'span',
