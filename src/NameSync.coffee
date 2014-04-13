@@ -87,10 +87,10 @@ Config =
     'Sync on /b/':     [true,  'Enable sync on /b/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
-    'Read-only Mode':  [false, 'Share none of your fields.']
-    'Hide Sage':       [false, 'Share none of your fields when sage is in the email field.']
+    'Read-only Mode':  [false, 'Share none of your sync fields.']
+    'Hide Sage':       [false, 'Share none of your sync fields when sage is in the email field.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
-    'Do Not Track':    [false, 'Opt out of name tracking by third party websites.']
+    'Do Not Track':    [false, 'Request no sync field tracking by third party archives.']
   other:
     'Persona Fields':  [false]
     'Filter':          [false]
@@ -160,14 +160,7 @@ Main =
   ready: ->
     path = location.pathname.split '/'
     g.board = path[1]
-    g.view =
-      switch path[2]
-        when 'res'
-          'thread'
-        when 'catalog'
-          'catalog'
-        else
-          'index'
+    g.view = if path[2] is ('thread' or 'catalog') then path[2] else 'index'
     return if g.view isnt 'thread'
     # Only observe changes when in a thread, index doesn't work right
     for post in $$ '.thread > .postContainer'
@@ -296,7 +289,7 @@ Settings =
         <legend>
           <label><input type=checkbox name='Persona Fields' #{if $.get('Persona Fields') is 'true' then 'checked' else ''}>Persona</label>
         </legend>
-        <p>Share these fields instead of the 4chan X quick reply fields. Only visible to sync users.</p>
+        <p>Share these fields instead of the 4chan X quick reply fields.</p>
         <div>
           <input type=text name=Name placeholder=Name>
           <input type=text name=Email placeholder=Email>
