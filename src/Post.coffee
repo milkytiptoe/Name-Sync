@@ -16,11 +16,12 @@ class Post
     @isReply = $.hasClass post, 'reply'
 
     @info = {}
-    if [$ '.subject', info] && subject = $ '.subject', info
-      @nodes.subject  = subject
-    else if subject        = $.el('span', className: 'subject')
-      $.after $('[type="checkbox"]', info), subject
-      @nodes.subject  = subject
+
+    unless subject    = $ '.subject',      info
+      subject = $.el 'span', className: 'subject'
+      $.after $('[type="checkbox"]', info), [$.tn ' '; subject]
+    @nodes.subject    = subject
+
     if name           = $ '.name',         info
       @nodes.name     = name
     if capcode        = $ '.capcode.hand', info

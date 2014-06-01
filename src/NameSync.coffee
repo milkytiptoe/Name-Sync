@@ -160,7 +160,7 @@ Main =
   ready: ->
     path = location.pathname.split '/'
     g.board = path[1]
-    g.view = if path[2] is ('thread' or 'catalog') then path[2] else 'index'
+    g.view = if path[2] in ['thread', 'catalog'] then path[2] else 'index'
     return if g.view isnt 'thread'
     # Only observe changes when in a thread, index doesn't work right
     for post in $$ '.thread > .postContainer'
