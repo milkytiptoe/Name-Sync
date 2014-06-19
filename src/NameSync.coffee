@@ -258,31 +258,15 @@ Settings =
         Set[setting] = if stored is null then val[0] else stored is 'true'
     el = $.el 'a',
       href: 'javascript:;'
-      textContent: '<% if (type == "userscript") { %>4chan X Name <% } %>Sync Settings'
-    <% if (type == 'userscript') { %>
-    $.on el, 'click', ->
-      $.event 'OpenSettings',
-        detail: 'Name Sync'
-    $.event 'AddMenuEntry',
-      detail:
-        type: 'header'
-        el: el
-        order: 112
-    $.event 'AddSettingsSection',
-      detail:
-        title: 'Name Sync'
-        open: Settings.open
-    <% } else { %>
-    # Appears before the QR shortcut meaning it needs a class for a /.
-    el.className = 'shortcut'
+      className: 'shortcut'
+      textContent: 'Sync'
     $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
       $.on el, 'click', ->
         $.event 'OpenSettings'
-        sec = $ '.section-main'
-        sec.className = 'section-name-sync'
-        Settings.open sec
-    <% } %>
+        section = $ '.section-main'
+        section.className = 'section-name-sync'
+        Settings.open section
   open: (section) ->
     section.innerHTML = """
       <fieldset>
