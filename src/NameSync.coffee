@@ -3,7 +3,7 @@
 Set = {}
 d   = document
 g   =
-  NAMESPACE: 'NameSync.'
+  NAMESPACE: '<%= name %>.'
   VERSION:   '<%= version %>'
   posts:     {}
 
@@ -53,7 +53,7 @@ $.ajax = (file, type, data, callbacks) ->
   url = "<%= meta.page %>namesync/#{file}.php"
   url += "?#{data}" if type is 'GET'
   r.open type, url, true
-  r.setRequestHeader 'X-Requested-With', 'NameSync<%= version %>'
+  r.setRequestHeader 'X-Requested-With', '<%= name %><%= version %>'
   r.setRequestHeader 'If-Modified-Since', Sync.lastModified if file is 'qp'
   r.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' if type is 'POST'
   $.extend r, callbacks
@@ -260,6 +260,7 @@ Settings =
       href: 'javascript:;'
       className: 'shortcut'
       textContent: 'Sync'
+      title: '<%= meta.name %> Settings'
     $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
       $.on el, 'click', ->
@@ -301,7 +302,7 @@ Settings =
       </fieldset>
       <fieldset>
         <legend>About</legend>
-        <div>4chan X Name Sync v#{g.VERSION}</div>
+        <div><%= meta.name %> v#{g.VERSION}</div>
         <div>
           <a href='http://milkytiptoe.github.io/Name-Sync/' target=_blank>Website</a> |
           <a href='https://github.com/milkytiptoe/Name-Sync/wiki/Support' target=_blank>Support</a> |
