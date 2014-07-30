@@ -118,6 +118,10 @@ CSS =
     .section-name-sync div label {
       text-decoration: underline;
     }
+    /* Appchan X description fix */
+    .section-name-sync .description {
+      display: inline;
+    }
     """
     if Set['Filter']
       css += """
@@ -265,7 +269,7 @@ Settings =
       $.add $.id('shortcuts'), el
       $.on el, 'click', ->
         $.event 'OpenSettings'
-        section = $ '.section-main'
+        section = $ 'section[class^="section-"]'
         section.className = 'section-name-sync'
         Settings.open section
   open: (section) ->
