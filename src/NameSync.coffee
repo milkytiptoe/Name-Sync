@@ -268,8 +268,8 @@ Settings =
     $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
       $.on el, 'click', ->
-        $.event 'OpenSettings'
-        section = $ 'section[class^="section-"]'
+        $.event 'OpenSettings', {detail: 'none'}
+        section = $ '[class^="section-"]'
         section.className = 'section-name-sync'
         Settings.open section
   open: (section) ->
