@@ -6,6 +6,7 @@ g   =
   NAMESPACE: '<%= name %>.'
   VERSION:   '<%= version %>'
   posts:     {}
+  threads:   []
 
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
@@ -69,14 +70,6 @@ $.asap = (test, cb) ->
     cb()
   else
     setTimeout $.asap, 25, test, cb
-$.ready = (fc) ->
-  unless d.readyState is 'loading'
-    fc()
-    return
-  cb = ->
-    $.off d, 'DOMContentLoaded', cb
-    fc()
-  $.on d, 'DOMContentLoaded', cb
 $.get = (name) ->
   localStorage.getItem "#{g.NAMESPACE}#{name}"
 $.set = (name, value) ->
@@ -153,25 +146,33 @@ Filter =
 
 Main =
   init: ->
-    $.off d, '4chanXInitFinished', Main.init
-    return if g.view is 'catalog'
-    Settings.init()
-    CSS.init()
-    if Set['Filter']
-      Filter.init()
-    if Set["Sync on /#{g.board}/"]
-      Sync.init()
-  ready: ->
+    lastview = g.view
     path = location.pathname.split '/'
     g.board = path[1]
     g.view = if path[2] in ['thread', 'catalog'] then path[2] else 'index'
+    return if g.view is 'catalog'
+    unless lastview
+      Settings.init()
+      CSS.init()
+      if Set['Filter']
+        Filter.init()
+    if Set["Sync on /#{g.board}/"]
+      Posts.init()
+      Sync.init()
+
+Posts =
+  nameByPost: {}
+  init: ->
+    g.posts = {}
+    g.threads = []
+    @observer.disconnect() if @observer
     return if g.view isnt 'thread'
-    # Only observe changes when in a thread, index doesn't work right
+    # Only observe changes when in a thread
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
     target = $ '.thread'
-    Sync.threads.push target.id[1..]
-    observer = new MutationObserver (mutations) ->
+    g.threads.push target.id[1..]
+    @observer = new MutationObserver (mutations) ->
       foundNode = false
       for mutation in mutations
         for node in mutation.addedNodes
@@ -182,19 +183,16 @@ Main =
       if foundNode
         # Single node positive:
         # Posts can be missed, cycle them all for now
-        Names.updateAllPosts()
-    observer.observe target, childList: true
-
-Names =
-  nameByPost: {}
+        Posts.updateAllPosts()
+    @observer.observe target, childList: true
   updateAllPosts: ->
-    for key of Names.nameByPost
-      Names.updatePost.call g.posts[key]
+    for key of Posts.nameByPost
+      Posts.updatePost.call g.posts[key]
     return
   updatePost: ->
     return if !@info or @info.capcode
 
-    if oinfo = Names.nameByPost[@ID]
+    if oinfo = Posts.nameByPost[@ID]
       name     = oinfo.n
       tripcode = oinfo.t
       email    = oinfo.e
@@ -345,28 +343,27 @@ Settings =
     $.on $('#syncClear',  section), 'click', Sync.clear
 
 Sync =
-  lastModified: '0'
-  disabled: false
-  threads: []
   init: ->
+    @disabled = false
+    @lastModified = '0'
     @delay = (parseInt $.get 'Delay') or 300
     @failedSends = 0
     @canRetry = true
+
     unless Set['Read-only Mode']
       $.on d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', Sync.requestSend
-    if g.view is 'thread'
-      $.on d, 'ThreadUpdate', @threadUpdate
-      @sync true
-    else
+
+    $.on d, 'ThreadUpdate', @threadUpdate
+    $.on d, 'IndexRefresh', ->
       setTimeout Sync.indexRefresh, Sync.delay
-      $.on d, 'IndexRefresh', ->
-        setTimeout Sync.indexRefresh, Sync.delay
+
+    @sync true
   indexRefresh: ->
     # Rebuild posts and resync every index refresh
-    g.posts = []
-    Sync.threads = []
+    g.posts = {}
+    g.threads = []
     for thread in $$ '.thread'
-      Sync.threads.push thread.id[1..]
+      g.threads.push thread.id[1..]
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
     clearTimeout Sync.handle
@@ -380,16 +377,16 @@ Sync =
     clearTimeout Sync.handle
     Sync.handle = setTimeout Sync.sync, Sync.delay
   sync: (repeat) ->
-    return if Sync.threads.length is 0
+    return if g.threads.length is 0
     $.ajax 'qp',
       'GET'
-      "t=#{Sync.threads}&b=#{g.board}"
+      "t=#{g.threads}&b=#{g.board}"
       onloadend: ->
         return unless @status is 200 and @response
-        Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified
+        Sync.lastModified = @getResponseHeader('Last-Modified') or Sync.lastModified if g.view is 'thread'
         for poster in JSON.parse @response
-          Names.nameByPost[poster.p] = poster
-        Names.updateAllPosts()
+          Posts.nameByPost[poster.p] = poster
+        Posts.updateAllPosts()
         $.event 'NamesSynced'
     if repeat and !Sync.disabled
       setTimeout Sync.sync, 30000, true
@@ -450,5 +447,4 @@ Sync =
         return if @status isnt 200
         $('#syncClear').value = 'Cleared'
 
-$.ready Main.ready
 $.on d, '4chanXInitFinished', Main.init

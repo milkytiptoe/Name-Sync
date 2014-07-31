@@ -69,11 +69,6 @@ module.exports = (grunt) ->
         flatten: true
         src: 'builds/crx/*'
         dest: '/'
-    crx:
-      prod:
-        src: 'builds/crx/'
-        dest: 'builds/<%= pkg.name %>.crx'
-        privateKey: 'builds/crx.pem'
     clean:
       builds: 'builds'
       tmpcrx: 'tmp-crx'
@@ -97,7 +92,6 @@ module.exports = (grunt) ->
     'copy:crx'
     'compress:crx'
     'clean:tmpcrx'
-    'crx:prod'
   ]
   grunt.registerTask 'build-userscript', [
     'set-build:userscript'
