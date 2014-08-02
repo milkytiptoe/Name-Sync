@@ -7,9 +7,7 @@
     "page": "https://www.namesync.org/",
     "builds": "namesync/builds/",
     "includes": [
-      "*://boards.4chan.org/b/*",
-      "*://boards.4chan.org/soc/*",
-      "*://boards.4chan.org/s4s/*"
+      "*://boards.4chan.org/*/*"
     ],
     "authors": [
       "milkytiptoe",

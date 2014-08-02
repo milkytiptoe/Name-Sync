@@ -7,6 +7,7 @@ g   =
   VERSION:   '<%= version %>'
   posts:     {}
   threads:   []
+  boards:    ['b', 'soc', 's4s']
 
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
@@ -156,9 +157,11 @@ Main =
       CSS.init()
       if Set['Filter']
         Filter.init()
-    if Set["Sync on /#{g.board}/"]
+    if Set["Sync on /#{g.board}/"] or lastview
       Posts.init()
       Sync.init()
+  boardLegit: ->
+    g.board in g.boards
 
 Posts =
   nameByPost: {}
@@ -166,7 +169,7 @@ Posts =
     g.posts = {}
     g.threads = []
     @observer.disconnect() if @observer
-    return if g.view isnt 'thread'
+    return if g.view isnt 'thread' or !Main.boardLegit()
     # Only observe changes when in a thread
     for post in $$ '.thread > .postContainer'
       g.posts[post.id[2..]] = new Post post
@@ -261,7 +264,7 @@ Settings =
     el = $.el 'a',
       href: 'javascript:;'
       className: 'shortcut'
-      textContent: 'Sync'
+      textContent: 'NS'
       title: '<%= meta.name %> Settings'
     $.asap (-> $.id('shortcuts')), ->
       $.add $.id('shortcuts'), el
@@ -350,24 +353,31 @@ Sync =
     @failedSends = 0
     @canRetry = true
 
+    unless Main.boardLegit()
+      $.off d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', @requestSend
+      $.off d, 'ThreadUpdate', @threadUpdate
+      $.off d, 'IndexRefresh', @indexRefresh
+      return
+
     unless Set['Read-only Mode']
-      $.on d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', Sync.requestSend
+      $.on d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', @requestSend
 
     $.on d, 'ThreadUpdate', @threadUpdate
-    $.on d, 'IndexRefresh', ->
-      setTimeout Sync.indexRefresh, Sync.delay
+    $.on d, 'IndexRefresh', @indexRefresh
 
     @sync true
   indexRefresh: ->
     # Rebuild posts and resync every index refresh
-    g.posts = {}
-    g.threads = []
-    for thread in $$ '.thread'
-      g.threads.push thread.id[1..]
-    for post in $$ '.thread > .postContainer'
-      g.posts[post.id[2..]] = new Post post
-    clearTimeout Sync.handle
-    Sync.handle = setTimeout Sync.sync, Sync.delay
+    setTimeout ->
+      g.posts = {}
+      g.threads = []
+      for thread in $$ '.thread'
+        g.threads.push thread.id[1..]
+      for post in $$ '.thread > .postContainer'
+        g.posts[post.id[2..]] = new Post post
+      clearTimeout Sync.handle
+      Sync.handle = setTimeout Sync.sync, Sync.delay
+    , Sync.delay
   threadUpdate: (e) ->
     # Only Firefox can check for 404 or new posts. Chrome will be making more sync requests.
     <% if (type == 'userscript') { %>
