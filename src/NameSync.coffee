@@ -400,7 +400,7 @@ Sync =
           Posts.nameByPost[poster.p] = poster
         Posts.updateAllPosts()
         $.event 'NamesSynced'
-    if repeat and !Sync.disabled
+    if repeat and g.view is 'thread' and !Sync.disabled
       setTimeout Sync.sync, 30000, true
   requestSend: (e) ->
     postID   = e.detail.postID
