@@ -147,17 +147,17 @@ Filter =
 
 Main =
   init: ->
-    lastview = g.view
+    lastView = g.view
     path = location.pathname.split '/'
     g.board = path[1]
     g.view = if path[2] in ['thread', 'catalog'] then path[2] else 'index'
     return if g.view is 'catalog'
-    unless lastview
+    unless lastView
       Settings.init()
       CSS.init()
       if Set['Filter']
         Filter.init()
-    if Set["Sync on /#{g.board}/"] or lastview
+    if Set["Sync on /#{g.board}/"] or lastView
       Posts.init()
       Sync.init()
   boardLegit: ->
@@ -168,7 +168,9 @@ Posts =
   init: ->
     g.posts = {}
     g.threads = []
-    @observer.disconnect() if @observer
+    if @observer
+      @observer.disconnect()
+      delete @observer
     return if g.view isnt 'thread' or !Main.boardLegit()
     # Only observe changes when in a thread
     for post in $$ '.thread > .postContainer'
