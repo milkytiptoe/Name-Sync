@@ -116,6 +116,10 @@ CSS =
     .section-name-sync .description {
       display: inline;
     }
+    /* ccd0 4chan X clear fix */
+    .section-name-sync {
+      clear: both;
+    }
     """
     if Set['Filter']
       css += """
@@ -303,8 +307,8 @@ Settings =
       <fieldset>
         <legend>Advanced</legend>
         <div>
-          <input id=syncClear type=button value='Clear my sync history' title='Clear your stored sync fields from the server'>
-          Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising fields after a thread or index update'> ms
+          <input id=syncClear type=button value='Clear my sync history' title='Clear your sync history from the server'>
+          Sync Delay: <input type=number name=Delay min=0 step=100 placeholder=300 title='Delay before synchronising after a thread or index update'> ms
         </div>
       </fieldset>
       <fieldset>
@@ -313,8 +317,8 @@ Settings =
         <div>
           <a href='http://milkytiptoe.github.io/Name-Sync/' target=_blank>Website</a> |
           <a href='https://github.com/milkytiptoe/Name-Sync/wiki/Support' target=_blank>Support</a> |
-          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/license' target=_blank>License</a> |
-          <a href='https://raw.github.com/milkytiptoe/Name-Sync/master/changelog' target=_blank>Changelog</a> |
+          <a href='https://raw.githubusercontent.com/milkytiptoe/Name-Sync/master/license' target=_blank>License</a> |
+          <a href='https://raw.githubusercontent.com/milkytiptoe/Name-Sync/master/changelog' target=_blank>Changelog</a> |
           <a href='https://github.com/milkytiptoe/Name-Sync/issues/new' target=_blank>Issues</a>
         </div>
       </fieldset>
@@ -346,6 +350,8 @@ Settings =
         $.set @name, @value
 
     $.on $('#syncClear',  section), 'click', Sync.clear
+
+    $('div[id$="x-settings"] nav').style.visibility = 'hidden'
 
 Sync =
   init: ->
