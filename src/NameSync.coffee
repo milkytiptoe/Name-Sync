@@ -82,7 +82,7 @@ Config =
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
     'Read-only Mode':  [false, 'Share none of your sync fields.']
-    'Hide Sage':       [false, 'Share none of your sync fields when sage is in the email field.']
+    'Hide Sage':       [false, 'Share none of your sync fields when sage is in the options field.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
     'Do Not Track':    [false, 'Request no sync field tracking by third party archives.']
   other:
@@ -288,7 +288,7 @@ Settings =
         <p>Share these fields instead of the 4chan X quick reply fields.</p>
         <div>
           <input type=text name=Name placeholder=Name>
-          <input type=text name=Email placeholder=Email>
+          <input type=text name=Email placeholder=Options>
           <input type=text name=Subject placeholder=Subject>
         </div>
       </fieldset>
@@ -300,7 +300,7 @@ Settings =
         <div>
           <input type=text name=FilterNames placeholder=Names>
           <input type=text name=FilterTripcodes placeholder=Tripcodes>
-          <input type=text name=FilterEmails placeholder=Emails>
+          <input type=text name=FilterEmails placeholder=Options>
           <input type=text name=FilterSubjects placeholder=Subjects>
         </div>
       </fieldset>
