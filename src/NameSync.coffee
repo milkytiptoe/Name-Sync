@@ -387,11 +387,8 @@ Sync =
       Sync.handle = setTimeout Sync.sync, Sync.delay
     , Sync.delay
   threadUpdate: (e) ->
-    # Only Firefox can check for 404 or new posts. Chrome will be making more sync requests.
-    <% if (type == 'userscript') { %>
     return Sync.disabled = true if e.detail[404]
-    return unless e.detail.newPosts.length
-    <% } %>
+    return unless l = e.detail.newPosts.length > 0
     clearTimeout Sync.handle
     Sync.handle = setTimeout Sync.sync, Sync.delay
   sync: (repeat) ->
