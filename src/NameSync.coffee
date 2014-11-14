@@ -219,7 +219,7 @@ Posts =
       email    = oinfo.e
       subject  = oinfo.s
 
-    if Set['Custom Names'] and uID and uID isnt 'Heaven' and $('.sync-custom', @nodes.info) is null
+    if Set['Custom Names'] and uID isnt 'Heaven' and $('.sync-custom', @nodes.info) is null
       el = $.el 'a',
         className: 'sync-custom'
         textContent: '+'
