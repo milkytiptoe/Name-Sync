@@ -17,14 +17,16 @@ class Post
 
     @info = {}
 
-    unless subject    = $ '.subject',      info
+    unless subject    = $ '.subject',        info
       subject = $.el 'span', className: 'subject'
       $.after $('[type="checkbox"]', info), [$.tn ' '; subject]
     @nodes.subject    = subject
 
-    if name           = $ '.name',         info
+    if name           = $ '.name',           info
       @nodes.name     = name
-    if capcode        = $ '.capcode.hand', info
+    if capcode        = $ '.capcode.hand',   info
       @info.capcode   = capcode.textContent.replace '## ', ''
-    if date           = $ '.dateTime',     info
+    if date           = $ '.dateTime',       info
       @info.date      = date.dataset.utc
+    if uID            = $ '.posteruid .hand', info
+      @info.uID       = uID.textContent

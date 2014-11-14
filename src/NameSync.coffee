@@ -81,6 +81,7 @@ Config =
     'Sync on /b/':     [true,  'Enable sync on /b/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
+    'Custom Names':    [false, 'Posters can be given custom names.']
     'Read-only Mode':  [false, 'Share none of your sync fields.']
     'Hide Sage':       [false, 'Share none of your sync fields when sage is in the email field.']
     'Mark Sync Posts': [false, 'Mark posts made by sync users.']
@@ -139,6 +140,12 @@ CSS =
       right: 5px;
     }
     """
+    if Set['Custom Names']
+      css += """
+    div#qp .sync-custom, div.inline .sync-custom {
+      display: none;
+    }
+    """
     $.add d.body, $.el 'style',
       textContent: css
 
@@ -169,6 +176,7 @@ Main =
 
 Posts =
   nameByPost: {}
+  nameByID: {}
   init: ->
     g.posts = {}
     g.threads = []
@@ -201,23 +209,22 @@ Posts =
   updatePost: ->
     return if !@info or @info.capcode
 
-    if oinfo = Posts.nameByPost[@ID]
+    if linfo = Posts.nameByID[uID = @info.uID]
+      name     = linfo.n
+    else if oinfo = Posts.nameByPost[@ID]
+      # Ignore sync posts made after the retry timer
+      return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 11
       name     = oinfo.n
       tripcode = oinfo.t
       email    = oinfo.e
       subject  = oinfo.s
-      uid      = oinfo.i
     else
       return
-
-    # Ignore sync posts made after the retry timer
-    return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 11
 
     namespan    = @nodes.name
     subjectspan = @nodes.subject
     tripspan    = $ '.postertrip', @nodes.info
     emailspan   = $ '.useremail',  @nodes.info
-    uidspan     = $ '.posteruid',  @nodes.info
     if namespan.textContent isnt name
       namespan.textContent = name
     if subject
@@ -250,6 +257,16 @@ Posts =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
+    if Set['Custom Names'] and uID and $('.sync-custom', @nodes.info) is null
+      el = $.el 'a',
+        className: 'sync-custom'
+        textContent: '+'
+        href: 'javascript:;'
+        title: 'Custom Name'
+      $.before (emailspan || namespan), el
+      $.on el, 'click', ->
+        Posts.customName uID
+
     if Set['Mark Sync Posts'] and @isReply
       $.addClass @nodes.post, 'sync-post'
 
@@ -260,6 +277,10 @@ Posts =
           $.addClass @nodes.root, 'sync-filtered'
           return
       return
+  customName: (uID) ->
+    Posts.nameByID[uID] =
+      n: prompt 'Custom Name', 'Anonymous'
+    Posts.updateAllPosts()
 
 Settings =
   init: ->
