@@ -203,7 +203,7 @@ Posts =
         Posts.updateAllPosts()
     @observer.observe target, childList: true
   updateAllPosts: ->
-    for key of Posts.nameByPost
+    for key of (if Set['Custom Names'] then g.posts else Posts.nameByPost)
       Posts.updatePost.call g.posts[key]
     return
   updatePost: ->
@@ -218,8 +218,18 @@ Posts =
       tripcode = oinfo.t
       email    = oinfo.e
       subject  = oinfo.s
-    else
-      return
+
+    if Set['Custom Names'] and uID and uID isnt 'Heaven' and $('.sync-custom', @nodes.info) is null
+      el = $.el 'a',
+        className: 'sync-custom'
+        textContent: '+'
+        href: 'javascript:;'
+        title: 'Custom Name'
+      $.before @nodes.name, el
+      $.on el, 'click', ->
+        Posts.customName uID
+
+    return if !linfo and !oinfo
 
     namespan    = @nodes.name
     subjectspan = @nodes.subject
@@ -257,17 +267,7 @@ Posts =
       $.rm tripspan.previousSibling
       $.rm tripspan
 
-    if Set['Custom Names'] and uID and $('.sync-custom', @nodes.info) is null
-      el = $.el 'a',
-        className: 'sync-custom'
-        textContent: '+'
-        href: 'javascript:;'
-        title: 'Custom Name'
-      $.before (emailspan || namespan), el
-      $.on el, 'click', ->
-        Posts.customName uID
-
-    if Set['Mark Sync Posts'] and @isReply
+    if Set['Mark Sync Posts'] and @isReply and Posts.nameByPost[@ID]
       $.addClass @nodes.post, 'sync-post'
 
     if Set['Filter']
