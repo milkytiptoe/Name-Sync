@@ -227,7 +227,7 @@ Posts =
         textContent: '+'
         href: 'javascript:;'
         title: 'Custom Name'
-      $.before @nodes.name, [el, $.tn ' ']
+      $.after $('[type="checkbox"]', @nodes.info), [el, $.tn ' ']
       $.on el, 'click', ->
         Posts.customName uID
 
