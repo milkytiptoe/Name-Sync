@@ -225,7 +225,7 @@ Posts =
         textContent: '+'
         href: 'javascript:;'
         title: 'Custom Name'
-      $.before @nodes.name, el
+      $.before @nodes.name, [el, $.tn ' ']
       $.on el, 'click', ->
         Posts.customName uID
 
@@ -278,8 +278,9 @@ Posts =
           return
       return
   customName: (uID) ->
+    return unless n = prompt 'Custom Name', 'Anonymous'
     Posts.nameByID[uID] =
-      n: prompt 'Custom Name', 'Anonymous'
+      n: n
     Posts.updateAllPosts()
 
 Settings =
