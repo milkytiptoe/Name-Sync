@@ -202,6 +202,8 @@ Posts =
         # Posts can be missed, cycle them all for now
         Posts.updateAllPosts()
     @observer.observe target, childList: true
+    # Posts will not initially update if there is no sync data
+    Posts.updateAllPosts() if Set['Custom Names']
   updateAllPosts: ->
     for key of (if Set['Custom Names'] then g.posts else Posts.nameByPost)
       Posts.updatePost.call g.posts[key]
