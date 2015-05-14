@@ -47,7 +47,7 @@ img, input[type=image] {
 form {
   float: right;
 }
-#gecko, #webkit, #chanx, #opera {
+#gecko, #webkit, #chanx, #opera, #appx, #nsync {
   background-repeat: no-repeat;
   background-size: 19px;
   padding-left: 22px;
