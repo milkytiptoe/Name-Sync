@@ -121,6 +121,10 @@ CSS =
     .section-name-sync {
       clear: both;
     }
+    /* Show sync fields in ccd0 4chan X */
+    #qr.sync-enabled .persona input {
+      display: inline-block !important;
+    }
     """
     if Set['Filter']
       css += """
@@ -392,6 +396,7 @@ Sync =
       return
 
     unless Set['Read-only Mode']
+      @setupQR()
       $.on d, 'QRPostSuccessful<% if (type === "crx") { %>_<% } %>', @requestSend
 
     $.on d, 'ThreadUpdate', @threadUpdate
@@ -429,6 +434,12 @@ Sync =
         $.event 'NamesSynced'
     if repeat and g.view is 'thread' and !Sync.disabled
       setTimeout Sync.sync, 30000, true
+  setupQR: ->
+    unless qr = $.id 'qr'
+      $.on d, 'QRDialogCreation', Sync.setupQR
+      return
+    $.addClass qr, 'sync-enabled'
+    $('input[data-name=email]', qr).placeholder = 'E-mail'
   requestSend: (e) ->
     postID   = e.detail.postID
     threadID = e.detail.threadID
