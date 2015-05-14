@@ -1,46 +1,46 @@
 @charset "utf-8";
 * {
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 body {
-	color: black;
-	font-family: "Open Sans", Arial, Helvetica, Verdana, sans-serif;
-	font-size: .9em;
-	background: white;
+  color: black;
+  font-family: "Open Sans", Arial, Helvetica, Verdana, sans-serif;
+  font-size: .9em;
+  background: white;
 }
 a {
-	color: blue;
-	text-decoration: none;
+  color: blue;
+  text-decoration: none;
 }
 h1 {
-	font-size: 1.4em;
-	font-weight: normal;
+  font-size: 1.4em;
+  font-weight: normal;
 }
 h2 {
-	font-size: 1em;
-	font-weight: normal;
+  font-size: 1em;
+  font-weight: normal;
 }
 img, input[type=image] {
   border: 0;
 }
 #content-block {
-	min-height: 48px;
-	clear: both;
-	padding-left: 54px;
-	margin: 6px 0 12px 0;
+  min-height: 48px;
+  clear: both;
+  padding-left: 54px;
+  margin: 6px 0 12px 0;
 }
 #wrapper {
-	margin: auto;
-	width: 650px;
+  margin: auto;
+  width: 650px;
 }
 #footer {
   margin-top: 20px;
-	text-align: center;
+  text-align: center;
   font-size: 0.9em;
 }
 #header {
-	margin: 12px 0 12px 0;
+  margin: 12px 0 12px 0;
   padding-left: 54px !important;
   background: url(https://namesync.net/namesync/logo.png) no-repeat top left;
 }
@@ -66,6 +66,12 @@ form {
 }
 #chanx {
   background-image: url(../img/4chanx.png);
+}
+#appx {
+  background-image: url(../img/appx.png);
+}
+#nsync {
+  background-image: url(https://namesync.net/namesync/logo.png);
 }
 p {
   margin-top: 12px;
