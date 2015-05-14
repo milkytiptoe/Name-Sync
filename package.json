@@ -1,10 +1,10 @@
 {
   "name": "NameSync",
-  "version": "4.8.2",
+  "version": "4.9.0",
   "description": "Enables names on 4chan's forced anon boards. Requires 4chan X.",
   "meta": {
     "name": "4chan X Name Sync",
-    "page": "https://imagesync.org/",
+    "page": "https://namesync.net/",
     "builds": "namesync/builds/",
     "includes": [
       "*://boards.4chan.org/*/*"
@@ -16,7 +16,7 @@
     ]
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
+    "grunt": "^0.4.5",
     "grunt-concurrent": "~0.4.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-coffee": "~0.8.0",

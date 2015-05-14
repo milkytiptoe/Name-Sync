@@ -1,3 +1,9 @@
+4.9.0
+- Domain change from imagesync.org/namesync/ to namesync.net
+- Display Namesync fields by default on ccd0 4chan X (ccd0 pull request)
+- New Chrome Store page
+- Awaiting a response from Milky (5/14/2015)
+
 4.8.2
 - Domain change from namesync.org to imagesync.org/namesync/
 
