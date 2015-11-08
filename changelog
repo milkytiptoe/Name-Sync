@@ -1,3 +1,7 @@
+4.9.1
+- Added support for /trash/
+- namesync.org is now accessible again
+
 4.9.0
 - Domain change from imagesync.org/namesync/ to namesync.net
 - Display Namesync fields by default on ccd0 4chan X (ccd0 pull request)

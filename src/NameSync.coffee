@@ -7,7 +7,7 @@ g   =
   VERSION:   '<%= version %>'
   posts:     {}
   threads:   []
-  boards:    ['b', 'soc', 's4s']
+  boards:    ['b', 'soc', 's4s', 'trash']
 
 $$ = (selector, root = d.body) ->
   root.querySelectorAll selector
@@ -81,6 +81,7 @@ Config =
     'Sync on /b/':     [true,  'Enable sync on /b/.']
     'Sync on /soc/':   [true,  'Enable sync on /soc/.']
     'Sync on /s4s/':   [true,  'Enable sync on /s4s/.']
+    'Sync on /trash/':   [true,  'Enable sync on /trash/.']
     'Custom Names':    [false, 'Posters can be given custom names.']
     'Read-only Mode':  [false, 'Share none of your sync fields.']
     'Hide Sage':       [false, 'Share none of your sync fields when sage is in the email field.']
