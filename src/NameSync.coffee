@@ -220,7 +220,7 @@ Posts =
       name     = linfo.n
     else if oinfo = Posts.nameByPost[@ID]
       # Ignore sync posts made after the retry timer
-      return if parseInt(oinfo.time) < parseInt(@info.date) or parseInt(oinfo.time) > parseInt(@info.date) + 11
+      return if parseInt(oinfo.time) > parseInt(@info.date) + 60
       name     = oinfo.n
       tripcode = oinfo.t
       email    = oinfo.e
