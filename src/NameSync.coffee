@@ -457,6 +457,8 @@ Sync =
     currentEmail   = currentEmail.trim()
     currentSubject = currentSubject.trim()
     return if Set['Hide Sage'] and /sage/i.test currentEmail
+    if /since4pass/i.test currentEmail
+      currentEmail = ''
     return if currentName+currentEmail+currentSubject is ''
     Sync.send currentName, currentEmail, currentSubject, postID, threadID
   send: (name, email, subject, postID, threadID, retryTimer) ->

@@ -1,3 +1,7 @@
+4.9.3
+- Hide 'since4pass'
+- Updated package dependencies
+
 4.9.2
 - Changed ignore timer to 60 seconds and removed before 4chan's timer check
 
